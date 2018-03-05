@@ -25,6 +25,9 @@
     "url": "https://github.com/angro-kft/nav-connector/issues"
   },
   "homepage": "https://github.com/angro-kft/nav-connector#readme",
+  "engines": {
+    "node": ">= 8.9.4"
+  },
   "dependencies": {
     "cross-env": "^5.1.3"
   },
