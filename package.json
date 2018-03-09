@@ -4,8 +4,6 @@
   "description": "Node.js module which provides an interface for communicating with NAV online invoice service.",
   "main": "./src/index.js",
   "scripts": {
-    "start": "cross-env NODE_ENV=production node ./src/index.js",
-    "dev": "cross-env NODE_ENV=development node ./src/index.js",
     "test": "cross-env NODE_ENV=test nyc mocha",
     "lint": "eslint src/**",
     "coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov"
@@ -36,6 +34,7 @@
   "devDependencies": {
     "chai": "^4.1.2",
     "codecov": "^3.0.0",
+    "dotenv": "^5.0.1",
     "eslint": "^4.18.2",
     "eslint-config-airbnb-base": "^12.1.0",
     "eslint-config-prettier": "^2.9.0",

@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const NavConnector = require('../src/index.js');
 
 describe('NavConnector', () => {
