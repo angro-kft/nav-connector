@@ -1,15 +1,14 @@
-const { chain, camelCase } = require('lodash');
 const { assert } = require('chai');
 
-require('dotenv').config();
+const validateTechnicalUser = require('../src/validate-technical-user.js');
 
-const { validateTechnicalUser } = require('../src/index.js');
-
-const technicalUser = chain(process.env)
-  .pickBy((value, key) => key.startsWith('NAV_CONNECTOR_'))
-  .mapKeys((value, key) => key.replace('NAV_CONNECTOR_', ''))
-  .mapKeys((value, key) => camelCase(key))
-  .value();
+const technicalUser = {
+  login: 'login123',
+  password: 'password',
+  taxNumber: '12345678-2-04',
+  signatureKey: 'signatureKey',
+  exchangeKey: 'exchangeKey',
+};
 
 describe('validateTechnicalUser()', () => {
   it('should be a function', () => {
