@@ -4,6 +4,12 @@
 
 Node.js module which provides an interface for communicating with NAV online invoice service.
 
+## 🚧Work in progress
+
+This module is under constant development at this time and will stay maintained in the future.  
+This module was developed in order to satisfy the following specification:  
+[Online invoice interface specification](https://onlineszamla-test.nav.gov.hu/api/files/container/download/Online%20Szamla_Interfesz%20specifik%C3%A1ci%C3%B3_EN.pdf)
+
 ## Installation
 
 Node.js 8.10.0 or higher is required.
@@ -45,3 +51,13 @@ Copy the file named `.env.example` and rename it to `.env` in the root of the re
 ```sh
 $ npm run test
 ```
+
+## Maintainers
+
+This repository is maintained by [ANGRO Nagykereskedelmi Kft.](https://angro.hu/)
+
+Repository lead maintainer: [Dávid Házi](https://github.com/kailniris) ( <mailto:hazi.david@angro.hu> )
+
+## License
+
+[GPL-3.0](LICENSE)
