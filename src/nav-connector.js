@@ -1,4 +1,7 @@
 const EventEmitter = require('events');
+const axios = require('axios');
+
+const defaultBaseUrl = 'https://api.onlineszamla.nav.gov.hu/invoiceService/';
 
 /** Class representing a NAV online interface.
  * @extends EventEmitter
@@ -14,10 +17,18 @@ class NavConnector extends EventEmitter {
    * @param {string} technicalUser.signatureKey - Technical user’s signature key.
    * @param {string} technicalUser.exchangeKey - Technical user’s exchange key (replacement key).
    */
-  constructor(technicalUser) {
+  constructor(technicalUser, baseURL = defaultBaseUrl) {
     super();
 
     this.technicalUser = technicalUser;
+
+    this.axios = axios.create({
+      baseURL,
+      headers: {
+        'content-type': 'application/xml',
+        accept: 'application/xml',
+      },
+    });
   }
 }
 
