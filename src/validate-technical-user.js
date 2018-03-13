@@ -13,14 +13,14 @@ const technicalUserSchema = validator.compile({
   properties: {
     login: {
       type: 'string',
-      pattern: '[a-zA-Z0-9]{6,15}',
+      pattern: '^[a-zA-Z0-9]{6,15}$',
     },
     password: {
       type: 'string',
     },
     taxNumber: {
       type: 'string',
-      pattern: '[0-9]{8}',
+      pattern: '^[0-9]{8}$',
     },
     signatureKey: {
       type: 'string',
