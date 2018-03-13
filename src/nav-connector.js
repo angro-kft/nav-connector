@@ -9,24 +9,23 @@ const defaultBaseUrl = 'https://api.onlineszamla.nav.gov.hu/invoiceService/';
 class NavConnector extends EventEmitter {
   /**
    * Create a navConnector.
-   * @param {Object} technicalUser Technical user data.
-   * @param {string} technicalUser.login - Technical user’s login name.
-   * @param {string} technicalUser.password - Technical user’s password.
-   * @param {string} technicalUser.taxNumber - Tax number of the taxpayer using the interface
-   * service, to whom the technical user is assigned.
-   * @param {string} technicalUser.signatureKey - Technical user’s signature key.
-   * @param {string} technicalUser.exchangeKey - Technical user’s exchange key (replacement key).
+   * @param {Object} params Constuctor params.
+   * @param {Object} params.technicalUser Technical user data.
+   * @param {Object} params.softwareData Software data.
+   * @param {String} [params.baseURL=https://api.onlineszamla.nav.gov.hu/invoiceService/] Axios baseURL.
    */
-  constructor(technicalUser, baseURL = defaultBaseUrl) {
+  constructor({ technicalUser, softwareData, baseURL = defaultBaseUrl }) {
     super();
 
-    this.technicalUser = technicalUser;
+    this.$technicalUser = technicalUser;
+    this.$softwareData = softwareData;
 
-    this.axios = axios.create({
+    this.$axios = axios.create({
       baseURL,
       headers: {
         'content-type': 'application/xml',
         accept: 'application/xml',
+        encoding: 'UTF-8',
       },
     });
   }
