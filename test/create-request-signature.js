@@ -3,7 +3,7 @@ const ObjectId = require('bson-objectid');
 
 const createRequestSignature = require('../src/create-request-signature.js');
 
-const invoicesBase64 = require('./invoices-base64.js');
+const invoicesBase64 = require('./lib/invoices-base64.js');
 
 describe('createRequestSignature()', () => {
   it('should be a function', () => {
@@ -12,7 +12,7 @@ describe('createRequestSignature()', () => {
 
   it('should return string', () => {
     const requestSignature = createRequestSignature({
-      requestId: ObjectId,
+      requestId: ObjectId().toString(),
       date: new Date(),
       signatureKey: 'mnlFCfiGkwjIDe59',
       invoices: invoicesBase64,

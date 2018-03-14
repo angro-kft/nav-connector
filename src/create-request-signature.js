@@ -7,7 +7,7 @@ const crypto = require('crypto');
  * @param {string} params.requestId Unique string.
  * @param {Date} params.date Request creation date.
  * @param {String} params.signatureKey Technical user's signature key.
- * @param {Array}[params.baseURL=[]] Invoice xmls in base64 encoding.
+ * @param {Array} [params.invoices=[]] Invoice xmls in base64 encoding.
  * @returns {string} Request signature.
  */
 module.exports = function createRequestSignature({

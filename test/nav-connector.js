@@ -5,7 +5,7 @@ const NavConnector = require('../src/nav-connector.js');
 const technicalUser = {
   login: 'login123',
   password: 'password',
-  taxNumber: '12345678-2-04',
+  taxNumber: '12345678',
   signatureKey: 'signatureKey',
   exchangeKey: 'exchangeKey',
 };
