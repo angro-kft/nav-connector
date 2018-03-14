@@ -25,7 +25,7 @@ describe('createBaseRequest()', () => {
     assert.isFunction(createBaseRequest);
   });
 
-  it('should return baseRequest', () => {
+  it('should return object', () => {
     const baseRequest = createBaseRequest({
       requestType: 'TokenExchangeRequest',
       technicalUser,
