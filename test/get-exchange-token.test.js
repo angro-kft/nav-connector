@@ -1,3 +1,4 @@
+const { chain, camelCase } = require('lodash');
 const { assert } = require('chai');
 const axios = require('axios');
 
@@ -5,13 +6,14 @@ const getExchangeToken = require('../src/get-exchange-token.js');
 const createBaseRequest = require('../src/create-base-request.js');
 const createRequestXml = require('../src/create-request-xml.js');
 
-const technicalUser = {
-  login: 'login123',
-  password: 'password',
-  taxNumber: '12345678',
-  signatureKey: 'signatureKey',
-  exchangeKey: 'exchangeKey',
-};
+require('dotenv').config();
+
+const technicalUser = chain(process.env)
+  .pickBy((value, key) => key.includes('NAV_CONNECTOR_TECHNICAL_USER_'))
+  .mapKeys((value, key) =>
+    camelCase(key.replace('NAV_CONNECTOR_TECHNICAL_USER_', ''))
+  )
+  .value();
 
 const softwareData = {
   softwareId: '123456789123456789',
@@ -47,6 +49,15 @@ describe('getExchangeToken()', () => {
 
     const requestXml = createRequestXml(baseRequest);
 
-    const response = await getExchangeToken({ axios: navAxios, requestXml });
+    const exchangeToken = await getExchangeToken({
+      axios: navAxios,
+      requestXml,
+      technicalUser,
+    });
+
+    assert.match(
+      exchangeToken,
+      /^[A-Z0-9]{8}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{24}$/i
+    );
   });
 });
