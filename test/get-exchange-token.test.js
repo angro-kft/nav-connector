@@ -60,4 +60,76 @@ describe('getExchangeToken()', () => {
       /^[A-Z0-9]{8}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{24}$/i
     );
   });
-});
+
+  it('should handle string error response if request is invalid', done => {
+    technicalUser.login = 'asdasd';
+    const baseRequest = createBaseRequest({
+      requestType: 'TokenExchangeRequest2',
+      technicalUser,
+      softwareData,
+    });
+
+    const requestXml = createRequestXml(baseRequest);
+
+    getExchangeToken({
+      axios: navAxios,
+      requestXml,
+      technicalUser,
+    })
+      .then(() => {
+        throw new Error('should throw if request is invalid');
+      })
+      .catch(() => {
+        done();
+      });
+  });
+
+  it('should handle xml error response if request is invalid', done => {
+    technicalUser.login = 'invalidUser';
+    const baseRequest = createBaseRequest({
+      requestType: 'TokenExchangeRequest',
+      technicalUser,
+      softwareData,
+    });
+
+    const requestXml = createRequestXml(baseRequest);
+
+    getExchangeToken({
+      axios: navAxios,
+      requestXml,
+      technicalUser,
+    })
+      .then(() => {
+        throw new Error('should throw if request is invalid');
+      })
+      .catch(() => {
+        done();
+      });
+  });
+
+  /*
+  it('should handle non response errors', done => {
+    technicalUser.login = 'invalidUser';
+    const baseRequest = createBaseRequest({
+      requestType: 'TokenExchangeRequest',
+      technicalUser,
+      softwareData,
+    });
+
+    const requestXml = createRequestXml(baseRequest);
+
+    getExchangeToken({
+      axios: navAxios,
+      requestXml,
+      technicalUser,
+    })
+      .then(() => {
+        throw new Error('should throw if request is invalid');
+      })
+      .catch(error => {
+        console.log(error);
+        done();
+      });
+  });
+  */
+}).timeout(10000);

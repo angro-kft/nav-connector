@@ -34,6 +34,7 @@
     "bson-objectid": "^1.2.2",
     "crc": "^3.5.0",
     "cross-env": "^5.1.3",
+    "lodash": "^4.17.5",
     "xml2js": "^0.4.19"
   },
   "devDependencies": {
@@ -45,7 +46,6 @@
     "eslint-config-prettier": "^2.9.0",
     "eslint-plugin-import": "^2.9.0",
     "eslint-plugin-prettier": "^2.6.0",
-    "lodash": "^4.17.5",
     "mocha": "^5.0.1",
     "nyc": "^11.4.1",
     "prettier": "^1.11.1"

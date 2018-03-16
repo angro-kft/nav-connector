@@ -1,6 +1,7 @@
 const crypto = require('crypto');
 const xml2js = require('xml2js');
 const { promisify } = require('util');
+const { noop } = require('lodash');
 
 const xmlParser = new xml2js.Parser({ explicitArray: false });
 
@@ -26,6 +27,29 @@ module.exports = async function getExchangeToken({
 
     return exchangeToken;
   } catch (error) {
-    throw error;
+    const { response } = error;
+    /* Not service response error. */
+    if (!response) {
+      throw error;
+    }
+
+    let result = response.data;
+
+    /* Sometimes the service responses with an xml error sometines with a string */
+    try {
+      ({ result } = (await parseXml(response.data)).GeneralErrorResponse);
+    } catch (e) {
+      noop(e);
+    }
+
+    const { status, statusText } = response;
+
+    const errorResult = {
+      status,
+      statusText,
+      result,
+    };
+
+    throw errorResult;
   }
 };
