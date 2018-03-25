@@ -6,7 +6,7 @@ const createRequestSignature = require('./create-request-signature.js');
 /**
  * Create a base request object.
  * @param {Object} params Function params.
- * @param {string} requestType Operation type of the request is used for.
+ * @param {string} params.requestType Operation type of the request is used for.
  * @param {string} [params.requestId=ObjectId().toString()] Unique string.
  * @param {Date} [params.date=new Date()] Request creation date.
  * @param {Object} params.technicalUser Technical user data.

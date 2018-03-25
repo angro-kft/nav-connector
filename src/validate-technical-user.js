@@ -34,12 +34,12 @@ const technicalUserSchema = validator.compile({
 /**
  * Validate technical user data to a predefined schema.
  * @param {Object} technicalUser Technical user data to valudate.
- * @param {string} technicalUser.login - Technical user’s login name.
- * @param {string} technicalUser.password - Technical user’s password.
- * @param {string} technicalUser.taxNumber - Tax number of the taxpayer using the interface
+ * @param {string} technicalUser.login Technical user’s login name.
+ * @param {string} technicalUser.password Technical user’s password.
+ * @param {string} technicalUser.taxNumber Tax number of the taxpayer using the interface
  * service, to whom the technical user is assigned.
- * @param {string} technicalUser.signatureKey - Technical user’s signature key.
- * @param {string} technicalUser.exchangeKey - Technical user’s exchange key (replacement key).
+ * @param {string} technicalUser.signatureKey Technical user’s signature key.
+ * @param {string} technicalUser.exchangeKey Technical user’s exchange key (replacement key).
  * @returns {string} TechnicalUser validation result.
  * Contains errors or an empty string if the data is valid.
  */

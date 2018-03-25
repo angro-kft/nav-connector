@@ -1,18 +1,28 @@
 const crypto = require('crypto');
 const xml2js = require('xml2js');
 const { promisify } = require('util');
-const { noop } = require('lodash');
 
 const xmlParser = new xml2js.Parser({ explicitArray: false });
-
 const parseXml = promisify(xmlParser.parseString).bind(xmlParser);
 
+const createRequestXml = require('./create-request-xml.js');
+
+/**
+ * Get and decipher new exchangeToken from the NAV service.
+ * @async
+ * @param {Object} params Function params.
+ * @param {Object} params.axios Axios instance.
+ * @param {Object} params.request Request object for xml conversion and send.
+ * @param {Object} params.technicalUser Technical user data.
+ * @returns {Promise<string>} Deciphered exchangeToken.
+ */
 module.exports = async function getExchangeToken({
   axios,
-  requestXml,
+  request,
   technicalUser,
 }) {
   try {
+    const requestXml = createRequestXml(request);
     const response = await axios.post('/tokenExchange', requestXml);
     const { exchangeKey } = technicalUser;
 
@@ -28,28 +38,20 @@ module.exports = async function getExchangeToken({
     return exchangeToken;
   } catch (error) {
     const { response } = error;
-    /* Not service response error. */
-    if (!response) {
-      throw error;
+
+    if (response) {
+      /* Sometimes the service responses with an xml error sometimes with a string */
+      try {
+        const data = await parseXml(response.data);
+
+        response.data = data.GeneralErrorResponse.result;
+      } catch (e) {
+        response.data = {
+          message: response.data,
+        };
+      }
     }
 
-    let result = response.data;
-
-    /* Sometimes the service responses with an xml error sometines with a string */
-    try {
-      ({ result } = (await parseXml(response.data)).GeneralErrorResponse);
-    } catch (e) {
-      noop(e);
-    }
-
-    const { status, statusText } = response;
-
-    const errorResult = {
-      status,
-      statusText,
-      result,
-    };
-
-    throw errorResult;
+    throw error;
   }
 };

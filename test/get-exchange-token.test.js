@@ -4,7 +4,6 @@ const axios = require('axios');
 
 const getExchangeToken = require('../src/get-exchange-token.js');
 const createBaseRequest = require('../src/create-base-request.js');
-const createRequestXml = require('../src/create-request-xml.js');
 
 require('dotenv').config();
 
@@ -41,17 +40,15 @@ describe('getExchangeToken()', () => {
   });
 
   it('should return exchange token', async () => {
-    const baseRequest = createBaseRequest({
+    const request = createBaseRequest({
       requestType: 'TokenExchangeRequest',
       technicalUser,
       softwareData,
     });
 
-    const requestXml = createRequestXml(baseRequest);
-
     const exchangeToken = await getExchangeToken({
       axios: navAxios,
-      requestXml,
+      request,
       technicalUser,
     });
 
@@ -59,77 +56,76 @@ describe('getExchangeToken()', () => {
       exchangeToken,
       /^[A-Z0-9]{8}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{24}$/i
     );
-  });
+  }).timeout(20000);
 
-  it('should handle string error response if request is invalid', done => {
-    technicalUser.login = 'asdasd';
-    const baseRequest = createBaseRequest({
+  it('should handle string error response if request is invalid', async () => {
+    const request = createBaseRequest({
       requestType: 'TokenExchangeRequest2',
       technicalUser,
       softwareData,
     });
 
-    const requestXml = createRequestXml(baseRequest);
-
-    getExchangeToken({
-      axios: navAxios,
-      requestXml,
-      technicalUser,
-    })
-      .then(() => {
-        throw new Error('should throw if request is invalid');
-      })
-      .catch(() => {
-        done();
+    try {
+      await getExchangeToken({
+        axios: navAxios,
+        request,
+        technicalUser,
       });
-  });
 
-  it('should handle xml error response if request is invalid', done => {
+      throw new Error('should throw if request is invalid');
+    } catch (error) {
+      assert.isString(error.response.data.message);
+    }
+  }).timeout(20000);
+
+  it('should handle xml error response if request is invalid', async () => {
     technicalUser.login = 'invalidUser';
-    const baseRequest = createBaseRequest({
+
+    const request = createBaseRequest({
       requestType: 'TokenExchangeRequest',
       technicalUser,
       softwareData,
     });
 
-    const requestXml = createRequestXml(baseRequest);
-
-    getExchangeToken({
-      axios: navAxios,
-      requestXml,
-      technicalUser,
-    })
-      .then(() => {
-        throw new Error('should throw if request is invalid');
-      })
-      .catch(() => {
-        done();
+    try {
+      await getExchangeToken({
+        axios: navAxios,
+        request,
+        technicalUser,
       });
-  });
 
-  /*
-  it('should handle non response errors', done => {
-    technicalUser.login = 'invalidUser';
-    const baseRequest = createBaseRequest({
+      throw new Error('should throw if request is invalid');
+    } catch (error) {
+      assert.isString(error.response.data.funcCode);
+    }
+  }).timeout(20000);
+
+  it('should handle non response errors', async () => {
+    const invalidAxios = axios.create({
+      baseURL: 'https://api2-test.onlineszamla.nav.gov.hu/invoiceService/',
+      headers: {
+        'content-type': 'application/xml',
+        accept: 'application/xml',
+        encoding: 'UTF-8',
+      },
+    });
+
+    const request = createBaseRequest({
       requestType: 'TokenExchangeRequest',
       technicalUser,
       softwareData,
     });
 
-    const requestXml = createRequestXml(baseRequest);
-
-    getExchangeToken({
-      axios: navAxios,
-      requestXml,
-      technicalUser,
-    })
-      .then(() => {
-        throw new Error('should throw if request is invalid');
-      })
-      .catch(error => {
-        console.log(error);
-        done();
+    try {
+      await getExchangeToken({
+        axios: invalidAxios,
+        request,
+        technicalUser,
       });
-  });
-  */
-}).timeout(10000);
+
+      throw new Error('should throw if request is invalid');
+    } catch (error) {
+      assert.equal(error.code, 'ENOTFOUND');
+    }
+  }).timeout(20000);
+});
