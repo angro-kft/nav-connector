@@ -3,10 +3,6 @@ const createRequestXml = require('../src/create-request-xml.js');
 const { readFileSync } = require('fs');
 
 describe('createRequestXml()', () => {
-  it('should be a function', () => {
-    assert.isFunction(createRequestXml);
-  });
-
   it('should return a valid request xml', () => {
     const request = {
       TokenExchangeRequest: {

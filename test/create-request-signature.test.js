@@ -6,11 +6,7 @@ const createRequestSignature = require('../src/create-request-signature.js');
 const invoicesBase64 = require('./lib/invoices-base64.js');
 
 describe('createRequestSignature()', () => {
-  it('should be a function', () => {
-    assert.isFunction(createRequestSignature);
-  });
-
-  it('should return string', () => {
+  it('should return new request signature', () => {
     const requestSignature = createRequestSignature({
       requestId: ObjectId().toString(),
       date: new Date(),

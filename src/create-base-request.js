@@ -4,7 +4,7 @@ const crypto = require('crypto');
 const createRequestSignature = require('./create-request-signature.js');
 
 /**
- * Create a base request object.
+ * Create a base request object for the given operation.
  * @param {Object} params Function params.
  * @param {string} params.requestType Operation type of the request is used for.
  * @param {string} [params.requestId=ObjectId().toString()] Unique string.
@@ -23,11 +23,13 @@ module.exports = function createBaseRequest({
   invoices,
 }) {
   const { login, password, taxNumber, signatureKey } = technicalUser;
+
   const passwordHash = crypto
     .createHash('sha512')
     .update(password)
     .digest('hex')
     .toUpperCase();
+
   const requestSignature = createRequestSignature({
     requestId,
     date,

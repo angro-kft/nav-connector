@@ -76,7 +76,7 @@ describe('NavConnector', () => {
     assert.equal(navConnector.$axios.defaults.baseURL, defaultBaseUrl);
   });
 
-  it('should set propert http headers to axios', () => {
+  it('should set proper http headers to axios', () => {
     const navConnector = new NavConnector({
       technicalUser,
       softwareData,

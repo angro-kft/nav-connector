@@ -21,11 +21,7 @@ const softwareData = {
 };
 
 describe('createBaseRequest()', () => {
-  it('should be a function', () => {
-    assert.isFunction(createBaseRequest);
-  });
-
-  it('should return object', () => {
+  it('should return new base request', () => {
     const baseRequest = createBaseRequest({
       requestType: 'TokenExchangeRequest',
       technicalUser,
