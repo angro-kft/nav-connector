@@ -27,10 +27,23 @@ const { NavConnector, validateTechnicalUser } = require('@angro/nav-connector');
 const technicalUser = {
   login: 'login123',
   password: 'password',
-  taxNumber: '12345678-2-04',
+  taxNumber: '12345678',
   signatureKey: 'signatureKey',
   exchangeKey: 'exchangeKey',
 };
+
+const softwareData = {
+  softwareId: '123456789123456789',
+  softwareName: 'string',
+  softwareOperation: 'LOCAL_SOFTWARE',
+  softwareMainVersion: 'string',
+  softwareDevName: 'string',
+  softwareDevContact: 'string',
+  softwareDevCountryCode: 'HU',
+  softwareDevTaxNumber: 'string',
+};
+
+const baseURL = 'https://api-test.onlineszamla.nav.gov.hu/invoiceService/';
 
 /* Always validate Your technical user's data. */
 const validationErrors = validateTechnicalUser(technicalUser);
@@ -40,7 +53,7 @@ if (validationErrors) {
 }
 
 /* Create the nav connector interface. */
-const navConnector = new NavConnector(technicalUser);
+const navConnector = new NavConnector({ technicalUser, softwareData, baseURL });
 ```
 
 ## Tests

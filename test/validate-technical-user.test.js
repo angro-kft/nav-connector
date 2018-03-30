@@ -11,20 +11,10 @@ const technicalUser = {
 };
 
 describe('validateTechnicalUser()', () => {
-  it('should be a function', () => {
-    assert.isFunction(validateTechnicalUser);
-  });
-
-  it('should return a string', () => {
-    const validationErrors = validateTechnicalUser(technicalUser);
-
-    assert.isString(validationErrors);
-  });
-
   it('should return an empty string when technicalUser is valid', () => {
     const validationErrors = validateTechnicalUser(technicalUser);
 
-    assert.isEmpty(validationErrors);
+    assert.equal(validationErrors, '');
   });
 
   it('should return a string containst validation errors when technicalUser is invalid', () => {
