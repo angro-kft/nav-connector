@@ -1,14 +1,7 @@
 const { assert } = require('chai');
+const { technicalUser } = require('./lib/globals.js');
 
 const validateTechnicalUser = require('../src/validate-technical-user.js');
-
-const technicalUser = {
-  login: 'login123',
-  password: 'password',
-  taxNumber: '12345678',
-  signatureKey: 'signatureKey',
-  exchangeKey: 'exchangeKey',
-};
 
 describe('validateTechnicalUser()', () => {
   it('should return an empty string when technicalUser is valid', () => {

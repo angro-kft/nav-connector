@@ -1,25 +1,7 @@
 const { assert } = require('chai');
+const { technicalUser, softwareData } = require('./lib/globals.js');
 
 const NavConnector = require('../src/nav-connector.js');
-
-const technicalUser = {
-  login: 'login123',
-  password: 'password',
-  taxNumber: '12345678',
-  signatureKey: 'signatureKey',
-  exchangeKey: 'exchangeKey',
-};
-
-const softwareData = {
-  softwareId: '123456789123456789',
-  softwareName: 'string',
-  softwareOperation: 'LOCAL_SOFTWARE',
-  softwareMainVersion: 'string',
-  softwareDevName: 'string',
-  softwareDevContact: 'string',
-  softwareDevCountryCode: 'HU',
-  softwareDevTaxNumber: 'string',
-};
 
 const defaultBaseUrl = 'https://api.onlineszamla.nav.gov.hu/invoiceService/';
 const baseURL = 'https://api-test.onlineszamla.nav.gov.hu/invoiceService/';
