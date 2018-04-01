@@ -15,10 +15,10 @@ describe('manageInvoice()', () => {
     };
 
     const transactionId = await manageInvoice({
+      invoiceOperations,
       technicalUser,
       softwareData,
       axios,
-      invoiceOperations,
     });
 
     assert.match(transactionId, /^[+a-zA-Z0-9_]{1,30}$/);
@@ -31,16 +31,12 @@ describe('manageInvoice()', () => {
     };
 
     const transactionId = await manageInvoice({
+      invoiceOperations,
       technicalUser,
       softwareData,
       axios,
-      invoiceOperations,
     });
 
     assert.match(transactionId, /^[+a-zA-Z0-9_]{1,30}$/);
   }).timeout(2000);
-
-  it('should throw if invoiceOperations param is invalid', async () => {
-    throw new Error();
-  });
 });

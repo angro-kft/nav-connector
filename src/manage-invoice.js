@@ -1,13 +1,22 @@
 const createBaseRequest = require('./create-base-request.js');
 const getExchangeToken = require('./get-exchange-token.js');
-const validateInvoiceOperations = require('./validate-invoice-operations.js');
 const sendRequest = require('./send-request.js');
 
+/**
+ * Send request to NAV service to manage invoices.
+ * @async
+ * @param {Object} params Function params.
+ * @param {Object} params.invoiceOperations Request object for xml conversion and send.
+ * @param {Object} params.technicalUser Technical user’s data.
+ * @param {Object} params.softwareData Invoice software data.
+ * @param {Object} params.axios Axios instance.
+ * @returns {Promise<string>} Manage invoice operation transaction id.
+ */
 module.exports = async function manageInvoice({
+  invoiceOperations,
   technicalUser,
   softwareData,
   axios,
-  invoiceOperations,
 }) {
   const invoices = invoiceOperations.invoiceOperation.map(
     invoiceOperation => invoiceOperation.invoice
@@ -25,8 +34,6 @@ module.exports = async function manageInvoice({
     technicalUser,
     softwareData,
   });
-
-  validateInvoiceOperations(invoiceOperations);
 
   request.ManageInvoiceRequest.invoiceOperations = invoiceOperations;
 
