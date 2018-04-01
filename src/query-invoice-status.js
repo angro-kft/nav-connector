@@ -1,0 +1,49 @@
+const createBaseRequest = require('./create-base-request.js');
+const sendRequest = require('./send-request.js');
+
+/**
+ * Get the result of a previously sent manage invoice request.
+ * @async
+ * @param {Object} params Function params.
+ * @param {Object} params.transactionId Manage invoice operation transaction id.
+ * @param {Object} params.returnOriginalRequest Flag for api response to contain the original invoice.
+ * @param {Object} params.technicalUser Technical user’s data.
+ * @param {Object} params.softwareData Invoice software data.
+ * @param {Object} params.axios Axios instance.
+ * @returns {Promise<Object>} processingResult
+ */
+module.exports = async function queryInvoiceStatus({
+  transactionId,
+  returnOriginalRequest = false,
+  technicalUser,
+  softwareData,
+  axios,
+}) {
+  const request = createBaseRequest({
+    requestType: 'QueryInvoiceStatusRequest',
+    technicalUser,
+    softwareData,
+  });
+
+  Object.assign(request.QueryInvoiceStatusRequest, {
+    transactionId,
+    returnOriginalRequest,
+  });
+
+  const responseData = await sendRequest({
+    request,
+    axios,
+    path: '/queryInvoiceStatus',
+  });
+
+  const { processingResults } = responseData.QueryInvoiceStatusResponse;
+
+  /* Normalize processingResult to Array. */
+  const { processingResult } = processingResults;
+
+  if (!Array.isArray(processingResult)) {
+    processingResults.processingResult = [processingResult];
+  }
+
+  return processingResults.processingResult;
+};
