@@ -1,5 +1,5 @@
 const { assert } = require('chai');
-const createBaseRequest = require('../src/create-base-request.js');
+const { softwareData } = require('./lib/globals.js');
 
 const technicalUser = {
   login: 'login123',
@@ -9,16 +9,7 @@ const technicalUser = {
   exchangeKey: 'exchangeKey',
 };
 
-const softwareData = {
-  softwareId: '123456789123456789',
-  softwareName: 'string',
-  softwareOperation: 'LOCAL_SOFTWARE',
-  softwareMainVersion: 'string',
-  softwareDevName: 'string',
-  softwareDevContact: 'string',
-  softwareDevCountryCode: 'HU',
-  softwareDevTaxNumber: 'string',
-};
+const createBaseRequest = require('../src/create-base-request.js');
 
 describe('createBaseRequest()', () => {
   it('should return new base request', () => {
