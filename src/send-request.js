@@ -1,5 +1,6 @@
 const xml2js = require('xml2js');
 const { promisify } = require('util');
+const { pick } = require('lodash');
 
 const xmlParser = new xml2js.Parser({ explicitArray: false });
 const parseXml = promisify(xmlParser.parseString).bind(xmlParser);
@@ -33,10 +34,15 @@ module.exports = async function sendRequest({ request, axios, path }) {
       try {
         const data = await parseXml(response.data);
 
-        response.data = data.GeneralErrorResponse.result;
+        response.data = pick(data.GeneralErrorResponse, [
+          'result',
+          'schemaValidationMessages',
+        ]);
       } catch (xmlParseError) {
         response.data = {
-          message: response.data,
+          result: {
+            message: response.data,
+          },
         };
       }
     }

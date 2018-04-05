@@ -1,6 +1,9 @@
-const axios = require('axios');
+const axiosCreate = require('axios').create;
 
 const defaultBaseUrl = 'https://api.onlineszamla.nav.gov.hu/invoiceService/';
+
+const manageInvoice = require('../src/manage-invoice.js');
+const queryInvoiceStatus = require('../src/query-invoice-status.js');
 
 /** Class representing a NAV online interface.
  */
@@ -13,10 +16,10 @@ module.exports = class NavConnector {
    * @param {String} [params.baseURL=https://api.onlineszamla.nav.gov.hu/invoiceService/] Axios baseURL.
    */
   constructor({ technicalUser, softwareData, baseURL = defaultBaseUrl }) {
-    this.$technicalUser = technicalUser;
-    this.$softwareData = softwareData;
+    this.technicalUser = technicalUser;
+    this.softwareData = softwareData;
 
-    this.$axios = axios.create({
+    this.axios = axiosCreate({
       baseURL,
       headers: {
         'content-type': 'application/xml',
@@ -25,4 +28,31 @@ module.exports = class NavConnector {
       },
     });
   }
+
+  async manageInvoice(invoiceOperations) {
+    const { technicalUser, softwareData, axios } = this;
+
+    return manageInvoice({
+      invoiceOperations,
+      technicalUser,
+      softwareData,
+      axios,
+    });
+  }
+
+  async queryInvoiceStatus({ transactionId, returnOriginalRequest }) {
+    const { technicalUser, softwareData, axios } = this;
+
+    return queryInvoiceStatus({
+      transactionId,
+      returnOriginalRequest,
+      technicalUser,
+      softwareData,
+      axios,
+    });
+  }
 };
+
+(async function sendInvoice() {
+  return 'asd';
+})();

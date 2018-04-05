@@ -1,12 +1,10 @@
 # nav-connector
 
+[![CircleCI](https://circleci.com/gh/angro-kft/nav-connector.svg?style=shield)](https://circleci.com/gh/angro-kft/nav-connector)
 [![codecov](https://codecov.io/gh/angro-kft/nav-connector/branch/dev/graph/badge.svg)](https://codecov.io/gh/angro-kft/nav-connector)
 
 Node.js module which provides an interface for communicating with NAV online invoice service.
 
-## 🚧Work in progress
-
-This module is under constant development at this time and will stay maintained in the future.  
 This module was developed in order to satisfy the following specification:  
 [Online invoice interface specification](https://onlineszamla-test.nav.gov.hu/api/files/container/download/Online%20Szamla_Interfesz%20specifik%C3%A1ci%C3%B3_EN.pdf)
 
@@ -21,7 +19,7 @@ $ npm install @angro/nav-connector
 ## Example
 
 ```js
-const { NavConnector, validateTechnicalUser } = require('@angro/nav-connector');
+const NavConnector = require('@angro/nav-connector');
 
 /* Your technical user's data. */
 const technicalUser = {
@@ -45,15 +43,48 @@ const softwareData = {
 
 const baseURL = 'https://api-test.onlineszamla.nav.gov.hu/invoiceService/';
 
-/* Always validate Your technical user's data. */
-const validationErrors = validateTechnicalUser(technicalUser);
-
-if (validationErrors) {
-  throw new Error(`technicalUser validation errors: ${validationErrors}`);
-}
-
 /* Create the nav connector interface. */
 const navConnector = new NavConnector({ technicalUser, softwareData, baseURL });
+
+(async function sendInvoice() {
+  try {
+    /* Send invoice to the NAV service.
+       invoiceOperations is the InvoiceOperationListType in the specification. */
+    const invoiceOperations = {
+      technicalAnnulment: false,
+      invoiceOperation: [{
+        index: 1,
+        operation: 'CREATE',
+        invoice: 'invoice xml in base64 encoding',
+      }],
+    };
+
+    const transactionId = await navConnector.manageInvoice(invoiceOperations);
+
+    /* Check previously sent invoice processing status.
+       processingResults is the ProcessingResultListType in the specification. */
+    const processingResults = await navConnector.queryInvoiceStatus({
+      transactionId,
+    });
+
+    /* Check processingResults.length.
+        If the array is empty then transactionId was invalid. */
+    if (processingResults.length) {
+      /* Handle invoice status responses. */
+    }
+  } catch (error) {
+    if (error.response) {
+      /* Axios error instance.
+         error.response.data contains service error response,
+         this is the GeneralErrorResponseType in the specification. */
+    } else if (error.request) {
+      /* Axios error instance.
+         Possible network error. You can try to resend the request later. */
+    } else {
+      /* Something happened in setting up the request that triggered an Error. */
+    }
+  }
+})();
 ```
 
 ## Tests

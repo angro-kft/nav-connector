@@ -39,6 +39,10 @@ module.exports = async function queryInvoiceStatus({
   const { processingResults } = responseData.QueryInvoiceStatusResponse;
 
   /* Normalize processingResults to Array. */
+  if (!processingResults) {
+    return [];
+  }
+
   const { processingResult } = processingResults;
 
   if (!Array.isArray(processingResult)) {
