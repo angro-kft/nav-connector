@@ -7,18 +7,6 @@ const defaultBaseUrl = 'https://api.onlineszamla.nav.gov.hu/invoiceService/';
 const baseURL = 'https://api-test.onlineszamla.nav.gov.hu/invoiceService/';
 
 describe('NavConnector', () => {
-  it('should inherit from event emitter', done => {
-    const navConnector = new NavConnector({
-      technicalUser,
-      softwareData,
-      baseURL,
-    });
-
-    navConnector.on('foo', done);
-
-    navConnector.emit('foo');
-  });
-
   it('should assign technicalUser to the new instance', () => {
     const navConnector = new NavConnector({
       technicalUser,

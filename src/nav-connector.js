@@ -1,12 +1,10 @@
-const EventEmitter = require('events');
 const axios = require('axios');
 
 const defaultBaseUrl = 'https://api.onlineszamla.nav.gov.hu/invoiceService/';
 
 /** Class representing a NAV online interface.
- * @extends EventEmitter
  */
-class NavConnector extends EventEmitter {
+module.exports = class NavConnector {
   /**
    * Create a navConnector.
    * @param {Object} params Constuctor params.
@@ -15,8 +13,6 @@ class NavConnector extends EventEmitter {
    * @param {String} [params.baseURL=https://api.onlineszamla.nav.gov.hu/invoiceService/] Axios baseURL.
    */
   constructor({ technicalUser, softwareData, baseURL = defaultBaseUrl }) {
-    super();
-
     this.$technicalUser = technicalUser;
     this.$softwareData = softwareData;
 
@@ -29,6 +25,4 @@ class NavConnector extends EventEmitter {
       },
     });
   }
-}
-
-module.exports = NavConnector;
+};
