@@ -22,14 +22,14 @@ describe('queryInvoiceStatus()', () => {
       axios,
     });
 
-    const processingResult = await queryInvoiceStatus({
+    const processingResults = await queryInvoiceStatus({
       transactionId,
       technicalUser,
       softwareData,
       axios,
     });
 
-    assert.isArray(processingResult);
+    assert.isArray(processingResults);
   }).timeout(2000);
 
   it('should resolve to processingResults with multiple invoice', async () => {
@@ -45,14 +45,14 @@ describe('queryInvoiceStatus()', () => {
       axios,
     });
 
-    const processingResult = await queryInvoiceStatus({
+    const processingResults = await queryInvoiceStatus({
       transactionId,
       technicalUser,
       softwareData,
       axios,
     });
 
-    assert.isArray(processingResult);
+    assert.isArray(processingResults);
   }).timeout(2000);
 
   /*
@@ -69,7 +69,7 @@ describe('queryInvoiceStatus()', () => {
       axios,
     });
 
-    const processingResult = await queryInvoiceStatus({
+    const processingResults = await queryInvoiceStatus({
       transactionId,
       returnOriginalRequest: true,
       technicalUser,
@@ -77,7 +77,7 @@ describe('queryInvoiceStatus()', () => {
       axios,
     });
 
-    assert.property(processingResult[0], 'originalRequest');
+    assert.property(processingResults[0], 'originalRequest');
   }).timeout(2000);
   */
 });

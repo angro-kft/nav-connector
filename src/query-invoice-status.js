@@ -10,7 +10,7 @@ const sendRequest = require('./send-request.js');
  * @param {Object} params.technicalUser Technical user’s data.
  * @param {Object} params.softwareData Invoice software data.
  * @param {Object} params.axios Axios instance.
- * @returns {Promise<Object>} processingResult
+ * @returns {Promise<Array>} processingResults
  */
 module.exports = async function queryInvoiceStatus({
   transactionId,
@@ -42,8 +42,8 @@ module.exports = async function queryInvoiceStatus({
   const { processingResult } = processingResults;
 
   if (!Array.isArray(processingResult)) {
-    processingResults.processingResult = [processingResult];
+    return [processingResult];
   }
 
-  return processingResults.processingResult;
+  return processingResult;
 };

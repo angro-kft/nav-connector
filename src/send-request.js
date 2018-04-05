@@ -34,7 +34,7 @@ module.exports = async function sendRequest({ request, axios, path }) {
         const data = await parseXml(response.data);
 
         response.data = data.GeneralErrorResponse.result;
-      } catch (e) {
+      } catch (xmlParseError) {
         response.data = {
           message: response.data,
         };
