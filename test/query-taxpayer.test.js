@@ -12,6 +12,17 @@ describe('queryTaxpayer()', () => {
       axios,
     });
 
-    assert.isBoolean(isValid);
+    assert.equal(isValid, true);
+  }).timeout(2000);
+
+  it('should resolve to undefined if taxpayer does not exists', async () => {
+    const isValid = await queryTaxpayer({
+      taxNumber: '12345678',
+      technicalUser,
+      softwareData,
+      axios,
+    });
+
+    assert.equal(isValid, undefined);
   }).timeout(2000);
 });

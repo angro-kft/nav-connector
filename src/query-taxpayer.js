@@ -9,7 +9,7 @@ const sendRequest = require('./send-request.js');
  * @param {Object} params.technicalUser Technical user’s data.
  * @param {Object} params.softwareData Invoice software data.
  * @param {Object} params.axios Axios instance.
- * @returns {Promise<boolean>} Taxpayer validity.
+ * @returns {Promise<boolean>|Promise<undefined>} Taxpayer validity.
  */
 module.exports = async function queryTaxpayer({
   taxNumber,
@@ -31,5 +31,7 @@ module.exports = async function queryTaxpayer({
     path: '/queryTaxpayer',
   });
 
-  return responseData.QueryTaxpayerResponse.validTaxpayer;
+  const { validTaxpayer } = responseData.QueryTaxpayerResponse;
+
+  return validTaxpayer;
 };
