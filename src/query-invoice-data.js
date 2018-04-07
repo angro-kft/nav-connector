@@ -43,7 +43,11 @@ module.exports = async function queryInvoiceData({
 
   const { queryResults } = responseData.QueryInvoiceDataResponse;
 
-  /* Normalize queryResult to Array. */
+  /* Normalize queryResults to Array. */
+  if (!queryResults) {
+    return [];
+  }
+
   const { queryResult } = queryResults;
 
   if (!Array.isArray(queryResult)) {
