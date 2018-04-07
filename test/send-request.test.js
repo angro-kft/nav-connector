@@ -25,7 +25,7 @@ describe('sendRequest()', () => {
 
   it('should handle string error response if request is invalid', async () => {
     const request = createBaseRequest({
-      requestType: 'TokenExchangeRequest2',
+      requestType: 'TokenExchangeRequest',
       technicalUser,
       softwareData,
     });
@@ -34,7 +34,7 @@ describe('sendRequest()', () => {
       await sendRequest({
         request,
         axios,
-        path: '/tokenExchange',
+        path: '/tokenExchange2',
       });
 
       throw new Error('should throw if request is invalid');
