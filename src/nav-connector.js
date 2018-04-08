@@ -30,6 +30,12 @@ module.exports = class NavConnector {
     });
   }
 
+  /**
+   * Send request to NAV service to manage invoices.
+   * @async
+   * @param {Object} invoiceOperations Request object for xml conversion and send.
+   * @returns {Promise<string>} Manage invoice operation transaction id.
+   */
   async manageInvoice(invoiceOperations) {
     const { technicalUser, softwareData, axios } = this;
 
@@ -41,7 +47,15 @@ module.exports = class NavConnector {
     });
   }
 
-  async queryInvoiceStatus({ transactionId, returnOriginalRequest }) {
+  /**
+   * Get the result of a previously sent manage invoice request.
+   * @async
+   * @param {Object} params Function params.
+   * @param {Object} params.transactionId Manage invoice operation transaction id.
+   * @param {boolean} [params.returnOriginalRequest=false] Flag for api response to contain the original invoice.
+   * @returns {Promise<Array>} processingResults
+   */
+  async queryInvoiceStatus({ transactionId, returnOriginalRequest = false }) {
     const { technicalUser, softwareData, axios } = this;
 
     return queryInvoiceStatus({
@@ -53,6 +67,12 @@ module.exports = class NavConnector {
     });
   }
 
+  /**
+   * Test connection, user auth data and keys validity with a tokenExchnageRequest.
+   * @async
+   * @throws {Object} Will throw an error if there was a network expectation
+   * or any user given auth data or key is invalid.
+   */
   async testConnection() {
     const { technicalUser, softwareData, axios } = this;
 

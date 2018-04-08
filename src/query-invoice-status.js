@@ -6,7 +6,7 @@ const sendRequest = require('./send-request.js');
  * @async
  * @param {Object} params Function params.
  * @param {Object} params.transactionId Manage invoice operation transaction id.
- * @param {Object} params.returnOriginalRequest Flag for api response to contain the original invoice.
+ * @param {boolean} [params.returnOriginalRequest=false] Flag for api response to contain the original invoice.
  * @param {Object} params.technicalUser Technical user’s data.
  * @param {Object} params.softwareData Invoice software data.
  * @param {Object} params.axios Axios instance.
