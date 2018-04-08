@@ -107,4 +107,16 @@ describe('NavConnector', () => {
       assert.isArray(processingResults);
     }).timeout(2000);
   });
+
+  describe('testConnection()', () => {
+    it('should not throw in user given auth data and key is valid', async () => {
+      const navConnector = new NavConnector({
+        technicalUser,
+        softwareData,
+        baseURL,
+      });
+
+      await navConnector.testConnection();
+    }).timeout(2000);
+  });
 });
