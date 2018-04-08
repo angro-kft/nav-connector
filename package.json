@@ -1,0 +1,51 @@
+{
+  "name": "@angro/nav-connector",
+  "version": "1.0.0",
+  "description": "Node.js module which provides an interface for communicating with NAV online invoice service.",
+  "main": "./src/nav-connector.js",
+  "scripts": {
+    "test": "nyc mocha",
+    "lint": "eslint src/**",
+    "coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/angro-kft/nav-connector.git"
+  },
+  "keywords": [
+    "nav",
+    "online",
+    "invoice",
+    "számla"
+  ],
+  "author": "Dávid Házi <hazi.david@angro.hu> (https://angro.hu/)",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/angro-kft/nav-connector/issues"
+  },
+  "homepage": "https://github.com/angro-kft/nav-connector#readme",
+  "engines": {
+    "node": ">= 8.10.0",
+    "npm": ">= 5.6.0"
+  },
+  "dependencies": {
+    "axios": "^0.18.0",
+    "bson-objectid": "^1.2.2",
+    "crc": "^3.5.0",
+    "lodash": "^4.17.5",
+    "xml2js": "^0.4.19"
+  },
+  "devDependencies": {
+    "chai": "^4.1.2",
+    "codecov": "^3.0.0",
+    "dotenv": "^5.0.1",
+    "eslint": "^4.18.2",
+    "eslint-config-airbnb-base": "^12.1.0",
+    "eslint-config-prettier": "^2.9.0",
+    "eslint-plugin-import": "^2.9.0",
+    "eslint-plugin-prettier": "^2.6.0",
+    "mocha": "^5.0.1",
+    "nyc": "^11.4.1",
+    "prettier": "^1.11.1"
+  }
+}
