@@ -55,6 +55,17 @@ describe('queryInvoiceStatus()', () => {
     assert.isArray(processingResults);
   }).timeout(2000);
 
+  it('should resolve to an empty array if transactionId is invalid', async () => {
+    const processingResults = await queryInvoiceStatus({
+      transactionId: 'invalid',
+      technicalUser,
+      softwareData,
+      axios,
+    });
+
+    assert.isArray(processingResults);
+  }).timeout(2000);
+
   /*
   it('should handle originalRequest param', async () => {
     const invoiceOperations = {
