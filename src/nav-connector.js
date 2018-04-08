@@ -52,7 +52,3 @@ module.exports = class NavConnector {
     });
   }
 };
-
-(async function sendInvoice() {
-  return 'asd';
-})();
