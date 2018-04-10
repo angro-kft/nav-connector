@@ -2,13 +2,14 @@
 
 [![CircleCI](https://circleci.com/gh/angro-kft/nav-connector.svg?style=shield)](https://circleci.com/gh/angro-kft/nav-connector)
 [![codecov](https://codecov.io/gh/angro-kft/nav-connector/branch/dev/graph/badge.svg)](https://codecov.io/gh/angro-kft/nav-connector)
+[![npm (scoped)](https://img.shields.io/npm/v/@angro/nav-connector.svg)](https://www.npmjs.com/package/@angro/nav-connector)
+[![license](https://img.shields.io/github/license/angro-kft/nav-connector.svg)](https://github.com/angro-kft/nav-connector/blob/dev/LICENSE)
+![nav](https://img.shields.io/badge/NAV%20service%20version%20compatible-0.10-blue.svg)
 
 Node.js module which provides an interface for communicating with NAV online invoice service.
 
 This module was developed in order to satisfy the following specification:  
 [Online invoice interface specification](https://onlineszamla-test.nav.gov.hu/api/files/container/download/Online%20Szamla_Interfesz%20specifik%C3%A1ci%C3%B3_EN.pdf)
-
-Compatible with NAV service version 0.10.
 
 ## Installation
 
