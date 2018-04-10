@@ -8,6 +8,8 @@ Node.js module which provides an interface for communicating with NAV online inv
 This module was developed in order to satisfy the following specification:  
 [Online invoice interface specification](https://onlineszamla-test.nav.gov.hu/api/files/container/download/Online%20Szamla_Interfesz%20specifik%C3%A1ci%C3%B3_EN.pdf)
 
+Compatible with NAV service version 0.10.
+
 ## Installation
 
 Node.js 8.10.0 or higher is required.
