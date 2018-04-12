@@ -20,7 +20,27 @@ describe('sendRequest()', () => {
       path: '/tokenExchange',
     });
 
-    assert.hasAllKeys(responseData, 'TokenExchangeResponse');
+    assert.property(responseData, 'TokenExchangeResponse');
+  }).timeout(2000);
+
+  it('should have schemaValidationMessages property in the error response', async () => {
+    const request = createBaseRequest({
+      requestType: 'TokenExchangeRequest2',
+      technicalUser,
+      softwareData,
+    });
+
+    try {
+      await sendRequest({
+        request,
+        axios,
+        path: '/tokenExchange',
+      });
+
+      throw new Error('should throw if request is invalid');
+    } catch (error) {
+      assert.property(error.response.data, 'schemaValidationMessages');
+    }
   }).timeout(2000);
 
   it('should handle string error response if request is invalid', async () => {
@@ -39,7 +59,7 @@ describe('sendRequest()', () => {
 
       throw new Error('should throw if request is invalid');
     } catch (error) {
-      assert.isString(error.response.data.message);
+      assert.isString(error.response.data.result.message);
     }
   }).timeout(2000);
 
@@ -63,7 +83,7 @@ describe('sendRequest()', () => {
 
       throw new Error('should throw if request is invalid');
     } catch (error) {
-      assert.isString(error.response.data.funcCode);
+      assert.isString(error.response.data.result.funcCode);
     }
   }).timeout(2000);
 

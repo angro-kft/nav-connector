@@ -6,19 +6,11 @@ const NavConnector = require('../src/nav-connector.js');
 const defaultBaseUrl = 'https://api.onlineszamla.nav.gov.hu/invoiceService/';
 const baseURL = 'https://api-test.onlineszamla.nav.gov.hu/invoiceService/';
 
+const invoiceOperation = require('./lib/invoices-base64.js').map(
+  (invoice, index) => ({ index: index + 1, operation: 'CREATE', invoice })
+);
+
 describe('NavConnector', () => {
-  it('should inherit from event emitter', done => {
-    const navConnector = new NavConnector({
-      technicalUser,
-      softwareData,
-      baseURL,
-    });
-
-    navConnector.on('foo', done);
-
-    navConnector.emit('foo');
-  });
-
   it('should assign technicalUser to the new instance', () => {
     const navConnector = new NavConnector({
       technicalUser,
@@ -26,7 +18,7 @@ describe('NavConnector', () => {
       baseURL,
     });
 
-    assert.deepEqual(navConnector.$technicalUser, technicalUser);
+    assert.deepEqual(navConnector.technicalUser, technicalUser);
   });
 
   it('should assign softwareData to the new instance', () => {
@@ -36,7 +28,7 @@ describe('NavConnector', () => {
       baseURL,
     });
 
-    assert.deepEqual(navConnector.$softwareData, softwareData);
+    assert.deepEqual(navConnector.softwareData, softwareData);
   });
 
   it('should set axios default baseURL', () => {
@@ -46,7 +38,7 @@ describe('NavConnector', () => {
       baseURL,
     });
 
-    assert.equal(navConnector.$axios.defaults.baseURL, baseURL);
+    assert.equal(navConnector.axios.defaults.baseURL, baseURL);
   });
 
   it('should use default axios baseURL when omitted', () => {
@@ -55,7 +47,7 @@ describe('NavConnector', () => {
       softwareData,
     });
 
-    assert.equal(navConnector.$axios.defaults.baseURL, defaultBaseUrl);
+    assert.equal(navConnector.axios.defaults.baseURL, defaultBaseUrl);
   });
 
   it('should set proper http headers to axios', () => {
@@ -71,6 +63,60 @@ describe('NavConnector', () => {
       encoding: 'UTF-8',
     };
 
-    assert.deepInclude(navConnector.$axios.defaults.headers, expectedHeaders);
+    assert.deepInclude(navConnector.axios.defaults.headers, expectedHeaders);
+  });
+
+  describe('manageInvoice()', () => {
+    it('should resolve to transactionId', async () => {
+      const navConnector = new NavConnector({
+        technicalUser,
+        softwareData,
+        baseURL,
+      });
+
+      const invoiceOperations = {
+        technicalAnnulment: false,
+        invoiceOperation: invoiceOperation.slice(0, 1),
+      };
+
+      const transactionId = await navConnector.manageInvoice(invoiceOperations);
+
+      assert.match(transactionId, /^[+a-zA-Z0-9_]{1,30}$/);
+    }).timeout(2000);
+  });
+
+  describe('queryInvoiceStatus()', () => {
+    it('should resolve to processingResults', async () => {
+      const navConnector = new NavConnector({
+        technicalUser,
+        softwareData,
+        baseURL,
+      });
+
+      const invoiceOperations = {
+        technicalAnnulment: false,
+        invoiceOperation: invoiceOperation.slice(0, 1),
+      };
+
+      const transactionId = await navConnector.manageInvoice(invoiceOperations);
+
+      const processingResults = await navConnector.queryInvoiceStatus({
+        transactionId,
+      });
+
+      assert.isArray(processingResults);
+    }).timeout(2000);
+  });
+
+  describe('testConnection()', () => {
+    it('should not throw in user given auth data and key is valid', async () => {
+      const navConnector = new NavConnector({
+        technicalUser,
+        softwareData,
+        baseURL,
+      });
+
+      await navConnector.testConnection();
+    }).timeout(2000);
   });
 });
