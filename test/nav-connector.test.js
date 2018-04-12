@@ -109,7 +109,7 @@ describe('NavConnector', () => {
   });
 
   describe('testConnection()', () => {
-    it('should not throw in user given auth data and key is valid', async () => {
+    it('should not throw if user given auth data and key is valid', async () => {
       const navConnector = new NavConnector({
         technicalUser,
         softwareData,
