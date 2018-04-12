@@ -51,7 +51,7 @@ module.exports = class NavConnector {
    * Get the result of a previously sent manage invoice request.
    * @async
    * @param {Object} params Function params.
-   * @param {Object} params.transactionId Manage invoice operation transaction id.
+   * @param {string} params.transactionId Manage invoice operation transaction id.
    * @param {boolean} [params.returnOriginalRequest=false] Flag for api response to contain the original invoice.
    * @returns {Promise<Array>} processingResults
    */
