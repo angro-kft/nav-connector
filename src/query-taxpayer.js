@@ -4,10 +4,10 @@ const sendRequest = require('./send-request.js');
 const { pick } = require('lodash');
 
 /**
- * Resolves to taxpayer information.
+ * Get taxpayer information by tax number.
  * @async
  * @param {Object} params Function params.
- * @param {Object} params.taxNumber Taxpayer tax number to validate.
+ * @param {string} params.taxNumber Taxpayer tax number to get information for.
  * @param {Object} params.technicalUser Technical user’s data.
  * @param {Object} params.softwareData Invoice software data.
  * @param {Object} params.axios Axios instance.

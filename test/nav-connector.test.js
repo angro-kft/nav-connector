@@ -119,4 +119,18 @@ describe('NavConnector', () => {
       await navConnector.testConnection();
     }).timeout(2000);
   });
+
+  describe('queryTaxpayer()', () => {
+    it('should resolve to taxpayer information if taxpayer is valid', async () => {
+      const navConnector = new NavConnector({
+        technicalUser,
+        softwareData,
+        baseURL,
+      });
+
+      const taxpayerInfo = await navConnector.queryTaxpayer('24291763');
+
+      assert.hasAllKeys(taxpayerInfo, ['taxpayerValidity', 'taxpayerData']);
+    }).timeout(2000);
+  });
 });

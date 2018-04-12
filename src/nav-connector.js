@@ -5,6 +5,7 @@ const defaultBaseUrl = 'https://api.onlineszamla.nav.gov.hu/invoiceService/';
 const manageInvoice = require('../src/manage-invoice.js');
 const queryInvoiceStatus = require('../src/query-invoice-status.js');
 const testConnection = require('../src/test-connection.js');
+const queryTaxpayer = require('../src/query-taxpayer.js');
 
 /** Class representing a NAV online interface.
  */
@@ -77,6 +78,22 @@ module.exports = class NavConnector {
     const { technicalUser, softwareData, axios } = this;
 
     return testConnection({
+      technicalUser,
+      softwareData,
+      axios,
+    });
+  }
+
+  /**
+   * Get taxpayer information by tax number.
+   * @param {string} taxNumber Taxpayer tax number to get information for.
+   * @returns {Promise<Object>} Taxpayer information.
+   */
+  async queryTaxpayer(taxNumber) {
+    const { technicalUser, softwareData, axios } = this;
+
+    return queryTaxpayer({
+      taxNumber,
       technicalUser,
       softwareData,
       axios,

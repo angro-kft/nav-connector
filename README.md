@@ -183,6 +183,21 @@ try {
 }
 ```
 
+### navConnector.queryTaxpayer()
+
+Method to get taxpayer information by tax number.  
+It resolves to an object containing taxpayerValidity and taxpayerData properties.  
+Keep in mind these properties are returned from the NAV service optionaly.
+
+```js
+/**
+ * Get taxpayer information by tax number.
+ * @param {string} taxNumber Taxpayer tax number to get information for.
+ * @returns {Promise<Object>} Taxpayer information.
+ */
+const taxpayerInfo = await navConnector.queryTaxpayer('12345678');
+```
+
 ## Error handling
 
 All methods can throw expectation and You can fine tune how to log these error, handle them or retry the request if possible.
