@@ -1,15 +1,17 @@
 const createBaseRequest = require('./create-base-request.js');
 const sendRequest = require('./send-request.js');
 
+const { pick } = require('lodash');
+
 /**
- * Checks if the given tax number is valid.
+ * Resolves to taxpayer information.
  * @async
  * @param {Object} params Function params.
  * @param {Object} params.taxNumber Taxpayer tax number to validate.
  * @param {Object} params.technicalUser Technical user’s data.
  * @param {Object} params.softwareData Invoice software data.
  * @param {Object} params.axios Axios instance.
- * @returns {Promise<boolean>|Promise<undefined>} Taxpayer validity.
+ * @returns {Promise<Object>} Taxpayer information.
  */
 module.exports = async function queryTaxpayer({
   taxNumber,
@@ -31,7 +33,8 @@ module.exports = async function queryTaxpayer({
     path: '/queryTaxpayer',
   });
 
-  const { validTaxpayer } = responseData.QueryTaxpayerResponse;
-
-  return validTaxpayer;
+  return pick(responseData.QueryTaxpayerResponse, [
+    'taxpayerValidity',
+    'taxpayerData',
+  ]);
 };
