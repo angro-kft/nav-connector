@@ -44,7 +44,7 @@ module.exports = function createBaseRequest({
       },
       header: {
         requestId,
-        timestamp: `${date.toISOString().split('.')[0]}Z`,
+        timestamp: date.toISOString(),
         requestVersion: '1.0',
         headerVersion: '1.0',
       },

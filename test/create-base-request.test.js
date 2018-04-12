@@ -28,7 +28,7 @@ describe('createBaseRequest()', () => {
         $: { xmlns: 'http://schemas.nav.gov.hu/OSA/1.0/api' },
         header: {
           requestId: '5aa8fb82b058db2438eaab4d',
-          timestamp: '2018-03-14T10:37:54Z',
+          timestamp: '2018-03-14T10:37:54.000Z',
           requestVersion: '1.0',
           headerVersion: '1.0',
         },
