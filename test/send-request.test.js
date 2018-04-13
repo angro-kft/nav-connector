@@ -21,7 +21,7 @@ describe('sendRequest()', () => {
     });
 
     assert.property(responseData, 'TokenExchangeResponse');
-  }).timeout(2000);
+  }).timeout(4000);
 
   it('should have schemaValidationMessages property in the error response', async () => {
     const request = createBaseRequest({
@@ -41,7 +41,7 @@ describe('sendRequest()', () => {
     } catch (error) {
       assert.property(error.response.data, 'schemaValidationMessages');
     }
-  }).timeout(2000);
+  }).timeout(4000);
 
   it('should handle string error response if request is invalid', async () => {
     const request = createBaseRequest({
@@ -61,7 +61,7 @@ describe('sendRequest()', () => {
     } catch (error) {
       assert.isString(error.response.data.result.message);
     }
-  }).timeout(2000);
+  }).timeout(4000);
 
   it('should handle xml error response if request is invalid', async () => {
     const invalidTechnicalUser = cloneDeep(technicalUser);
@@ -85,7 +85,7 @@ describe('sendRequest()', () => {
     } catch (error) {
       assert.isString(error.response.data.result.funcCode);
     }
-  }).timeout(2000);
+  }).timeout(4000);
 
   it('should handle non response errors', async () => {
     const invalidAxios = newAxios.create({
@@ -114,5 +114,5 @@ describe('sendRequest()', () => {
     } catch (error) {
       assert.equal(error.code, 'ENOTFOUND');
     }
-  }).timeout(2000);
+  }).timeout(4000);
 });
