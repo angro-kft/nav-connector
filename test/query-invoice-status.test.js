@@ -66,7 +66,6 @@ describe('queryInvoiceStatus()', () => {
     assert.isArray(processingResults);
   }).timeout(4000);
 
-  /*
   it('should handle originalRequest param', async () => {
     const invoiceOperations = {
       technicalAnnulment: false,
@@ -88,7 +87,9 @@ describe('queryInvoiceStatus()', () => {
       axios,
     });
 
-    assert.property(processingResults[0], 'originalRequest');
+    const { invoice } = invoiceOperations.invoiceOperation[0];
+    const { originalRequest } = processingResults[0];
+
+    assert.equal(invoice, originalRequest);
   }).timeout(4000);
-  */
 });
