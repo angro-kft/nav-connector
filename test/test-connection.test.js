@@ -11,7 +11,7 @@ describe('testConnection()', () => {
       softwareData,
       axios,
     });
-  }).timeout(2000);
+  }).timeout(4000);
 
   it('should throw if exchange key is invalid', async () => {
     const invalidTechnicalUser = cloneDeep(technicalUser);
@@ -29,5 +29,5 @@ describe('testConnection()', () => {
     } catch (error) {
       assert.ok(error);
     }
-  }).timeout(2000);
+  }).timeout(4000);
 });

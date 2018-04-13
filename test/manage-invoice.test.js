@@ -22,7 +22,7 @@ describe('manageInvoice()', () => {
     });
 
     assert.match(transactionId, /^[+a-zA-Z0-9_]{1,30}$/);
-  }).timeout(2000);
+  }).timeout(4000);
 
   it('should resolve to transactionId with multiple invoices', async () => {
     const invoiceOperations = {
@@ -38,5 +38,5 @@ describe('manageInvoice()', () => {
     });
 
     assert.match(transactionId, /^[+a-zA-Z0-9_]{1,30}$/);
-  }).timeout(2000);
+  }).timeout(4000);
 });
