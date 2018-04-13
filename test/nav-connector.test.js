@@ -82,7 +82,7 @@ describe('NavConnector', () => {
       const transactionId = await navConnector.manageInvoice(invoiceOperations);
 
       assert.match(transactionId, /^[+a-zA-Z0-9_]{1,30}$/);
-    }).timeout(2000);
+    }).timeout(4000);
   });
 
   describe('queryInvoiceStatus()', () => {
@@ -105,7 +105,7 @@ describe('NavConnector', () => {
       });
 
       assert.isArray(processingResults);
-    }).timeout(2000);
+    }).timeout(4000);
   });
 
   describe('testConnection()', () => {
@@ -117,6 +117,6 @@ describe('NavConnector', () => {
       });
 
       await navConnector.testConnection();
-    }).timeout(2000);
+    }).timeout(4000);
   });
 });

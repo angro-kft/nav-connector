@@ -30,7 +30,7 @@ describe('queryInvoiceStatus()', () => {
     });
 
     assert.isArray(processingResults);
-  }).timeout(2000);
+  }).timeout(4000);
 
   it('should resolve to processingResults with multiple invoice', async () => {
     const invoiceOperations = {
@@ -53,7 +53,7 @@ describe('queryInvoiceStatus()', () => {
     });
 
     assert.isArray(processingResults);
-  }).timeout(2000);
+  }).timeout(4000);
 
   it('should resolve to an empty array if transactionId is invalid', async () => {
     const processingResults = await queryInvoiceStatus({
@@ -64,7 +64,7 @@ describe('queryInvoiceStatus()', () => {
     });
 
     assert.isArray(processingResults);
-  }).timeout(2000);
+  }).timeout(4000);
 
   /*
   it('should handle originalRequest param', async () => {
@@ -89,6 +89,6 @@ describe('queryInvoiceStatus()', () => {
     });
 
     assert.property(processingResults[0], 'originalRequest');
-  }).timeout(2000);
+  }).timeout(4000);
   */
 });
