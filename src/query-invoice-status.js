@@ -5,8 +5,8 @@ const sendRequest = require('./send-request.js');
  * Get the result of a previously sent manage invoice request.
  * @async
  * @param {Object} params Function params.
- * @param {Object} params.transactionId Manage invoice operation transaction id.
- * @param {Object} params.returnOriginalRequest Flag for api response to contain the original invoice.
+ * @param {string} params.transactionId Manage invoice operation transaction id.
+ * @param {boolean} [params.returnOriginalRequest=false] Flag for api response to contain the original invoice.
  * @param {Object} params.technicalUser Technical user’s data.
  * @param {Object} params.softwareData Invoice software data.
  * @param {Object} params.axios Axios instance.
@@ -39,6 +39,10 @@ module.exports = async function queryInvoiceStatus({
   const { processingResults } = responseData.QueryInvoiceStatusResponse;
 
   /* Normalize processingResults to Array. */
+  if (!processingResults) {
+    return [];
+  }
+
   const { processingResult } = processingResults;
 
   if (!Array.isArray(processingResult)) {
