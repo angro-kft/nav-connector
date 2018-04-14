@@ -183,6 +183,38 @@ try {
 }
 ```
 
+### navConnector.queryInvoiceData()
+
+Method to query previously sent invoices with invoice number or query params.
+
+```js
+/**
+ * Query previously sent invoices with invoice number or query params.
+ * @async
+ * @param {Object} params Function params.
+ * @param {Object} params.invoiceQuery Query single invoice with invoice number.
+ * @param {Object} params.queryParams Query multiple invoices with params.
+ * @returns {Promise<Array>} queryResults
+ */
+const invoiceQuery = {
+  invoiceNumber: 'invoiceNumber',
+  requestAllModification: true,
+};
+
+const invoiceQueryResults = await navConnector.queryInvoiceData({
+  invoiceQuery,
+});
+
+const queryParams = {
+  invoiceIssueDateFrom: '2017-12-28',
+  invoiceIssueDateTo: '2017-12-28',
+};
+
+const paramsQueryResults = await navConnector.queryInvoiceData({
+  queryParams,
+});
+```
+
 ## Error handling
 
 All methods can throw expectation and You can fine tune how to log these error, handle them or retry the request if possible.

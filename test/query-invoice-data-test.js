@@ -22,8 +22,8 @@ describe('queryInvoiceData()', () => {
 
   it('should resolve to queryResults with queryParams param', async () => {
     const queryParams = {
-      invoiceIssueDateFrom: `${new Date().toISOString().split('T')[0]}Z`,
-      invoiceIssueDateTo: `${new Date().toISOString().split('T')[0]}Z`,
+      invoiceIssueDateFrom: new Date().toISOString().split('T')[0],
+      invoiceIssueDateTo: new Date().toISOString().split('T')[0],
     };
 
     const queryResults = await queryInvoiceData({

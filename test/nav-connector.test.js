@@ -119,4 +119,25 @@ describe('NavConnector', () => {
       await navConnector.testConnection();
     }).timeout(4000);
   });
+
+  describe('queryInvoiceData()', () => {
+    it('should resolve to queryResults with invoiceQuery param', async () => {
+      const navConnector = new NavConnector({
+        technicalUser,
+        softwareData,
+        baseURL,
+      });
+
+      const invoiceQuery = {
+        invoiceNumber: 'invoiceNumber',
+        requestAllModification: false,
+      };
+
+      const queryResults = await navConnector.queryInvoiceData({
+        invoiceQuery,
+      });
+
+      assert.isArray(queryResults);
+    }).timeout(4000);
+  });
 });

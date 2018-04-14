@@ -5,6 +5,7 @@ const defaultBaseUrl = 'https://api.onlineszamla.nav.gov.hu/invoiceService/';
 const manageInvoice = require('../src/manage-invoice.js');
 const queryInvoiceStatus = require('../src/query-invoice-status.js');
 const testConnection = require('../src/test-connection.js');
+const queryInvoiceData = require('../src/query-invoice-data.js');
 
 /** Class representing a NAV online interface.
  */
@@ -77,6 +78,26 @@ module.exports = class NavConnector {
     const { technicalUser, softwareData, axios } = this;
 
     return testConnection({
+      technicalUser,
+      softwareData,
+      axios,
+    });
+  }
+
+  /**
+   * Query previously sent invoices with invoice number or query params.
+   * @async
+   * @param {Object} params Function params.
+   * @param {Object} params.invoiceQuery Query single invoice with invoice number.
+   * @param {Object} params.queryParams Query multiple invoices with params.
+   * @returns {Promise<Array>} queryResults
+   */
+  async queryInvoiceData({ invoiceQuery, queryParams }) {
+    const { technicalUser, softwareData, axios } = this;
+
+    return queryInvoiceData({
+      invoiceQuery,
+      queryParams,
       technicalUser,
       softwareData,
       axios,
