@@ -4,7 +4,7 @@
 [![codecov](https://codecov.io/gh/angro-kft/nav-connector/branch/dev/graph/badge.svg)](https://codecov.io/gh/angro-kft/nav-connector)
 [![npm (scoped)](https://img.shields.io/npm/v/@angro/nav-connector.svg)](https://www.npmjs.com/package/@angro/nav-connector)
 [![license](https://img.shields.io/github/license/angro-kft/nav-connector.svg)](https://github.com/angro-kft/nav-connector/blob/dev/LICENSE)
-![nav](https://img.shields.io/badge/NAV%20service%20version%20compatible-0.11-blue.svg)
+![nav](https://img.shields.io/badge/NAV%20service%20version%20compatible-0.12-blue.svg)
 
 Node.js module which provides an interface for communicating with NAV online invoice service.
 
@@ -104,7 +104,7 @@ Class representing the implementation of the NAV online invoice data service spe
 ```js
 /**
  * Create a navConnector.
- * @param {Object} params Constuctor params.
+ * @param {Object} params Constructor params.
  * @param {Object} params.technicalUser Technical user data.
  * @param {Object} params.softwareData Software data.
  * @param {String} [params.baseURL=https://api.onlineszamla.nav.gov.hu/invoiceService/] Axios baseURL.
@@ -167,11 +167,11 @@ const processingResults = await navConnector.queryInvoiceStatus({
 
 ### navConnector.testConnection()
 
-Method to test connection, user auth data and keys validity with a tokenExchnageRequest.
+Method to test connection, user auth data and keys validity with a tokenExchangeRequest.
 
 ```js
 /**
- * Test connection, user auth data and keys validity with a tokenExchnageRequest.
+ * Test connection, user auth data and keys validity with a tokenExchangeRequest.
  * @async
  * @throws {Object} Will throw an error if there was a network expectation
  * or any user given auth data or key is invalid.
