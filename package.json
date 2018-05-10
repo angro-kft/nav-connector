@@ -1,6 +1,6 @@
 {
   "name": "@angro/nav-connector",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Node.js module which provides an interface for communicating with NAV online invoice service.",
   "main": "./src/nav-connector.js",
   "scripts": {
