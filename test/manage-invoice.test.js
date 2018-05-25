@@ -1,17 +1,18 @@
 const { assert } = require('chai');
 const { axios, technicalUser, softwareData } = require('./lib/globals.js');
+const createInvoiceOperation = require('./lib/create-invoice-operation.js');
 
 const manageInvoice = require('../src/manage-invoice.js');
 
-const invoiceOperation = require('./lib/invoices-base64.js').map(
-  (invoice, index) => ({ index: index + 1, operation: 'CREATE', invoice })
-);
-
 describe('manageInvoice()', () => {
   it('should resolve to transactionId with single invoice', async () => {
+    const invoiceOperation = createInvoiceOperation(
+      technicalUser.taxNumber
+    ).slice(0, 1);
+
     const invoiceOperations = {
       technicalAnnulment: false,
-      invoiceOperation: invoiceOperation.slice(0, 1),
+      invoiceOperation,
     };
 
     const transactionId = await manageInvoice({
@@ -20,11 +21,12 @@ describe('manageInvoice()', () => {
       softwareData,
       axios,
     });
-
     assert.match(transactionId, /^[+a-zA-Z0-9_]{1,30}$/);
-  }).timeout(4000);
+  }).timeout(6000);
 
   it('should resolve to transactionId with multiple invoices', async () => {
+    const invoiceOperation = createInvoiceOperation(technicalUser.taxNumber);
+
     const invoiceOperations = {
       technicalAnnulment: false,
       invoiceOperation,
@@ -38,5 +40,5 @@ describe('manageInvoice()', () => {
     });
 
     assert.match(transactionId, /^[+a-zA-Z0-9_]{1,30}$/);
-  }).timeout(4000);
+  }).timeout(6000);
 });

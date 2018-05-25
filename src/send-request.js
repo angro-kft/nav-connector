@@ -15,7 +15,7 @@ const createRequestXml = require('./create-request-xml.js');
  * @param {Object} params.axios Axios instance.
  * @param {string} params.path NAV service resource path.
  * @returns {Promise<Object>} Axios response data value.
- * @throws {Object} Normalised NAV service error response or network error.
+ * @throws {Object} Normalized NAV service error response or network error.
  */
 module.exports = async function sendRequest({ request, axios, path }) {
   try {

@@ -1,7 +1,7 @@
 const getExchangeToken = require('./get-exchange-token.js');
 
 /**
- * Test connection, user auth data and keys validity with a tokenExchnageRequest.
+ * Test connection, user auth data and keys validity with a tokenExchangeRequest.
  * @async
  * @param {Object} params Function params.
  * @param {Object} params.technicalUser Technical user’s data.

@@ -7,7 +7,7 @@ const createBaseRequest = require('../src/create-base-request.js');
 const sendRequest = require('../src/send-request.js');
 
 describe('sendRequest()', () => {
-  it('should resolve to axios respose.data value', async () => {
+  it('should resolve to axios response.data value', async () => {
     const request = createBaseRequest({
       requestType: 'TokenExchangeRequest',
       technicalUser,
@@ -21,7 +21,7 @@ describe('sendRequest()', () => {
     });
 
     assert.property(responseData, 'TokenExchangeResponse');
-  }).timeout(4000);
+  }).timeout(6000);
 
   it('should have schemaValidationMessages property in the error response', async () => {
     const request = createBaseRequest({
@@ -41,7 +41,7 @@ describe('sendRequest()', () => {
     } catch (error) {
       assert.property(error.response.data, 'schemaValidationMessages');
     }
-  }).timeout(4000);
+  }).timeout(6000);
 
   it('should handle string error response if request is invalid', async () => {
     const request = createBaseRequest({
@@ -61,7 +61,7 @@ describe('sendRequest()', () => {
     } catch (error) {
       assert.isString(error.response.data.result.message);
     }
-  }).timeout(4000);
+  }).timeout(6000);
 
   it('should handle xml error response if request is invalid', async () => {
     const invalidTechnicalUser = cloneDeep(technicalUser);
@@ -85,7 +85,7 @@ describe('sendRequest()', () => {
     } catch (error) {
       assert.isString(error.response.data.result.funcCode);
     }
-  }).timeout(4000);
+  }).timeout(6000);
 
   it('should handle non response errors', async () => {
     const invalidAxios = newAxios.create({
@@ -114,5 +114,5 @@ describe('sendRequest()', () => {
     } catch (error) {
       assert.equal(error.code, 'ENOTFOUND');
     }
-  }).timeout(4000);
+  }).timeout(6000);
 });
