@@ -95,8 +95,12 @@ describe('queryInvoiceStatus()', () => {
     });
 
     const { invoice } = invoiceOperations.invoiceOperation[0];
-    const { originalRequest } = processingResults[0];
+    const { invoiceStatus, originalRequest } = processingResults[0];
 
-    assert.equal(invoice, originalRequest);
+    if (invoiceStatus === 'RECEIVED') {
+      assert.isUndefined(originalRequest);
+    } else {
+      assert.equal(invoice, originalRequest);
+    }
   }).timeout(6000);
 });
