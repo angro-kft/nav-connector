@@ -1,4 +1,5 @@
 const { readFileSync } = require('fs');
+const { gzipSync } = require('zlib');
 
 const baseInvoiceXml = readFileSync('./test/lib/invoice-create.xml');
 
@@ -6,13 +7,17 @@ const baseInvoiceXml = readFileSync('./test/lib/invoice-create.xml');
  * Creates 3 valid and unique invoices and returns them as an invoiceOperation array.
  * @param {string} taxNumber Tax number of the taxpayer using the interface service,
  * to whom the technical user is assigned
+ * @param {boolean} [compress=false]
  * @returns {Array} invoiceOperation
  */
-module.exports = function createInvoiceOperation(taxNumber) {
+module.exports = function createInvoiceOperation({
+  taxNumber,
+  compress = false,
+}) {
   const invoiceOperation = [];
 
   for (let index = 0; index < 3; index += 1) {
-    const invoiceXml = baseInvoiceXml
+    let invoiceXml = baseInvoiceXml
       .toString()
       .replace(
         '<taxpayerId>11111111</taxpayerId>',
@@ -22,6 +27,10 @@ module.exports = function createInvoiceOperation(taxNumber) {
         '<invoiceNumber>2019/000123</invoiceNumber>',
         `<invoiceNumber>${Date.now()}</invoiceNumber>`
       );
+
+    if (compress) {
+      invoiceXml = gzipSync(invoiceXml);
+    }
 
     const invoice = Buffer.from(invoiceXml).toString('base64');
 

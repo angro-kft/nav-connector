@@ -59,6 +59,7 @@ const navConnector = new NavConnector({ technicalUser, softwareData, baseURL });
        invoiceOperations is the InvoiceOperationListType in the specification. */
     const invoiceOperations = {
       technicalAnnulment: false,
+      compressedContent: false,
       invoiceOperation: [
         {
           index: 1,
@@ -131,6 +132,7 @@ Example for invoiceOperations parameter:
 ```js
 const invoiceOperations = {
   technicalAnnulment: false,
+  compressedContent: false,
   invoiceOperation: [
     {
       index: 1,
