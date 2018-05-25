@@ -15,5 +15,5 @@ describe('getExchangeToken()', () => {
       exchangeToken,
       /^[A-Z0-9]{8}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{24}$/i
     );
-  }).timeout(4000);
+  }).timeout(6000);
 });

@@ -11,7 +11,7 @@ const testConnection = require('../src/test-connection.js');
 module.exports = class NavConnector {
   /**
    * Create a navConnector.
-   * @param {Object} params Constuctor params.
+   * @param {Object} params Constructor params.
    * @param {Object} params.technicalUser Technical user data.
    * @param {Object} params.softwareData Software data.
    * @param {String} [params.baseURL=https://api.onlineszamla.nav.gov.hu/invoiceService/] Axios baseURL.
@@ -68,7 +68,7 @@ module.exports = class NavConnector {
   }
 
   /**
-   * Test connection, user auth data and keys validity with a tokenExchnageRequest.
+   * Test connection, user auth data and keys validity with a tokenExchangeRequest.
    * @async
    * @throws {Object} Will throw an error if there was a network expectation
    * or any user given auth data or key is invalid.

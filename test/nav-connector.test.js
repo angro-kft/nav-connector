@@ -1,15 +1,11 @@
 const { assert } = require('chai');
 const { technicalUser, softwareData } = require('./lib/globals.js');
+const createInvoiceOperation = require('./lib/create-invoice-operation.js');
 
 const NavConnector = require('../src/nav-connector.js');
 
 const defaultBaseUrl = 'https://api.onlineszamla.nav.gov.hu/invoiceService/';
 const baseURL = 'https://api-test.onlineszamla.nav.gov.hu/invoiceService/';
-
-const invoiceOperation = require('./lib/invoices-base64.js').map(
-  (invoice, index) => ({ index: index + 1, operation: 'CREATE', invoice })
-);
-
 describe('NavConnector', () => {
   it('should assign technicalUser to the new instance', () => {
     const navConnector = new NavConnector({
@@ -74,15 +70,19 @@ describe('NavConnector', () => {
         baseURL,
       });
 
+      const invoiceOperation = createInvoiceOperation(
+        technicalUser.taxNumber
+      ).slice(0, 1);
+
       const invoiceOperations = {
         technicalAnnulment: false,
-        invoiceOperation: invoiceOperation.slice(0, 1),
+        invoiceOperation,
       };
 
       const transactionId = await navConnector.manageInvoice(invoiceOperations);
 
       assert.match(transactionId, /^[+a-zA-Z0-9_]{1,30}$/);
-    }).timeout(4000);
+    }).timeout(6000);
   });
 
   describe('queryInvoiceStatus()', () => {
@@ -93,9 +93,13 @@ describe('NavConnector', () => {
         baseURL,
       });
 
+      const invoiceOperation = createInvoiceOperation(
+        technicalUser.taxNumber
+      ).slice(0, 1);
+
       const invoiceOperations = {
         technicalAnnulment: false,
-        invoiceOperation: invoiceOperation.slice(0, 1),
+        invoiceOperation,
       };
 
       const transactionId = await navConnector.manageInvoice(invoiceOperations);
@@ -105,7 +109,7 @@ describe('NavConnector', () => {
       });
 
       assert.isArray(processingResults);
-    }).timeout(4000);
+    }).timeout(6000);
   });
 
   describe('testConnection()', () => {
@@ -117,6 +121,6 @@ describe('NavConnector', () => {
       });
 
       await navConnector.testConnection();
-    }).timeout(4000);
+    }).timeout(6000);
   });
 });
