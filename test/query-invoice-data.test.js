@@ -6,33 +6,39 @@ const queryInvoiceData = require('../src/query-invoice-data.js');
 describe('queryInvoiceData()', () => {
   it('should resolve to queryResults with invoiceQuery param', async () => {
     const invoiceQuery = {
-      invoiceNumber: 'invoiceNumber',
+      invoiceNumber: '1526972700136',
       requestAllModification: true,
     };
 
-    const queryResults = await queryInvoiceData({
+    const response = await queryInvoiceData({
+      page: 1,
       invoiceQuery,
       technicalUser,
       softwareData,
       axios,
     });
 
-    assert.isArray(queryResults);
-  }).timeout(2000);
+    assert.isNumber(response.currentPage);
+    assert.isNumber(response.availablePage);
+    assert.isObject(response.queryResult);
+  }).timeout(6000);
 
   it('should resolve to queryResults with queryParams param', async () => {
     const queryParams = {
-      invoiceIssueDateFrom: new Date().toISOString().split('T')[0],
-      invoiceIssueDateTo: new Date().toISOString().split('T')[0],
+      invoiceIssueDateFrom: '2019-05-15',
+      invoiceIssueDateTo: '2019-05-15',
     };
 
-    const queryResults = await queryInvoiceData({
+    const response = await queryInvoiceData({
+      page: 1,
       queryParams,
       technicalUser,
       softwareData,
       axios,
     });
 
-    assert.isArray(queryResults);
-  }).timeout(2000);
+    assert.isNumber(response.currentPage);
+    assert.isNumber(response.availablePage);
+    assert.isArray(response.queryResult);
+  }).timeout(6000);
 });

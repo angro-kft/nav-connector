@@ -5,6 +5,7 @@ const sendRequest = require('./send-request.js');
  * Query previously sent invoices with invoice number or query params.
  * @async
  * @param {Object} params Function params.
+ * @param {number} params.page
  * @param {Object} params.invoiceQuery Query single invoice with invoice number.
  * @param {Object} params.queryParams Query multiple invoices with params.
  * @param {Object} params.technicalUser Technical user’s data.
@@ -13,6 +14,7 @@ const sendRequest = require('./send-request.js');
  * @returns {Promise<Array>} queryResults
  */
 module.exports = async function queryInvoiceData({
+  page,
   invoiceQuery,
   queryParams,
   technicalUser,
@@ -27,10 +29,12 @@ module.exports = async function queryInvoiceData({
 
   if (invoiceQuery) {
     Object.assign(request.QueryInvoiceDataRequest, {
+      page,
       invoiceQuery,
     });
   } else {
     Object.assign(request.QueryInvoiceDataRequest, {
+      page,
       queryParams,
     });
   }
@@ -41,18 +45,23 @@ module.exports = async function queryInvoiceData({
     path: '/queryInvoiceData',
   });
 
-  const { queryResults } = responseData.QueryInvoiceDataResponse;
+  const response = responseData.QueryInvoiceDataResponse.queryResults;
 
-  /* Normalize queryResults to Array. */
-  if (!queryResults) {
-    return [];
+  /* Normalize queryResult to Array. */
+  const { queryResult } = response;
+
+  response.currentPage = Number(response.currentPage);
+  response.availablePage = Number(response.availablePage);
+
+  if (!queryResult) {
+    response.queryResult = [];
+  } else if (invoiceQuery) {
+    response.queryResult = response.queryResult.invoiceResult;
+  } else {
+    const { invoiceDigest } = response.queryResult.invoiceDigestList;
+
+    response.queryResult = invoiceDigest;
   }
 
-  const { queryResult } = queryResults;
-
-  if (!Array.isArray(queryResult)) {
-    return [queryResult];
-  }
-
-  return queryResult;
+  return response;
 };
