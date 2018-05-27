@@ -29,20 +29,63 @@ module.exports = async function sendRequest({ request, axios, path }) {
   } catch (error) {
     const { response } = error;
 
+    /* Normalize errors. */
     if (response) {
-      /* Sometimes the service responses with an xml error sometimes with a string */
-      try {
+      /* istanbul ignore if */
+      if (!response.data) {
+        response.data = {
+          result: {},
+          technicalValidationMessages: [],
+        };
+      } else if (response.data.includes('GeneralExceptionResponse')) {
+        const data = await parseXml(response.data);
+
+        response.data = {
+          result: pick(data.GeneralExceptionResponse, [
+            'funcCode',
+            'errorCode',
+            'message',
+          ]),
+          technicalValidationMessages: [],
+        };
+      } else if (response.data.includes('GeneralErrorResponse')) {
         const data = await parseXml(response.data);
 
         response.data = pick(data.GeneralErrorResponse, [
           'result',
           'schemaValidationMessages',
+          'technicalValidationMessages',
         ]);
-      } catch (xmlParseError) {
+
+        /* Rename property schemaValidationMessages to technicalValidationMessages.
+           The response data object key names will match the documentation this way.
+           This is necessary now because the response does not match the documentation
+           but can be omitted if the response or documentation gets fixed. */
+        const { schemaValidationMessages } = response.data;
+        let { technicalValidationMessages } = response.data;
+
+        if (schemaValidationMessages && !technicalValidationMessages) {
+          response.data.technicalValidationMessages = schemaValidationMessages;
+
+          delete response.data.schemaValidationMessages;
+        }
+
+        ({ technicalValidationMessages } = response.data);
+
+        /* Normalize technicalValidationMessages to array. */
+        if (!response.data.technicalValidationMessages) {
+          response.data.technicalValidationMessages = [];
+        } else if (!Array.isArray(technicalValidationMessages)) {
+          response.data.technicalValidationMessages = [
+            technicalValidationMessages,
+          ];
+        }
+      } else {
         response.data = {
           result: {
             message: response.data,
           },
+          technicalValidationMessages: [],
         };
       }
     }
