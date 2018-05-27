@@ -13,7 +13,7 @@ This module was developed in order to satisfy the following specification:
 
 ## Installation
 
-Node.js 8.10.0 or higher is required.
+Node.js 8.11.2 or higher is required.
 
 ```sh
 $ npm install @angro/nav-connector
