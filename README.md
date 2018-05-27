@@ -59,6 +59,7 @@ const navConnector = new NavConnector({ technicalUser, softwareData, baseURL });
        invoiceOperations is the InvoiceOperationListType in the specification. */
     const invoiceOperations = {
       technicalAnnulment: false,
+      compressedContent: false,
       invoiceOperation: [
         {
           index: 1,
@@ -95,6 +96,7 @@ const navConnector = new NavConnector({ technicalUser, softwareData, baseURL });
   }
 })();
 ```
+
 ## API
 
 ### NavConnector
@@ -126,11 +128,12 @@ Method to send a single or multiple invoices to the NAV service. The method retu
 const transactionId = await navConnector.manageInvoice(invoiceOperations);
 ```
 
-Example for invoiceOperations parameter:  
+Example for invoiceOperations parameter:
 
 ```js
 const invoiceOperations = {
   technicalAnnulment: false,
+  compressedContent: false,
   invoiceOperation: [
     {
       index: 1,
@@ -146,9 +149,25 @@ const invoiceOperations = {
 };
 ```
 
+Take note You have to compress the invoice by yourself before using the manageInvoice method.
+
+```js
+const invoiceOperations = {
+  technicalAnnulment: false,
+  compressedContent: true,
+  invoiceOperation: [
+    {
+      index: 1,
+      operation: 'CREATE',
+      invoice: 'compressed invoice xml in base64 encoding',
+    },
+  ],
+};
+```
+
 ### navConnector.queryInvoiceStatus()
 
-Method to get the processing status of previously send invoices. The resolved return value is the ProcessingResultListType of the specification. 
+Method to get the processing status of previously send invoices. The resolved return value is the ProcessingResultListType of the specification.
 
 ```js
 /**
@@ -198,7 +217,7 @@ try {
        According to the specification handle those errors and
        resend the request later. */
   } else if (error.request) {
-    /* http.ClientRequest instance. 
+    /* http.ClientRequest instance.
        Possible network error. You can try to resend the request later. */
   } else {
     /* Something happened in setting up the request that triggered an Error.
@@ -216,21 +235,23 @@ The error.response.data object is always normalized to the following format:
     errorCode: 'errorCode',
     message: 'message',
   },
-  technicalValidationMessages: [{
-    validationResultCode: 'validationResultCode',
-    validationErrorCode: 'validationErrorCode',
-    message: 'message',
-  }, {
-    validationResultCode: 'validationResultCode',
-    validationErrorCode: 'validationErrorCode',
-    message: 'message',
-  }]
+  technicalValidationMessages: [
+    {
+      validationResultCode: 'validationResultCode',
+      validationErrorCode: 'validationErrorCode',
+      message: 'message',
+    },
+    {
+      validationResultCode: 'validationResultCode',
+      validationErrorCode: 'validationErrorCode',
+      message: 'message',
+    },
+  ],
 }
 ```
 
 Take note properties funcCode, errorCode and message can be undefined and technicalValidationMessages length can be zero but
 response.data and result are always an object and technicalValidationMessages is always an array.
-
 
 ## Tests
 

@@ -70,12 +70,13 @@ describe('NavConnector', () => {
         baseURL,
       });
 
-      const invoiceOperation = createInvoiceOperation(
-        technicalUser.taxNumber
-      ).slice(0, 1);
+      const invoiceOperation = createInvoiceOperation({
+        taxNumber: technicalUser.taxNumber,
+      }).slice(0, 1);
 
       const invoiceOperations = {
         technicalAnnulment: false,
+        compressedContent: false,
         invoiceOperation,
       };
 
@@ -93,12 +94,13 @@ describe('NavConnector', () => {
         baseURL,
       });
 
-      const invoiceOperation = createInvoiceOperation(
-        technicalUser.taxNumber
-      ).slice(0, 1);
+      const invoiceOperation = createInvoiceOperation({
+        taxNumber: technicalUser.taxNumber,
+      }).slice(0, 1);
 
       const invoiceOperations = {
         technicalAnnulment: false,
+        compressedContent: false,
         invoiceOperation,
       };
 
