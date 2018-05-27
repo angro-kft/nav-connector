@@ -7,12 +7,13 @@ const queryInvoiceStatus = require('../src/query-invoice-status.js');
 
 describe('queryInvoiceStatus()', () => {
   it('should resolve to processingResults with single invoice', async () => {
-    const invoiceOperation = createInvoiceOperation(
-      technicalUser.taxNumber
-    ).slice(0, 1);
+    const invoiceOperation = createInvoiceOperation({
+      taxNumber: technicalUser.taxNumber,
+    }).slice(0, 1);
 
     const invoiceOperations = {
       technicalAnnulment: false,
+      compressedContent: false,
       invoiceOperation,
     };
 
@@ -34,10 +35,13 @@ describe('queryInvoiceStatus()', () => {
   }).timeout(6000);
 
   it('should resolve to processingResults with multiple invoice', async () => {
-    const invoiceOperation = createInvoiceOperation(technicalUser.taxNumber);
+    const invoiceOperation = createInvoiceOperation({
+      taxNumber: technicalUser.taxNumber,
+    });
 
     const invoiceOperations = {
       technicalAnnulment: false,
+      compressedContent: false,
       invoiceOperation,
     };
 
@@ -70,12 +74,13 @@ describe('queryInvoiceStatus()', () => {
   }).timeout(6000);
 
   it('should handle originalRequest param', async () => {
-    const invoiceOperation = createInvoiceOperation(
-      technicalUser.taxNumber
-    ).slice(0, 1);
+    const invoiceOperation = createInvoiceOperation({
+      taxNumber: technicalUser.taxNumber,
+    }).slice(0, 1);
 
     const invoiceOperations = {
       technicalAnnulment: false,
+      compressedContent: false,
       invoiceOperation,
     };
 

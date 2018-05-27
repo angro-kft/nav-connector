@@ -6,6 +6,7 @@ const NavConnector = require('../src/nav-connector.js');
 
 const defaultBaseUrl = 'https://api.onlineszamla.nav.gov.hu/invoiceService/';
 const baseURL = 'https://api-test.onlineszamla.nav.gov.hu/invoiceService/';
+
 describe('NavConnector', () => {
   it('should assign technicalUser to the new instance', () => {
     const navConnector = new NavConnector({
@@ -46,6 +47,27 @@ describe('NavConnector', () => {
     assert.equal(navConnector.axios.defaults.baseURL, defaultBaseUrl);
   });
 
+  it('should set axios default timeout', () => {
+    const timeout = 6000;
+    const navConnector = new NavConnector({
+      technicalUser,
+      softwareData,
+      timeout,
+    });
+
+    assert.equal(navConnector.axios.defaults.timeout, timeout);
+  });
+
+  it('should use default axios timeout when omitted', () => {
+    const defaultTimeout = 5500;
+    const navConnector = new NavConnector({
+      technicalUser,
+      softwareData,
+    });
+
+    assert.equal(navConnector.axios.defaults.timeout, defaultTimeout);
+  });
+
   it('should set proper http headers to axios', () => {
     const navConnector = new NavConnector({
       technicalUser,
@@ -70,12 +92,13 @@ describe('NavConnector', () => {
         baseURL,
       });
 
-      const invoiceOperation = createInvoiceOperation(
-        technicalUser.taxNumber
-      ).slice(0, 1);
+      const invoiceOperation = createInvoiceOperation({
+        taxNumber: technicalUser.taxNumber,
+      }).slice(0, 1);
 
       const invoiceOperations = {
         technicalAnnulment: false,
+        compressedContent: false,
         invoiceOperation,
       };
 
@@ -93,12 +116,13 @@ describe('NavConnector', () => {
         baseURL,
       });
 
-      const invoiceOperation = createInvoiceOperation(
-        technicalUser.taxNumber
-      ).slice(0, 1);
+      const invoiceOperation = createInvoiceOperation({
+        taxNumber: technicalUser.taxNumber,
+      }).slice(0, 1);
 
       const invoiceOperations = {
         technicalAnnulment: false,
+        compressedContent: false,
         invoiceOperation,
       };
 

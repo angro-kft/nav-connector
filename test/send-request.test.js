@@ -23,7 +23,7 @@ describe('sendRequest()', () => {
     assert.property(responseData, 'TokenExchangeResponse');
   }).timeout(6000);
 
-  it('should have schemaValidationMessages property in the error response', async () => {
+  it('should normalize error responses with GeneralExceptionResponse', async () => {
     const request = createBaseRequest({
       requestType: 'TokenExchangeRequest2',
       technicalUser,
@@ -39,31 +39,12 @@ describe('sendRequest()', () => {
 
       throw new Error('should throw if request is invalid');
     } catch (error) {
-      assert.property(error.response.data, 'schemaValidationMessages');
+      assert.isString(error.response.data.result.funcCode);
+      assert.isArray(error.response.data.technicalValidationMessages);
     }
   }).timeout(6000);
 
-  it('should handle string error response if request is invalid', async () => {
-    const request = createBaseRequest({
-      requestType: 'TokenExchangeRequest',
-      technicalUser,
-      softwareData,
-    });
-
-    try {
-      await sendRequest({
-        request,
-        axios,
-        path: '/tokenExchange2',
-      });
-
-      throw new Error('should throw if request is invalid');
-    } catch (error) {
-      assert.isString(error.response.data.result.message);
-    }
-  }).timeout(6000);
-
-  it('should handle xml error response if request is invalid', async () => {
+  it('should normalize error responses with GeneralErrorResponse', async () => {
     const invalidTechnicalUser = cloneDeep(technicalUser);
 
     invalidTechnicalUser.login = 'invalidUser';
@@ -84,12 +65,84 @@ describe('sendRequest()', () => {
       throw new Error('should throw if request is invalid');
     } catch (error) {
       assert.isString(error.response.data.result.funcCode);
+      assert.isArray(error.response.data.technicalValidationMessages);
+    }
+  }).timeout(6000);
+
+  it('should add technicalValidationMessages to error response data', async () => {
+    const invalidSoftwareData = cloneDeep(softwareData);
+
+    invalidSoftwareData.softwareId = 'invalidSoftwareId';
+    invalidSoftwareData.softwareOperation = 'invalidSoftwareOperation';
+
+    const request = createBaseRequest({
+      requestType: 'TokenExchangeRequest',
+      technicalUser,
+      softwareData: invalidSoftwareData,
+    });
+
+    try {
+      await sendRequest({
+        request,
+        axios,
+        path: '/tokenExchange',
+      });
+
+      throw new Error('should throw if request is invalid');
+    } catch (error) {
+      assert.lengthOf(error.response.data.technicalValidationMessages, 2);
+    }
+  }).timeout(6000);
+
+  it('should normalize technicalValidationMessages to array', async () => {
+    const invalidSoftwareData = cloneDeep(softwareData);
+
+    invalidSoftwareData.softwareId = 'invalidSoftwareId';
+
+    const request = createBaseRequest({
+      requestType: 'TokenExchangeRequest',
+      technicalUser,
+      softwareData: invalidSoftwareData,
+    });
+
+    try {
+      await sendRequest({
+        request,
+        axios,
+        path: '/tokenExchange',
+      });
+
+      throw new Error('should throw if request is invalid');
+    } catch (error) {
+      assert.lengthOf(error.response.data.technicalValidationMessages, 1);
+    }
+  }).timeout(6000);
+
+  it('should handle string error response if request is invalid', async () => {
+    const request = createBaseRequest({
+      requestType: 'TokenExchangeRequest',
+      technicalUser,
+      softwareData,
+    });
+
+    try {
+      await sendRequest({
+        request,
+        axios,
+        path: '/tokenExchange2',
+      });
+
+      throw new Error('should throw if request is invalid');
+    } catch (error) {
+      assert.isString(error.response.data.result.message);
+      assert.isArray(error.response.data.technicalValidationMessages);
     }
   }).timeout(6000);
 
   it('should handle non response errors', async () => {
     const invalidAxios = newAxios.create({
       baseURL: 'https://api2-test.onlineszamla.nav.gov.hu/invoiceService/',
+      timeout: 5500,
       headers: {
         'content-type': 'application/xml',
         accept: 'application/xml',

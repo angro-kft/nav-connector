@@ -15,14 +15,21 @@ module.exports = class NavConnector {
    * @param {Object} params Constructor params.
    * @param {Object} params.technicalUser Technical user data.
    * @param {Object} params.softwareData Software data.
-   * @param {String} [params.baseURL=https://api.onlineszamla.nav.gov.hu/invoiceService/] Axios baseURL.
+   * @param {string} [params.baseURL=https://api.onlineszamla.nav.gov.hu/invoiceService/] Axios baseURL.
+   * @param {number} [params.timeout=5500] Axios default timeout integer in milliseconds.
    */
-  constructor({ technicalUser, softwareData, baseURL = defaultBaseUrl }) {
+  constructor({
+    technicalUser,
+    softwareData,
+    baseURL = defaultBaseUrl,
+    timeout = 5500,
+  }) {
     this.technicalUser = technicalUser;
     this.softwareData = softwareData;
 
     this.axios = axiosCreate({
       baseURL,
+      timeout,
       headers: {
         'content-type': 'application/xml',
         accept: 'application/xml',
