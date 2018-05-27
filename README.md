@@ -110,8 +110,22 @@ Class representing the implementation of the NAV online invoice data service spe
  * @param {Object} params.technicalUser Technical user data.
  * @param {Object} params.softwareData Software data.
  * @param {String} [params.baseURL=https://api.onlineszamla.nav.gov.hu/invoiceService/] Axios baseURL.
+ * @param {number} [params.timeout=5500] Axios default timeout integer in milliseconds.
  */
 const navConnector = new NavConnector({ technicalUser, softwareData });
+```
+
+Axios timeout option is needed because during NAV service outages, requests will never timeout if axios timeout option is not set.
+The default 5500 milliseconds are sufficient because according to the NAV online invoice service documentation the request timeout
+is set to 5000 ms on the service side.  
+You can fine tune this value but its strongly suggested to keep it above 5000 ms to avoid dropped responses.
+
+```js
+const navConnector = new NavConnector({
+  technicalUser,
+  softwareData,
+  timeout: 6000,
+});
 ```
 
 ### navConnector.manageInvoice()
