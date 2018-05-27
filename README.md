@@ -207,6 +207,31 @@ try {
 }
 ```
 
+The error.response.data object is always normalized to the following format:
+
+```js
+{
+  result: {
+    funcCode: 'funcCode',
+    errorCode: 'errorCode',
+    message: 'message',
+  },
+  technicalValidationMessages: [{
+    validationResultCode: 'validationResultCode',
+    validationErrorCode: 'validationErrorCode',
+    message: 'message',
+  }, {
+    validationResultCode: 'validationResultCode',
+    validationErrorCode: 'validationErrorCode',
+    message: 'message',
+  }]
+}
+```
+
+Take note properties funcCode, errorCode and message can be undefined and technicalValidationMessages length can be zero but
+response.data and result are always an object and technicalValidationMessages is always an array.
+
+
 ## Tests
 
 Copy the file named `.env.example` and rename it to `.env` in the root of the repository and replace placeholder values with your own technical user's data.  
