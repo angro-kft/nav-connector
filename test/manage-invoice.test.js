@@ -46,6 +46,29 @@ describe('manageInvoice()', () => {
     assert.match(transactionId, /^[+a-zA-Z0-9_]{1,30}$/);
   }).timeout(6000);
 
+  it('should normalize invoiceOperation key order', async () => {
+    const invoiceOperation = createInvoiceOperation({
+      taxNumber: technicalUser.taxNumber,
+    }).map(({ invoice, operation, index }) => ({
+      invoice,
+      operation,
+      index,
+    }));
+
+    const invoiceOperations = {
+      invoiceOperation,
+      compressedContent: false,
+      technicalAnnulment: false,
+    };
+
+    await manageInvoice({
+      invoiceOperations,
+      technicalUser,
+      softwareData,
+      axios,
+    });
+  }).timeout(6000);
+
   /*
   it('should resolve to transactionId with compressed content', async () => {
     const invoiceOperation = createInvoiceOperation({
