@@ -1,3 +1,5 @@
+const { pick } = require('lodash');
+
 const createBaseRequest = require('./create-base-request.js');
 const sendRequest = require('./send-request.js');
 
@@ -28,15 +30,43 @@ module.exports = async function queryInvoiceData({
   });
 
   if (invoiceQuery) {
+    /* Normalize invoiceQuery key order. */
     Object.assign(request.QueryInvoiceDataRequest, {
       page,
-      invoiceQuery,
+      invoiceQuery: pick(invoiceQuery, ['invoiceNumber', 'invoiceNumber']),
     });
   } else {
+    /* Normalize queryParams key order. */
     Object.assign(request.QueryInvoiceDataRequest, {
       page,
-      queryParams,
+      queryParams: pick(queryParams, [
+        'invoiceIssueDateFrom',
+        'invoiceIssueDateTo',
+        'customerTaxNumber',
+        'invoiceCategory',
+        'paymentMethod',
+        'invoiceAppearance',
+        'source',
+        'invoiceDeliveryGreaterThan',
+        'invoiceDeliveryLessThan',
+        'currency',
+        'invoiceNetAmountGreaterThan',
+        'invoiceNetAmountLessThan',
+        'invoiceVatAmountHUFGreaterThan',
+        'invoiceVatAmountHUFLessThan',
+        'transactionParams',
+      ]),
     });
+
+    const { QueryInvoiceDataRequest } = request;
+    const { transactionParams } = QueryInvoiceDataRequest.queryParams;
+
+    if (transactionParams) {
+      QueryInvoiceDataRequest.queryParams.transactionParams = pick(
+        transactionParams,
+        ['transactionId', 'index', 'operation']
+      );
+    }
   }
 
   const responseData = await sendRequest({
