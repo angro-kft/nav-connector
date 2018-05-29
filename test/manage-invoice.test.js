@@ -23,7 +23,7 @@ describe('manageInvoice()', () => {
       axios,
     });
     assert.match(transactionId, /^[+a-zA-Z0-9_]{1,30}$/);
-  }).timeout(6000);
+  });
 
   it('should resolve to transactionId with multiple invoices', async () => {
     const invoiceOperation = createInvoiceOperation({
@@ -44,7 +44,7 @@ describe('manageInvoice()', () => {
     });
 
     assert.match(transactionId, /^[+a-zA-Z0-9_]{1,30}$/);
-  }).timeout(6000);
+  });
 
   it('should normalize invoiceOperation key order', async () => {
     const invoiceOperation = createInvoiceOperation({
@@ -67,7 +67,7 @@ describe('manageInvoice()', () => {
       softwareData,
       axios,
     });
-  }).timeout(6000);
+  });
 
   /*
   it('should resolve to transactionId with compressed content', async () => {
@@ -90,6 +90,6 @@ describe('manageInvoice()', () => {
     });
 
     assert.match(transactionId, /^[+a-zA-Z0-9_]{1,30}$/);
-  }).timeout(6000);
+  });
   */
 });

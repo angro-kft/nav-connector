@@ -225,28 +225,52 @@ Method to query previously sent invoices with invoice number or query params.
  * Query previously sent invoices with invoice number or query params.
  * @async
  * @param {Object} params Function params.
+ * @param {number} params.page Integer page to query.
  * @param {Object} params.invoiceQuery Query single invoice with invoice number.
  * @param {Object} params.queryParams Query multiple invoices with params.
- * @returns {Promise<Array>} queryResults
+ * @returns {Promise<Array>} response
  */
+
+/* Query by invoice number. */
 const invoiceQuery = {
   invoiceNumber: 'invoiceNumber',
   requestAllModification: true,
 };
 
-const invoiceQueryResults = await navConnector.queryInvoiceData({
+const invoiceQueryResponse = await navConnector.queryInvoiceData({
+  page: 1,
   invoiceQuery,
 });
 
+const invoiceQueryResult = invoiceQueryResponse.queryResult[0];
+
+/* InvoiceQueryResult is Undefined if no invoice was found for the given invoiceNumber. */
+if (invoiceQueryResult) {
+  /* InvoiceQueryResult is the InvoiceResultType from the documentation. */
+  console.log(invoiceQueryResult.invoice);
+}
+
+/* Query by parameters. */
 const queryParams = {
   invoiceIssueDateFrom: '2017-12-28',
   invoiceIssueDateTo: '2017-12-28',
 };
 
-const paramsQueryResults = await navConnector.queryInvoiceData({
+const queryParamsResponse = await navConnector.queryInvoiceData({
+  page: 1,
   queryParams,
 });
+
+const queryParamsResults = queryParamsResponse.queryResult;
+
+/* QueryParamsResults length will be 0 if no invoice was found for the given query. */
+if(!queryParamsResults.length) {
+  /* QueryParamsResults is the InvoiceDigestType from the documentation. */
+  console.log(queryParamsResults[0].invoiceNumber);
+}
 ```
+
+This function does type conversion for number and boolean typed values in the response according to the NAV service documentation.
 
 ## Error handling
 

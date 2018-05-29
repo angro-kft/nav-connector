@@ -7,13 +7,13 @@ const sendRequest = require('./send-request.js');
  * Query previously sent invoices with invoice number or query params.
  * @async
  * @param {Object} params Function params.
- * @param {number} params.page
+ * @param {number} params.page Integer page to query.
  * @param {Object} params.invoiceQuery Query single invoice with invoice number.
  * @param {Object} params.queryParams Query multiple invoices with params.
  * @param {Object} params.technicalUser Technical user’s data.
  * @param {Object} params.softwareData Invoice software data.
  * @param {Object} params.axios Axios instance.
- * @returns {Promise<Array>} queryResults
+ * @returns {Promise<Array>} response
  */
 module.exports = async function queryInvoiceData({
   page,
@@ -80,18 +80,53 @@ module.exports = async function queryInvoiceData({
   /* Normalize queryResult to Array. */
   const { queryResult } = response;
 
-  response.currentPage = Number(response.currentPage);
-  response.availablePage = Number(response.availablePage);
-
   if (!queryResult) {
     response.queryResult = [];
   } else if (invoiceQuery) {
-    response.queryResult = response.queryResult.invoiceResult;
+    response.queryResult = [response.queryResult.invoiceResult];
+
+    /* Type conversions. */
+    const result = response.queryResult[0];
+
+    /* Rename property ns2:modifyWithoutMaster to modifyWithoutMaster.
+       The response data object key names will match the documentation this way.
+       This is necessary now because the response does not match the documentation
+       but can be omitted if the response or documentation gets fixed. */
+    const { invoiceReference } = result;
+
+    /* istanbul ignore next */
+    if (
+      invoiceReference['ns2:modifyWithoutMaster'] &&
+      !invoiceReference.modifyWithoutMaster
+    ) {
+      invoiceReference.modifyWithoutMaster =
+        invoiceReference['ns2:modifyWithoutMaster'];
+
+      delete invoiceReference['ns2:modifyWithoutMaster'];
+    }
+
+    invoiceReference.modifyWithoutMaster =
+      invoiceReference.modifyWithoutMaster === 'true';
+
+    result.compressedContentIndicator =
+      result.compressedContentIndicator === 'true';
   } else {
     const { invoiceDigest } = response.queryResult.invoiceDigestList;
 
     response.queryResult = invoiceDigest;
+
+    /* Type conversions. */
+    response.queryResult.forEach(digest => {
+      /* eslint-disable-next-line no-param-reassign */
+      digest.invoiceNetAmount = Number(digest.invoiceNetAmount);
+      /* eslint-disable-next-line no-param-reassign */
+      digest.invoiceVatAmountHUF = Number(digest.invoiceVatAmountHUF);
+    });
   }
+
+  /* Type conversions. */
+  response.currentPage = Number(response.currentPage);
+  response.availablePage = Number(response.availablePage);
 
   return response;
 };
