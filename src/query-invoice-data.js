@@ -113,7 +113,10 @@ module.exports = async function queryInvoiceData({
   } else {
     const { invoiceDigest } = response.queryResult.invoiceDigestList;
 
-    response.queryResult = invoiceDigest;
+    /* Normalize to Array. */
+    response.queryResult = Array.isArray(invoiceDigest)
+      ? invoiceDigest
+      : [invoiceDigest];
 
     /* Type conversions. */
     response.queryResult.forEach(digest => {

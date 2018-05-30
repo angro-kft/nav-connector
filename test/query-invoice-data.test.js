@@ -3,15 +3,17 @@ const { axios, technicalUser, softwareData } = require('./lib/globals.js');
 const createInvoiceOperation = require('./lib/create-invoice-operation.js');
 
 const manageInvoice = require('../src/manage-invoice.js');
+const queryInvoiceStatus = require('../src/query-invoice-status.js');
 const queryInvoiceData = require('../src/query-invoice-data.js');
 
 describe('queryInvoiceData()', () => {
   let existingInvoiceNumber;
+  let transactionId;
 
-  before(async () => {
+  before(async function before() {
     const invoiceOperation = createInvoiceOperation({
       taxNumber: technicalUser.taxNumber,
-    }).slice(0, 1);
+    }).slice(0, 2);
 
     const invoiceOperations = {
       technicalAnnulment: false,
@@ -24,11 +26,42 @@ describe('queryInvoiceData()', () => {
       .match(/<invoiceNumber>(.*?)<\/invoiceNumber>/g)[0]
       .replace(/<\/?invoiceNumber>/g, '');
 
-    const transactionId = await manageInvoice({
+    transactionId = await manageInvoice({
       invoiceOperations,
       technicalUser,
       softwareData,
       axios,
+    });
+
+    await new Promise(resolve => {
+      const getInvoiceStatus = async () => {
+        const processingResults = await queryInvoiceStatus({
+          transactionId,
+          returnOriginalRequest: true,
+          technicalUser,
+          softwareData,
+          axios,
+        });
+
+        const { invoiceStatus } = processingResults[0];
+
+        if (this.test.timedOut) {
+          return;
+        }
+
+        if (invoiceStatus === 'ABORTED') {
+          throw new Error('Invoice status is ABORTED!');
+        }
+
+        if (invoiceStatus === 'DONE') {
+          resolve();
+          return;
+        }
+
+        getInvoiceStatus();
+      };
+
+      getInvoiceStatus();
     });
   });
 
@@ -87,6 +120,29 @@ describe('queryInvoiceData()', () => {
     const queryParams = {
       invoiceIssueDateFrom: '1900-01-01',
       invoiceIssueDateTo: '1900-01-01',
+    };
+
+    const response = await queryInvoiceData({
+      page: 1,
+      queryParams,
+      technicalUser,
+      softwareData,
+      axios,
+    });
+
+    assert.isArray(response.queryResult);
+  });
+
+  it('should normalize queryParams resolve value to array', async () => {
+    const today = new Date().toISOString().split('T')[0];
+    const queryParams = {
+      invoiceIssueDateFrom: today,
+      invoiceIssueDateTo: today,
+      transactionParams: {
+        transactionId,
+        index: 1,
+        operation: 'CREATE',
+      },
     };
 
     const response = await queryInvoiceData({

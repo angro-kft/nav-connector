@@ -264,7 +264,7 @@ const queryParamsResponse = await navConnector.queryInvoiceData({
 const queryParamsResults = queryParamsResponse.queryResult;
 
 /* QueryParamsResults length will be 0 if no invoice was found for the given query. */
-if(!queryParamsResults.length) {
+if(queryParamsResults.length) {
   /* QueryParamsResults is the InvoiceDigestType from the documentation. */
   console.log(queryParamsResults[0].invoiceNumber);
 }
