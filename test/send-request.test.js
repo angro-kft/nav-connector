@@ -21,7 +21,7 @@ describe('sendRequest()', () => {
     });
 
     assert.property(responseData, 'TokenExchangeResponse');
-  }).timeout(6000);
+  });
 
   it('should normalize error responses with GeneralExceptionResponse', async () => {
     const request = createBaseRequest({
@@ -42,7 +42,7 @@ describe('sendRequest()', () => {
       assert.isString(error.response.data.result.funcCode);
       assert.isArray(error.response.data.technicalValidationMessages);
     }
-  }).timeout(6000);
+  });
 
   it('should normalize error responses with GeneralErrorResponse', async () => {
     const invalidTechnicalUser = cloneDeep(technicalUser);
@@ -67,7 +67,7 @@ describe('sendRequest()', () => {
       assert.isString(error.response.data.result.funcCode);
       assert.isArray(error.response.data.technicalValidationMessages);
     }
-  }).timeout(6000);
+  });
 
   it('should add technicalValidationMessages to error response data', async () => {
     const invalidSoftwareData = cloneDeep(softwareData);
@@ -92,7 +92,7 @@ describe('sendRequest()', () => {
     } catch (error) {
       assert.lengthOf(error.response.data.technicalValidationMessages, 2);
     }
-  }).timeout(6000);
+  });
 
   it('should normalize technicalValidationMessages to array', async () => {
     const invalidSoftwareData = cloneDeep(softwareData);
@@ -116,7 +116,7 @@ describe('sendRequest()', () => {
     } catch (error) {
       assert.lengthOf(error.response.data.technicalValidationMessages, 1);
     }
-  }).timeout(6000);
+  });
 
   it('should handle string error response if request is invalid', async () => {
     const request = createBaseRequest({
@@ -137,7 +137,7 @@ describe('sendRequest()', () => {
       assert.isString(error.response.data.result.message);
       assert.isArray(error.response.data.technicalValidationMessages);
     }
-  }).timeout(6000);
+  });
 
   it('should handle non response errors', async () => {
     const invalidAxios = newAxios.create({
@@ -167,5 +167,5 @@ describe('sendRequest()', () => {
     } catch (error) {
       assert.equal(error.code, 'ENOTFOUND');
     }
-  }).timeout(6000);
+  });
 });

@@ -15,6 +15,7 @@ module.exports = function createInvoiceOperation({
   compress = false,
 }) {
   const invoiceOperation = [];
+  const today = new Date().toISOString().split('T')[0];
 
   for (let index = 0; index < 3; index += 1) {
     let invoiceXml = baseInvoiceXml
@@ -26,6 +27,18 @@ module.exports = function createInvoiceOperation({
       .replace(
         '<invoiceNumber>2019/000123</invoiceNumber>',
         `<invoiceNumber>${Date.now()}</invoiceNumber>`
+      )
+      .replace(
+        '<invoiceIssueDate>2019-05-15</invoiceIssueDate>',
+        `<invoiceIssueDate>${today}</invoiceIssueDate>`
+      )
+      .replace(
+        '<invoiceDeliveryDate>2019-05-10</invoiceDeliveryDate>',
+        `<invoiceDeliveryDate>${today}</invoiceDeliveryDate>`
+      )
+      .replace(
+        '<paymentDate>2019-05-30</paymentDate>',
+        `<paymentDate>${today}</paymentDate>`
       );
 
     if (compress) {

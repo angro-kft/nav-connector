@@ -105,7 +105,7 @@ describe('NavConnector', () => {
       const transactionId = await navConnector.manageInvoice(invoiceOperations);
 
       assert.match(transactionId, /^[+a-zA-Z0-9_]{1,30}$/);
-    }).timeout(6000);
+    });
   });
 
   describe('queryInvoiceStatus()', () => {
@@ -133,7 +133,7 @@ describe('NavConnector', () => {
       });
 
       assert.isArray(processingResults);
-    }).timeout(6000);
+    });
   });
 
   describe('testConnection()', () => {
@@ -145,6 +145,28 @@ describe('NavConnector', () => {
       });
 
       await navConnector.testConnection();
-    }).timeout(6000);
+    });
+  });
+
+  describe('queryInvoiceData()', () => {
+    it('should resolve with invoiceQuery param', async () => {
+      const navConnector = new NavConnector({
+        technicalUser,
+        softwareData,
+        baseURL,
+      });
+
+      const invoiceQuery = {
+        invoiceNumber: 'invoiceNumber',
+        requestAllModification: false,
+      };
+
+      const response = await navConnector.queryInvoiceData({
+        page: 1,
+        invoiceQuery,
+      });
+
+      assert.isArray(response.queryResult);
+    });
   });
 });
