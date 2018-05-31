@@ -1,14 +1,11 @@
 const { assert } = require('chai');
 const { technicalUser, softwareData } = require('./lib/globals.js');
+const createInvoiceOperation = require('./lib/create-invoice-operation.js');
 
 const NavConnector = require('../src/nav-connector.js');
 
 const defaultBaseUrl = 'https://api.onlineszamla.nav.gov.hu/invoiceService/';
 const baseURL = 'https://api-test.onlineszamla.nav.gov.hu/invoiceService/';
-
-const invoiceOperation = require('./lib/invoices-base64.js').map(
-  (invoice, index) => ({ index: index + 1, operation: 'CREATE', invoice })
-);
 
 describe('NavConnector', () => {
   it('should assign technicalUser to the new instance', () => {
@@ -50,6 +47,27 @@ describe('NavConnector', () => {
     assert.equal(navConnector.axios.defaults.baseURL, defaultBaseUrl);
   });
 
+  it('should set axios default timeout', () => {
+    const timeout = 50000;
+    const navConnector = new NavConnector({
+      technicalUser,
+      softwareData,
+      timeout,
+    });
+
+    assert.equal(navConnector.axios.defaults.timeout, timeout);
+  });
+
+  it('should use default axios timeout when omitted', () => {
+    const defaultTimeout = 60000;
+    const navConnector = new NavConnector({
+      technicalUser,
+      softwareData,
+    });
+
+    assert.equal(navConnector.axios.defaults.timeout, defaultTimeout);
+  });
+
   it('should set proper http headers to axios', () => {
     const navConnector = new NavConnector({
       technicalUser,
@@ -74,15 +92,20 @@ describe('NavConnector', () => {
         baseURL,
       });
 
+      const invoiceOperation = createInvoiceOperation({
+        taxNumber: technicalUser.taxNumber,
+      }).slice(0, 1);
+
       const invoiceOperations = {
         technicalAnnulment: false,
-        invoiceOperation: invoiceOperation.slice(0, 1),
+        compressedContent: false,
+        invoiceOperation,
       };
 
       const transactionId = await navConnector.manageInvoice(invoiceOperations);
 
       assert.match(transactionId, /^[+a-zA-Z0-9_]{1,30}$/);
-    }).timeout(4000);
+    });
   });
 
   describe('queryInvoiceStatus()', () => {
@@ -93,9 +116,14 @@ describe('NavConnector', () => {
         baseURL,
       });
 
+      const invoiceOperation = createInvoiceOperation({
+        taxNumber: technicalUser.taxNumber,
+      }).slice(0, 1);
+
       const invoiceOperations = {
         technicalAnnulment: false,
-        invoiceOperation: invoiceOperation.slice(0, 1),
+        compressedContent: false,
+        invoiceOperation,
       };
 
       const transactionId = await navConnector.manageInvoice(invoiceOperations);
@@ -105,7 +133,7 @@ describe('NavConnector', () => {
       });
 
       assert.isArray(processingResults);
-    }).timeout(4000);
+    });
   });
 
   describe('testConnection()', () => {
@@ -117,6 +145,28 @@ describe('NavConnector', () => {
       });
 
       await navConnector.testConnection();
-    }).timeout(4000);
+    });
+  });
+
+  describe('queryInvoiceData()', () => {
+    it('should resolve with invoiceQuery param', async () => {
+      const navConnector = new NavConnector({
+        technicalUser,
+        softwareData,
+        baseURL,
+      });
+
+      const invoiceQuery = {
+        invoiceNumber: 'invoiceNumber',
+        requestAllModification: false,
+      };
+
+      const response = await navConnector.queryInvoiceData({
+        page: 1,
+        invoiceQuery,
+      });
+
+      assert.isArray(response.queryResult);
+    });
   });
 });
