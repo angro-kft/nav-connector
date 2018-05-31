@@ -4,7 +4,7 @@
 [![codecov](https://codecov.io/gh/angro-kft/nav-connector/branch/dev/graph/badge.svg)](https://codecov.io/gh/angro-kft/nav-connector)
 [![npm (scoped)](https://img.shields.io/npm/v/@angro/nav-connector.svg)](https://www.npmjs.com/package/@angro/nav-connector)
 [![license](https://img.shields.io/github/license/angro-kft/nav-connector.svg)](https://github.com/angro-kft/nav-connector/blob/dev/LICENSE)
-![nav](https://img.shields.io/badge/NAV%20service%20version%20compatible-0.12-blue.svg)
+![nav](https://img.shields.io/badge/NAV%20service%20version%20compatible-0.13-blue.svg)
 
 Node.js module which provides an interface for communicating with NAV online invoice service.
 
@@ -13,7 +13,7 @@ This module was developed in order to satisfy the following specification:
 
 ## Installation
 
-Node.js 8.10.0 or higher is required.
+Tested with version 8.11.2 of Node.js.
 
 ```sh
 $ npm install @angro/nav-connector
@@ -59,6 +59,7 @@ const navConnector = new NavConnector({ technicalUser, softwareData, baseURL });
        invoiceOperations is the InvoiceOperationListType in the specification. */
     const invoiceOperations = {
       technicalAnnulment: false,
+      compressedContent: false,
       invoiceOperation: [
         {
           index: 1,
@@ -95,6 +96,7 @@ const navConnector = new NavConnector({ technicalUser, softwareData, baseURL });
   }
 })();
 ```
+
 ## API
 
 ### NavConnector
@@ -108,8 +110,23 @@ Class representing the implementation of the NAV online invoice data service spe
  * @param {Object} params.technicalUser Technical user data.
  * @param {Object} params.softwareData Software data.
  * @param {String} [params.baseURL=https://api.onlineszamla.nav.gov.hu/invoiceService/] Axios baseURL.
+ * @param {number} [params.timeout=60000] Axios default timeout integer in milliseconds.
  */
 const navConnector = new NavConnector({ technicalUser, softwareData });
+```
+
+Axios timeout option is needed because during NAV service outages, requests will never timeout if axios timeout option is not set.  
+According to the NAV online invoice service documentation the request timeout is set to 5000 ms on the service side
+but at this time in practice there is no timeout and requests can resolve even after 20 seconds.  
+The timeout is set to 60000 milliseconds (60 sec) in axios as default.  
+You can fine tune this value but its strongly suggested to keep it hight to avoid dropped responses.
+
+```js
+const navConnector = new NavConnector({
+  technicalUser,
+  softwareData,
+  timeout: 60000,
+});
 ```
 
 ### navConnector.manageInvoice()
@@ -126,11 +143,12 @@ Method to send a single or multiple invoices to the NAV service. The method retu
 const transactionId = await navConnector.manageInvoice(invoiceOperations);
 ```
 
-Example for invoiceOperations parameter:  
+Example for invoiceOperations parameter:
 
 ```js
 const invoiceOperations = {
   technicalAnnulment: false,
+  compressedContent: false,
   invoiceOperation: [
     {
       index: 1,
@@ -146,9 +164,25 @@ const invoiceOperations = {
 };
 ```
 
+Take note You have to compress the invoice by yourself before using the manageInvoice method.
+
+```js
+const invoiceOperations = {
+  technicalAnnulment: false,
+  compressedContent: true,
+  invoiceOperation: [
+    {
+      index: 1,
+      operation: 'CREATE',
+      invoice: 'compressed invoice xml in base64 encoding',
+    },
+  ],
+};
+```
+
 ### navConnector.queryInvoiceStatus()
 
-Method to get the processing status of previously send invoices. The resolved return value is the ProcessingResultListType of the specification. 
+Method to get the processing status of previously send invoices. The resolved return value is the ProcessingResultListType of the specification.
 
 ```js
 /**
@@ -183,6 +217,62 @@ try {
 }
 ```
 
+### navConnector.queryInvoiceData()
+
+Method to query previously sent invoices with invoice number or query params.
+
+```js
+/**
+ * Query previously sent invoices with invoice number or query params.
+ * @async
+ * @param {Object} params Function params.
+ * @param {number} params.page Integer page to query.
+ * @param {Object} params.invoiceQuery Query single invoice with invoice number.
+ * @param {Object} params.queryParams Query multiple invoices with params.
+ * @returns {Promise<Array>} response
+ */
+
+/* Query by invoice number. */
+const invoiceQuery = {
+  invoiceNumber: 'invoiceNumber',
+  requestAllModification: true,
+};
+
+const invoiceQueryResponse = await navConnector.queryInvoiceData({
+  page: 1,
+  invoiceQuery,
+});
+
+const invoiceQueryResult = invoiceQueryResponse.queryResult[0];
+
+/* InvoiceQueryResult is Undefined if no invoice was found for the given invoiceNumber. */
+if (invoiceQueryResult) {
+  /* InvoiceQueryResult is the InvoiceResultType from the documentation. */
+  console.log(invoiceQueryResult.invoice);
+}
+
+/* Query by parameters. */
+const queryParams = {
+  invoiceIssueDateFrom: '2017-12-28',
+  invoiceIssueDateTo: '2017-12-28',
+};
+
+const queryParamsResponse = await navConnector.queryInvoiceData({
+  page: 1,
+  queryParams,
+});
+
+const queryParamsResults = queryParamsResponse.queryResult;
+
+/* QueryParamsResults length will be 0 if no invoice was found for the given query. */
+if(queryParamsResults.length) {
+  /* QueryParamsResults is the InvoiceDigestType from the documentation. */
+  console.log(queryParamsResults[0].invoiceNumber);
+}
+```
+
+This function does type conversion for number and boolean typed values in the response according to the NAV service documentation.
+
 ## Error handling
 
 All methods can throw expectation and You can fine tune how to log these error, handle them or retry the request if possible.
@@ -198,7 +288,7 @@ try {
        According to the specification handle those errors and
        resend the request later. */
   } else if (error.request) {
-    /* http.ClientRequest instance. 
+    /* http.ClientRequest instance.
        Possible network error. You can try to resend the request later. */
   } else {
     /* Something happened in setting up the request that triggered an Error.
@@ -206,6 +296,33 @@ try {
   }
 }
 ```
+
+The error.response.data object is always normalized to the following format:
+
+```js
+{
+  result: {
+    funcCode: 'funcCode',
+    errorCode: 'errorCode',
+    message: 'message',
+  },
+  technicalValidationMessages: [
+    {
+      validationResultCode: 'validationResultCode',
+      validationErrorCode: 'validationErrorCode',
+      message: 'message',
+    },
+    {
+      validationResultCode: 'validationResultCode',
+      validationErrorCode: 'validationErrorCode',
+      message: 'message',
+    },
+  ],
+}
+```
+
+Take note properties funcCode, errorCode and message can be undefined and technicalValidationMessages length can be zero but
+response.data and result are always an object and technicalValidationMessages is always an array.
 
 ## Tests
 

@@ -1,3 +1,5 @@
+const { pick } = require('lodash');
+
 const createBaseRequest = require('./create-base-request.js');
 const getExchangeToken = require('./get-exchange-token.js');
 const sendRequest = require('./send-request.js');
@@ -35,7 +37,20 @@ module.exports = async function manageInvoice({
     softwareData,
   });
 
-  request.ManageInvoiceRequest.invoiceOperations = invoiceOperations;
+  /* Normalize request object key order. */
+  const normalizedInvoiceOperations = pick(invoiceOperations, [
+    'technicalAnnulment',
+    'compressedContent',
+    'invoiceOperation',
+  ]);
+
+  const { invoiceOperation } = normalizedInvoiceOperations;
+
+  normalizedInvoiceOperations.invoiceOperation = invoiceOperation.map(elem =>
+    pick(elem, ['index', 'operation', 'invoice'])
+  );
+
+  request.ManageInvoiceRequest.invoiceOperations = normalizedInvoiceOperations;
 
   const responseData = await sendRequest({
     request,
