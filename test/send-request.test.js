@@ -142,7 +142,7 @@ describe('sendRequest()', () => {
   it('should handle non response errors', async () => {
     const invalidAxios = newAxios.create({
       baseURL: 'https://api2-test.onlineszamla.nav.gov.hu/invoiceService/',
-      timeout: 5500,
+      timeout: 60000,
       headers: {
         'content-type': 'application/xml',
         accept: 'application/xml',
