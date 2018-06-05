@@ -48,7 +48,7 @@ describe('NavConnector', () => {
   });
 
   it('should set axios default timeout', () => {
-    const timeout = 50000;
+    const timeout = 65000;
     const navConnector = new NavConnector({
       technicalUser,
       softwareData,
@@ -59,7 +59,7 @@ describe('NavConnector', () => {
   });
 
   it('should use default axios timeout when omitted', () => {
-    const defaultTimeout = 60000;
+    const defaultTimeout = 70000;
     const navConnector = new NavConnector({
       technicalUser,
       softwareData,

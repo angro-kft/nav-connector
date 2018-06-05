@@ -4,7 +4,7 @@
   "description": "Node.js module which provides an interface for communicating with NAV online invoice service.",
   "main": "./src/nav-connector.js",
   "scripts": {
-    "test": "nyc mocha --timeout 120000",
+    "test": "nyc mocha --timeout 150000",
     "lint": "eslint src/**",
     "coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov"
   },
