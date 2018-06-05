@@ -120,10 +120,10 @@ module.exports = async function queryInvoiceData({
 
     /* Type conversions. */
     response.queryResult.forEach(digest => {
-      /* eslint-disable-next-line no-param-reassign */
+      /* eslint-disable no-param-reassign */
       digest.invoiceNetAmount = Number(digest.invoiceNetAmount);
-      /* eslint-disable-next-line no-param-reassign */
       digest.invoiceVatAmountHUF = Number(digest.invoiceVatAmountHUF);
+      /* eslint-disable-enable no-param-reassign */
     });
   }
 

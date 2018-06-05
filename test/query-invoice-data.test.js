@@ -7,7 +7,7 @@ const queryInvoiceStatus = require('../src/query-invoice-status.js');
 const queryInvoiceData = require('../src/query-invoice-data.js');
 
 describe('queryInvoiceData()', () => {
-  const existingInvoiceNumber = '2019/000123';
+  let existingInvoiceNumber;
   let transactionId;
 
   before(async function before() {
@@ -21,12 +21,10 @@ describe('queryInvoiceData()', () => {
       invoiceOperation,
     };
 
-    /*
-    existingInvoiceNumber = Buffer.from(invoiceOperation[0].invoice, 'base64')
+    existingInvoiceNumber = Buffer.from(invoiceOperation[1].invoice, 'base64')
       .toString()
       .match(/<invoiceNumber>(.*?)<\/invoiceNumber>/g)[0]
       .replace(/<\/?invoiceNumber>/g, '');
-    */
 
     transactionId = await manageInvoice({
       invoiceOperations,
@@ -35,32 +33,36 @@ describe('queryInvoiceData()', () => {
       axios,
     });
 
-    await new Promise(resolve => {
+    await new Promise((resolve, reject) => {
       const getInvoiceStatus = async () => {
-        const processingResults = await queryInvoiceStatus({
-          transactionId,
-          returnOriginalRequest: true,
-          technicalUser,
-          softwareData,
-          axios,
-        });
+        try {
+          const processingResults = await queryInvoiceStatus({
+            transactionId,
+            returnOriginalRequest: true,
+            technicalUser,
+            softwareData,
+            axios,
+          });
 
-        const { invoiceStatus } = processingResults[0];
+          const { invoiceStatus } = processingResults[0];
 
-        if (this.test.timedOut) {
-          return;
+          if (this.test.timedOut) {
+            return;
+          }
+
+          if (invoiceStatus === 'ABORTED') {
+            throw new Error('Invoice status is ABORTED!');
+          }
+
+          if (invoiceStatus === 'DONE') {
+            resolve();
+            return;
+          }
+
+          getInvoiceStatus();
+        } catch (error) {
+          reject(error);
         }
-
-        if (invoiceStatus === 'ABORTED') {
-          throw new Error('Invoice status is ABORTED!');
-        }
-
-        if (invoiceStatus === 'DONE') {
-          resolve();
-          return;
-        }
-
-        getInvoiceStatus();
       };
 
       getInvoiceStatus();
@@ -103,7 +105,7 @@ describe('queryInvoiceData()', () => {
 
   it('should resolve with invoiceQuery param', async () => {
     const invoiceQuery = {
-      invoiceNumber: 'invoiceNumber',
+      invoiceNumber: existingInvoiceNumber,
       requestAllModification: true,
     };
 
@@ -115,13 +117,14 @@ describe('queryInvoiceData()', () => {
       axios,
     });
 
-    assert.isArray(response.queryResult);
+    assert.lengthOf(response.queryResult, 1);
   });
 
   it('should resolve with queryParams param', async () => {
+    const today = new Date().toISOString().split('T')[0];
     const queryParams = {
-      invoiceIssueDateFrom: '1900-01-01',
-      invoiceIssueDateTo: '1900-01-01',
+      invoiceIssueDateFrom: today,
+      invoiceIssueDateTo: today,
     };
 
     const response = await queryInvoiceData({
@@ -132,10 +135,10 @@ describe('queryInvoiceData()', () => {
       axios,
     });
 
-    assert.isArray(response.queryResult);
+    assert.isAbove(response.queryResult.length, 2);
   });
 
-  it('should normalize queryParams resolve value to array', async () => {
+  it('should normalize queryParams resolve value to array with single element', async () => {
     const today = new Date().toISOString().split('T')[0];
     const queryParams = {
       invoiceIssueDateFrom: today,
@@ -155,7 +158,7 @@ describe('queryInvoiceData()', () => {
       axios,
     });
 
-    assert.isArray(response.queryResult);
+    assert.lengthOf(response.queryResult, 1);
   });
 
   it('should normalize invoiceQuery object key order', async () => {
@@ -223,11 +226,8 @@ describe('queryInvoiceData()', () => {
 
     assert.isNumber(response.currentPage);
     assert.isNumber(response.availablePage);
-
-    if (queryResult) {
-      assert.isBoolean(queryResult.invoiceReference.modifyWithoutMaster);
-      assert.isBoolean(queryResult.compressedContentIndicator);
-    }
+    assert.isBoolean(queryResult.invoiceReference.modifyWithoutMaster);
+    assert.isBoolean(queryResult.compressedContentIndicator);
   });
 
   it('should convert types with queryParams param', async () => {

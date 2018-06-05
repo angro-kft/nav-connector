@@ -1,4 +1,5 @@
 const { readFileSync } = require('fs');
+const ObjectId = require('bson-objectid');
 const { gzipSync } = require('zlib');
 
 const baseInvoiceXml = readFileSync('./test/lib/invoice-create.xml');
@@ -26,7 +27,7 @@ module.exports = function createInvoiceOperation({
       )
       .replace(
         '<invoiceNumber>2019/000123</invoiceNumber>',
-        `<invoiceNumber>${Date.now()}</invoiceNumber>`
+        `<invoiceNumber>${ObjectId().toString()}</invoiceNumber>`
       )
       .replace(
         '<invoiceIssueDate>2019-05-15</invoiceIssueDate>',
