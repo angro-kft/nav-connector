@@ -57,20 +57,7 @@ module.exports = async function sendRequest({ request, axios, path }) {
           'technicalValidationMessages',
         ]);
 
-        /* Rename property schemaValidationMessages to technicalValidationMessages.
-           The response data object key names will match the documentation this way.
-           This is necessary now because the response does not match the documentation
-           but can be omitted if the response or documentation gets fixed. */
-        const { schemaValidationMessages } = response.data;
-        let { technicalValidationMessages } = response.data;
-
-        if (schemaValidationMessages && !technicalValidationMessages) {
-          response.data.technicalValidationMessages = schemaValidationMessages;
-
-          delete response.data.schemaValidationMessages;
-        }
-
-        ({ technicalValidationMessages } = response.data);
+        const { technicalValidationMessages } = response.data;
 
         /* Normalize technicalValidationMessages to array. */
         if (!response.data.technicalValidationMessages) {
