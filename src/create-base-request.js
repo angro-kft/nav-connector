@@ -1,3 +1,4 @@
+const { pick } = require('lodash');
 const ObjectId = require('bson-objectid');
 const crypto = require('crypto');
 
@@ -23,6 +24,19 @@ module.exports = function createBaseRequest({
   invoices,
 }) {
   const { login, password, taxNumber, signatureKey } = technicalUser;
+
+  /* Normalize Object key order. This is necessary because
+     of the XML element has sequence property. */
+  const software = pick(softwareData, [
+    'softwareId',
+    'softwareName',
+    'softwareOperation',
+    'softwareMainVersion',
+    'softwareDevName',
+    'softwareDevContact',
+    'softwareDevCountryCode',
+    'softwareDevTaxNumber',
+  ]);
 
   const passwordHash = crypto
     .createHash('sha512')
@@ -54,7 +68,7 @@ module.exports = function createBaseRequest({
         taxNumber,
         requestSignature,
       },
-      software: softwareData,
+      software,
     },
   };
 

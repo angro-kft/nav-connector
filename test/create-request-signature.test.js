@@ -20,12 +20,12 @@ describe('createRequestSignature()', () => {
   it('should return valid request signature', () => {
     const requestSignature = createRequestSignature({
       requestId: 'RID332893718672',
-      date: new Date('2018-01-22T20:45:58Z'),
-      signatureKey: 'mnlFCfiGkwjIDe59',
+      date: new Date('2018-01-22T20:45:58.000Z'),
+      signatureKey: 'ce-8f5e-215119fa7dd621DLMRHRLH2S',
       invoices: invoicesBase64,
     });
     const expected =
-      '01C9CAB158C61784CECACE792F67C68C94135654F10F0A36FCA50E3F18D3068E1B14AADBBCBF3BA08446FFAC037D1DC2D2F92D932FA5085C5B69C3615EB08D50';
+      'F1FFC71E7A7C800B86FB7AF10F2FF26AB9FBCB8CD39747FE5987D0318563F2B0E8ECB893B9A34D4BF034575B6AFD067EB8A1D8C9D8E5875D9F42496443F9B84D';
 
     assert.equal(requestSignature, expected);
   });

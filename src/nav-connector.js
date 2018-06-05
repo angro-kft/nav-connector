@@ -5,6 +5,7 @@ const defaultBaseUrl = 'https://api.onlineszamla.nav.gov.hu/invoiceService/';
 const manageInvoice = require('../src/manage-invoice.js');
 const queryInvoiceStatus = require('../src/query-invoice-status.js');
 const testConnection = require('../src/test-connection.js');
+const queryInvoiceData = require('../src/query-invoice-data.js');
 const queryTaxpayer = require('../src/query-taxpayer.js');
 
 /** Class representing a NAV online interface.
@@ -12,17 +13,24 @@ const queryTaxpayer = require('../src/query-taxpayer.js');
 module.exports = class NavConnector {
   /**
    * Create a navConnector.
-   * @param {Object} params Constuctor params.
+   * @param {Object} params Constructor params.
    * @param {Object} params.technicalUser Technical user data.
    * @param {Object} params.softwareData Software data.
-   * @param {String} [params.baseURL=https://api.onlineszamla.nav.gov.hu/invoiceService/] Axios baseURL.
+   * @param {string} [params.baseURL=https://api.onlineszamla.nav.gov.hu/invoiceService/] Axios baseURL.
+   * @param {number} [params.timeout=70000] Axios default timeout integer in milliseconds.
    */
-  constructor({ technicalUser, softwareData, baseURL = defaultBaseUrl }) {
+  constructor({
+    technicalUser,
+    softwareData,
+    baseURL = defaultBaseUrl,
+    timeout = 70000,
+  }) {
     this.technicalUser = technicalUser;
     this.softwareData = softwareData;
 
     this.axios = axiosCreate({
       baseURL,
+      timeout,
       headers: {
         'content-type': 'application/xml',
         accept: 'application/xml',
@@ -69,7 +77,7 @@ module.exports = class NavConnector {
   }
 
   /**
-   * Test connection, user auth data and keys validity with a tokenExchnageRequest.
+   * Test connection, user auth data and keys validity with a tokenExchangeRequest.
    * @async
    * @throws {Object} Will throw an error if there was a network expectation
    * or any user given auth data or key is invalid.
@@ -78,6 +86,28 @@ module.exports = class NavConnector {
     const { technicalUser, softwareData, axios } = this;
 
     return testConnection({
+      technicalUser,
+      softwareData,
+      axios,
+    });
+  }
+
+  /**
+   * Query previously sent invoices with invoice number or query params.
+   * @async
+   * @param {Object} params Function params.
+   * @param {number} params.page Integer page to query.
+   * @param {Object} params.invoiceQuery Query single invoice with invoice number.
+   * @param {Object} params.queryParams Query multiple invoices with params.
+   * @returns {Promise<Array>} response
+   */
+  async queryInvoiceData({ page, invoiceQuery, queryParams }) {
+    const { technicalUser, softwareData, axios } = this;
+
+    return queryInvoiceData({
+      page,
+      invoiceQuery,
+      queryParams,
       technicalUser,
       softwareData,
       axios,

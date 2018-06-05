@@ -11,7 +11,6 @@ exports.technicalUser = chain(process.env)
   .value();
 
 exports.softwareData = {
-  softwareId: '123456789123456789',
   softwareName: 'string',
   softwareOperation: 'LOCAL_SOFTWARE',
   softwareMainVersion: 'string',
@@ -19,10 +18,12 @@ exports.softwareData = {
   softwareDevContact: 'string',
   softwareDevCountryCode: 'HU',
   softwareDevTaxNumber: 'string',
+  softwareId: '123456789123456789',
 };
 
 exports.axios = axios.create({
   baseURL: 'https://api-test.onlineszamla.nav.gov.hu/invoiceService/',
+  timeout: 70000,
   headers: {
     'content-type': 'application/xml',
     accept: 'application/xml',
