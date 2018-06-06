@@ -69,7 +69,6 @@ describe('manageInvoice()', () => {
     });
   });
 
-  /*
   it('should resolve to transactionId with compressed content', async () => {
     const invoiceOperation = createInvoiceOperation({
       taxNumber: technicalUser.taxNumber,
@@ -91,5 +90,4 @@ describe('manageInvoice()', () => {
 
     assert.match(transactionId, /^[+a-zA-Z0-9_]{1,30}$/);
   });
-  */
 });
