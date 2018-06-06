@@ -273,6 +273,29 @@ if(queryParamsResults.length) {
 
 This function does type conversion for number and boolean typed values in the response according to the NAV service documentation.
 
+### navConnector.queryTaxpayer()
+
+Method to get taxpayer information by tax number.  
+It resolves to an object containing taxpayerValidity and taxpayerData properties.  
+Keep in mind the taxpayerData property is not returned by the NAV service if the tax number is non existent.
+
+```js
+/**
+ * Get taxpayer information by tax number.
+ * @param {string} taxNumber Taxpayer tax number to get information for.
+ * @returns {Promise<Object>} Taxpayer information.
+ */
+const { taxpayerValidity, taxpayerData } = await navConnector.queryTaxpayer('12345678');
+
+if (!taxpayerValidity) {
+  /* Taxpayer is non existent or inactive. */
+} else if (taxpayerData) {
+  /* The taxpayerData property was returned by the service. */
+}
+```
+
+This function does type conversion for boolean typed values in the response according to the NAV service documentation.
+
 ## Error handling
 
 All methods can throw expectation and You can fine tune how to log these error, handle them or retry the request if possible.
