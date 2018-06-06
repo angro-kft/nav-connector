@@ -178,9 +178,9 @@ describe('NavConnector', () => {
         baseURL,
       });
 
-      const taxpayerInfo = await navConnector.queryTaxpayer('24291763');
+      const taxpayerInfo = await navConnector.queryTaxpayer('15789934');
 
       assert.hasAllKeys(taxpayerInfo, ['taxpayerValidity', 'taxpayerData']);
-    }).timeout(2000);
+    });
   });
 });

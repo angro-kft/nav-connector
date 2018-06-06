@@ -277,7 +277,7 @@ This function does type conversion for number and boolean typed values in the re
 
 Method to get taxpayer information by tax number.  
 It resolves to an object containing taxpayerValidity and taxpayerData properties.  
-Keep in mind these properties are returned from the NAV service optionally.
+Keep in mind the taxpayerData property is not returned by the NAV service if the tax number is non existent.
 
 ```js
 /**
@@ -285,8 +285,16 @@ Keep in mind these properties are returned from the NAV service optionally.
  * @param {string} taxNumber Taxpayer tax number to get information for.
  * @returns {Promise<Object>} Taxpayer information.
  */
-const taxpayerInfo = await navConnector.queryTaxpayer('12345678');
+const { taxpayerValidity, taxpayerData } = await navConnector.queryTaxpayer('12345678');
+
+if (!taxpayerValidity) {
+  /* Taxpayer is non existent or inactive. */
+} else if (taxpayerData) {
+  /* The taxpayerData property was returned by the service. */
+}
 ```
+
+This function does type conversion for boolean typed values in the response according to the NAV service documentation.
 
 ## Error handling
 

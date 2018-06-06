@@ -27,14 +27,18 @@ module.exports = async function queryTaxpayer({
 
   request.QueryTaxpayerRequest.taxNumber = taxNumber;
 
-  const responseData = await sendRequest({
+  const response = await sendRequest({
     request,
     axios,
     path: '/queryTaxpayer',
   });
 
-  return pick(responseData.QueryTaxpayerResponse, [
+  const taxpayerInfo = pick(response.QueryTaxpayerResponse, [
     'taxpayerValidity',
     'taxpayerData',
   ]);
+
+  taxpayerInfo.taxpayerValidity = taxpayerInfo.taxpayerValidity === 'true';
+
+  return taxpayerInfo;
 };

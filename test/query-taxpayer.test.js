@@ -6,23 +6,23 @@ const queryTaxpayer = require('../src/query-taxpayer.js');
 describe('queryTaxpayer()', () => {
   it('should resolve to taxpayer information if taxpayer is valid', async () => {
     const taxpayerInfo = await queryTaxpayer({
-      taxNumber: '24291763',
+      taxNumber: '15789934',
       technicalUser,
       softwareData,
       axios,
     });
 
     assert.hasAllKeys(taxpayerInfo, ['taxpayerValidity', 'taxpayerData']);
-  }).timeout(2000);
+  });
 
   it('should resolve to empty object if taxpayer does not exists', async () => {
     const taxpayerInfo = await queryTaxpayer({
-      taxNumber: '12345678',
+      taxNumber: '00000000',
       technicalUser,
       softwareData,
       axios,
     });
 
-    assert.isEmpty(taxpayerInfo);
-  }).timeout(2000);
+    assert.hasAllKeys(taxpayerInfo, ['taxpayerValidity']);
+  });
 });
