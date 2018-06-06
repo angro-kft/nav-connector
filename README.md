@@ -4,7 +4,7 @@
 [![codecov](https://codecov.io/gh/angro-kft/nav-connector/branch/dev/graph/badge.svg)](https://codecov.io/gh/angro-kft/nav-connector)
 [![npm (scoped)](https://img.shields.io/npm/v/@angro/nav-connector.svg)](https://www.npmjs.com/package/@angro/nav-connector)
 [![license](https://img.shields.io/github/license/angro-kft/nav-connector.svg)](https://github.com/angro-kft/nav-connector/blob/dev/LICENSE)
-![nav](https://img.shields.io/badge/NAV%20service%20version%20compatible-0.13-blue.svg)
+![nav](https://img.shields.io/badge/NAV%20service%20version%20compatible-0.14-blue.svg)
 
 Node.js module which provides an interface for communicating with NAV online invoice service.
 
@@ -110,22 +110,22 @@ Class representing the implementation of the NAV online invoice data service spe
  * @param {Object} params.technicalUser Technical user data.
  * @param {Object} params.softwareData Software data.
  * @param {String} [params.baseURL=https://api.onlineszamla.nav.gov.hu/invoiceService/] Axios baseURL.
- * @param {number} [params.timeout=60000] Axios default timeout integer in milliseconds.
+ * @param {number} [params.timeout=70000] Axios default timeout integer in milliseconds.
  */
 const navConnector = new NavConnector({ technicalUser, softwareData });
 ```
 
-Axios timeout option is needed because during NAV service outages, requests will never timeout if axios timeout option is not set.  
+Axios timeout option is needed because during NAV service outages, requests may never timeout if axios timeout option is not set.  
 According to the NAV online invoice service documentation the request timeout is set to 5000 ms on the service side
-but at this time in practice there is no timeout and requests can resolve even after 20 seconds.  
-The timeout is set to 60000 milliseconds (60 sec) in axios as default.  
-You can fine tune this value but its strongly suggested to keep it hight to avoid dropped responses.
+but in practice there may be no timeout or there can be a gateway timeout after 60 seconds.
+The timeout is set to 70000 milliseconds (70 sec) in axios as default.  
+You can fine tune this value but its strongly suggested to keep it above 60 seconds to avoid dropped responses.
 
 ```js
 const navConnector = new NavConnector({
   technicalUser,
   softwareData,
-  timeout: 60000,
+  timeout: 70000,
 });
 ```
 
@@ -273,6 +273,29 @@ if(queryParamsResults.length) {
 
 This function does type conversion for number and boolean typed values in the response according to the NAV service documentation.
 
+### navConnector.queryTaxpayer()
+
+Method to get taxpayer information by tax number.  
+It resolves to an object containing taxpayerValidity and taxpayerData properties.  
+Keep in mind the taxpayerData property is not returned by the NAV service if the tax number is non existent.
+
+```js
+/**
+ * Get taxpayer information by tax number.
+ * @param {string} taxNumber Taxpayer tax number to get information for.
+ * @returns {Promise<Object>} Taxpayer information.
+ */
+const { taxpayerValidity, taxpayerData } = await navConnector.queryTaxpayer('12345678');
+
+if (!taxpayerValidity) {
+  /* Taxpayer is non existent or inactive. */
+} else if (taxpayerData) {
+  /* The taxpayerData property was returned by the service. */
+}
+```
+
+This function does type conversion for boolean typed values in the response according to the NAV service documentation.
+
 ## Error handling
 
 All methods can throw expectation and You can fine tune how to log these error, handle them or retry the request if possible.
@@ -281,15 +304,20 @@ All methods can throw expectation and You can fine tune how to log these error, 
 try {
   await navConnector.testConnection();
 } catch (error) {
-  if (error.response) {
-    /* Axios error instance.
-       Log the error and fix the request then resend it.
-       Its possible to have error here if the NAV service is down.
-       According to the specification handle those errors and
-       resend the request later. */
-  } else if (error.request) {
+  /* Axios error instance.*/
+  const { response, request } = error;
+
+  if (response) {
+    if (response.status === 504) {
+      /* Gateway timeout, retryable. */
+    } else if (response.data.result.errorCode === 'OPERATION_FAILED') {
+      /* Server side error, retryable. */
+    } else {
+      /* Log the error and fix the request then resend it. */
+    }
+  } else if (request) {
     /* http.ClientRequest instance.
-       Possible network error. You can try to resend the request later. */
+       Possible network error. Retryable. */
   } else {
     /* Something happened in setting up the request that triggered an Error.
        Log the error and try to fix the problem then resend the request. */
