@@ -80,6 +80,10 @@ describe('queryInvoiceStatus()', () => {
             }
 
             if (response) {
+              if (response.status === 504) {
+                return true;
+              }
+
               return response.data.result.errorCode === 'OPERATION_FAILED';
             }
 
@@ -170,17 +174,18 @@ describe('queryInvoiceStatus()', () => {
   });
 
   it('should convert types', async () => {
-    const processingResult = await queryInvoiceStatus({
+    const [processingResult] = await queryInvoiceStatus({
       transactionId: corruptTransactionId,
       technicalUser,
       softwareData,
       axios,
     });
 
-    console.log(processingResult);
-
     assert.isNumber(processingResult.index);
     assert.isBoolean(processingResult.compressedContentIndicator);
+    assert.isNumber(
+      processingResult.businessValidationMessages[1].pointer.line
+    );
   });
 
   it('should normalize validation messages to arrays with empty validation responses', async () => {
