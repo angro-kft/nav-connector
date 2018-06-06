@@ -3,23 +3,30 @@ const ObjectId = require('bson-objectid');
 const { gzipSync } = require('zlib');
 
 const baseInvoiceXml = readFileSync('./test/lib/invoice-create.xml');
+const corruptInvoiceXml = readFileSync('./test/lib/invoice-create-corrupt.xml');
 
 /**
- * Creates 3 valid and unique invoices and returns them as an invoiceOperation array.
+ * Creates 3 valid and unique invoices and returns them as an invoiceOperation Array.
  * @param {string} taxNumber Tax number of the taxpayer using the interface service,
- * to whom the technical user is assigned
- * @param {boolean} [compress=false]
+ * to whom the technical user is assigned.
+ * @param {boolean} [compress=false] Flag to compress invoice xmls.
+ * @param {boolean} [corrupt=false] Flag to set data corruptions in the invoices.
+ * The first xml has 0, the second has 1 the third has 2 technicalValidationMessages
+ * and businessValidationMessages errors.
  * @returns {Array} invoiceOperation
  */
 module.exports = function createInvoiceOperation({
   taxNumber,
   compress = false,
+  corrupt = false,
 }) {
   const invoiceOperation = [];
   const today = new Date().toISOString().split('T')[0];
 
   for (let index = 0; index < 3; index += 1) {
-    let invoiceXml = baseInvoiceXml
+    let invoiceXml = corrupt ? corruptInvoiceXml : baseInvoiceXml;
+
+    invoiceXml = invoiceXml
       .toString()
       .replace(
         '<taxpayerId>11111111</taxpayerId>',
@@ -41,6 +48,23 @@ module.exports = function createInvoiceOperation({
         '<paymentDate>2019-05-30</paymentDate>',
         `<paymentDate>${today}</paymentDate>`
       );
+
+    if (corrupt) {
+      switch (index) {
+        case 1:
+          invoiceXml = invoiceXml.replace('<lineNumber>1</lineNumber>', '');
+          break;
+
+        case 2:
+          invoiceXml = invoiceXml
+            .replace('<lineNumber>1</lineNumber>', '')
+            .replace('<lineNumber>2</lineNumber>', '');
+          break;
+
+        default:
+          break;
+      }
+    }
 
     if (compress) {
       invoiceXml = gzipSync(invoiceXml);

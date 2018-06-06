@@ -123,7 +123,7 @@ module.exports = async function queryInvoiceData({
       /* eslint-disable no-param-reassign */
       digest.invoiceNetAmount = Number(digest.invoiceNetAmount);
       digest.invoiceVatAmountHUF = Number(digest.invoiceVatAmountHUF);
-      /* eslint-disable-enable no-param-reassign */
+      /* eslint-enable no-param-reassign */
     });
   }
 

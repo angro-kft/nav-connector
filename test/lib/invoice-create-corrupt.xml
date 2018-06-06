@@ -102,12 +102,6 @@
 		</line>
 		<line>
 			<lineNumber>3</lineNumber>
-      <productCodes>
-				<productCode>
-					<productCodeCategory>VTSZ</productCodeCategory>
-					<productCodeValue>16010010</productCodeValue>
-				</productCode>
-			</productCodes>
 			<lineDescription>Árengedmény</lineDescription>
 			<quantity>1600.00</quantity>
 			<unitOfMeasure>kg</unitOfMeasure>

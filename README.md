@@ -194,10 +194,24 @@ Method to get the processing status of previously send invoices. The resolved re
  * @returns {Promise<Array>} processingResults
  */
 const processingResults = await navConnector.queryInvoiceStatus({
-      transactionId,
-      returnOriginalRequest: true,
-    });
+  transactionId,
+  returnOriginalRequest: true,
+});
+
+processingResults.forEach(processingResult => {
+  const {
+    index,
+    invoiceStatus,
+    businessValidationMessages,
+    technicalValidationMessages,
+  } = processingResult;
+
+  /* Property businessValidationMessages and technicalValidationMessages
+     are always normalized to arrays even if there were no validation messages. */
+});
 ```
+
+This function does type conversion for number and boolean typed values in the response according to the NAV service documentation.
 
 ### navConnector.testConnection()
 
