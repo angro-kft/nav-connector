@@ -22,9 +22,11 @@ module.exports = function createInvoiceOperation({
 }) {
   const invoiceOperation = [];
   const today = new Date().toISOString().split('T')[0];
+  let existingInvoiceNumber;
 
-  for (let index = 0; index < 3; index += 1) {
+  for (let index = 0; index < 6; index += 1) {
     let invoiceXml = corrupt ? corruptInvoiceXml : baseInvoiceXml;
+    const invoiceNumber = ObjectId().toString();
 
     invoiceXml = invoiceXml
       .toString()
@@ -34,7 +36,7 @@ module.exports = function createInvoiceOperation({
       )
       .replace(
         '<invoiceNumber>2019/000123</invoiceNumber>',
-        `<invoiceNumber>${ObjectId().toString()}</invoiceNumber>`
+        `<invoiceNumber>${invoiceNumber}</invoiceNumber>`
       )
       .replace(
         '<invoiceIssueDate>2019-05-15</invoiceIssueDate>',
@@ -52,13 +54,38 @@ module.exports = function createInvoiceOperation({
     if (corrupt) {
       switch (index) {
         case 1:
-          invoiceXml = invoiceXml.replace('<lineNumber>1</lineNumber>', '');
+          invoiceXml = invoiceXml.replace(
+            '<lineNumber>2</lineNumber>',
+            '<lineNumber>2</lineNumber><productCodes><productCode><productCodeCategory>VTSZ</productCodeCategory><productCodeValue>16010091</productCodeValue></productCode></productCodes>'
+          );
           break;
 
         case 2:
           invoiceXml = invoiceXml
-            .replace('<lineNumber>1</lineNumber>', '')
-            .replace('<lineNumber>2</lineNumber>', '');
+            .replace(
+              '<taxpayerId>15789934</taxpayerId>',
+              '<taxpayerId>33333333</taxpayerId>'
+            )
+            .replace(
+              '<lineNumber>2</lineNumber>',
+              '<lineNumber>2</lineNumber><productCodes><productCode><productCodeCategory>VTSZ</productCodeCategory><productCodeValue>16010091</productCodeValue></productCode></productCodes>'
+            );
+
+          break;
+
+        case 3:
+          existingInvoiceNumber = invoiceNumber;
+          break;
+
+        case 4:
+          invoiceXml = invoiceXml.replace('<lineNumber>2</lineNumber>', '');
+          break;
+
+        case 5:
+          invoiceXml = invoiceXml.replace(
+            `<invoiceNumber>${invoiceNumber}</invoiceNumber>`,
+            `<invoiceNumber>${existingInvoiceNumber}</invoiceNumber>`
+          );
           break;
 
         default:

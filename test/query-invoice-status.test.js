@@ -29,7 +29,7 @@ describe('queryInvoiceStatus()', () => {
     invoiceOperationList.push(
       createInvoiceOperation({
         taxNumber: technicalUser.taxNumber,
-      })
+      }).slice(0, 3)
     );
 
     invoiceOperationList.push(
@@ -174,29 +174,36 @@ describe('queryInvoiceStatus()', () => {
   });
 
   it('should convert types', async () => {
-    const [processingResult] = await queryInvoiceStatus({
+    const processingResults = await queryInvoiceStatus({
       transactionId: corruptTransactionId,
       technicalUser,
       softwareData,
       axios,
     });
 
+    const processingResult = processingResults[1];
+
     assert.isNumber(processingResult.index);
     assert.isBoolean(processingResult.compressedContentIndicator);
     assert.isNumber(
-      processingResult.businessValidationMessages[1].pointer.line
+      processingResult.businessValidationMessages[0].pointer.line
     );
   });
 
-  it('should normalize validation messages to arrays with empty validation responses', async () => {
-    const [processingResult] = await queryInvoiceStatus({
-      transactionId: singleTransactionId,
+  it('should normalize validation messages to arrays', async () => {
+    const processingResults = await queryInvoiceStatus({
+      transactionId: corruptTransactionId,
       technicalUser,
       softwareData,
       axios,
     });
 
-    assert.isArray(processingResult.technicalValidationMessages);
-    assert.isArray(processingResult.businessValidationMessages);
+    assert.lengthOf(processingResults[0].businessValidationMessages, 0);
+    assert.lengthOf(processingResults[1].businessValidationMessages, 1);
+    assert.lengthOf(processingResults[2].businessValidationMessages, 2);
+
+    assert.lengthOf(processingResults[0].technicalValidationMessages, 0);
+    assert.lengthOf(processingResults[3].technicalValidationMessages, 1);
+    assert.lengthOf(processingResults[4].technicalValidationMessages, 2);
   });
 });
