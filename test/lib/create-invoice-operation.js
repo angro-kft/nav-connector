@@ -11,8 +11,6 @@ const corruptInvoiceXml = readFileSync('./test/lib/invoice-create-corrupt.xml');
  * to whom the technical user is assigned.
  * @param {boolean} [compress=false] Flag to compress invoice xmls.
  * @param {boolean} [corrupt=false] Flag to set data corruptions in the invoices.
- * The first xml has 0, the second has 1 the third has 2 technicalValidationMessages
- * and businessValidationMessages errors.
  * @returns {Array} invoiceOperation
  */
 module.exports = function createInvoiceOperation({

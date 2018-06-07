@@ -1,4 +1,10 @@
 const { assert } = require('chai');
+
+const { promisify } = require('util');
+const async = require('async');
+
+const retry = promisify(async.retry).bind(async);
+
 const { axios, technicalUser, softwareData } = require('./lib/globals.js');
 const createInvoiceOperation = require('./lib/create-invoice-operation.js');
 
@@ -33,40 +39,60 @@ describe('queryInvoiceData()', () => {
       axios,
     });
 
-    await new Promise((resolve, reject) => {
-      const getInvoiceStatus = async () => {
-        try {
-          const processingResults = await queryInvoiceStatus({
-            transactionId,
-            returnOriginalRequest: true,
-            technicalUser,
-            softwareData,
-            axios,
-          });
-
-          const { invoiceStatus } = processingResults[0];
-
+    await retry(
+      {
+        times: 20,
+        interval: 500,
+        errorFilter: error => {
+          const { message, response, request } = error;
           if (this.test.timedOut) {
-            return;
+            return false;
           }
 
-          if (invoiceStatus === 'ABORTED') {
-            throw new Error('Invoice status is ABORTED!');
+          if (message === 'An invoice is still under processing!') {
+            return true;
           }
 
-          if (invoiceStatus === 'DONE') {
-            resolve();
-            return;
+          if (response) {
+            if (response.status === 504) {
+              return true;
+            }
+
+            return response.data.result.errorCode === 'OPERATION_FAILED';
           }
 
-          getInvoiceStatus();
-        } catch (error) {
-          reject(error);
+          if (request) {
+            return true;
+          }
+
+          return false;
+        },
+      },
+      async () => {
+        const processingResults = await queryInvoiceStatus({
+          transactionId,
+          technicalUser,
+          softwareData,
+          axios,
+        });
+
+        const hasAborted = processingResults.find(
+          processingResult => processingResult.invoiceStatus === 'ABORTED'
+        );
+
+        if (hasAborted) {
+          throw new Error('Invoice status is ABORTED!');
         }
-      };
 
-      getInvoiceStatus();
-    });
+        const hasPending = processingResults.find(processingResult =>
+          ['RECEIVED', 'PROCESSING'].includes(processingResult.invoiceStatus)
+        );
+
+        if (hasPending) {
+          throw new Error('An invoice is still under processing!');
+        }
+      }
+    );
   });
 
   it('should resolve to empty array with invoiceQuery param without result', async () => {
