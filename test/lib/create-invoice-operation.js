@@ -3,7 +3,6 @@ const ObjectId = require('bson-objectid');
 const { gzipSync } = require('zlib');
 
 const baseInvoiceXml = readFileSync('./test/lib/invoice-create.xml');
-const corruptInvoiceXml = readFileSync('./test/lib/invoice-create-corrupt.xml');
 
 /**
  * Creates 3 valid and unique invoices and returns them as an invoiceOperation Array.
@@ -23,7 +22,7 @@ module.exports = function createInvoiceOperation({
   let existingInvoiceNumber;
 
   for (let index = 0; index < 6; index += 1) {
-    let invoiceXml = corrupt ? corruptInvoiceXml : baseInvoiceXml;
+    let invoiceXml = baseInvoiceXml;
     const invoiceNumber = ObjectId().toString();
 
     invoiceXml = invoiceXml
