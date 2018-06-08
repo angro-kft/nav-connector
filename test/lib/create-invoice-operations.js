@@ -12,7 +12,7 @@ const baseInvoiceXml = readFileSync('./test/lib/invoice-create.xml');
  * @param {boolean} [corrupt=false] Flag to set data corruptions in the invoices.
  * @returns {Array} invoiceOperation
  */
-module.exports = function createInvoiceOperation({
+module.exports = function createInvoiceOperations({
   taxNumber,
   compress = false,
   corrupt = false,

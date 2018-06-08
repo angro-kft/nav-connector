@@ -1,6 +1,6 @@
 const { assert } = require('chai');
 const { technicalUser, softwareData } = require('./lib/globals.js');
-const createInvoiceOperation = require('./lib/create-invoice-operation.js');
+const createInvoiceOperations = require('./lib/create-invoice-operations.js');
 
 const NavConnector = require('../src/nav-connector.js');
 
@@ -92,7 +92,7 @@ describe('NavConnector', () => {
         baseURL,
       });
 
-      const invoiceOperation = createInvoiceOperation({
+      const invoiceOperation = createInvoiceOperations({
         taxNumber: technicalUser.taxNumber,
       }).slice(0, 1);
 
@@ -116,7 +116,7 @@ describe('NavConnector', () => {
         baseURL,
       });
 
-      const invoiceOperation = createInvoiceOperation({
+      const invoiceOperation = createInvoiceOperations({
         taxNumber: technicalUser.taxNumber,
       }).slice(0, 1);
 

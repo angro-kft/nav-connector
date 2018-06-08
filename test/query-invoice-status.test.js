@@ -1,12 +1,8 @@
 const { assert } = require('chai');
 
-const { promisify } = require('util');
-const async = require('async');
-
-const retry = promisify(async.retry).bind(async);
-
 const { axios, technicalUser, softwareData } = require('./lib/globals.js');
-const createInvoiceOperation = require('./lib/create-invoice-operation.js');
+const createInvoiceOperations = require('./lib/create-invoice-operations.js');
+const waitInvoiceProcessing = require('./lib/wait-invoice-processing.js');
 
 const manageInvoice = require('../src/manage-invoice.js');
 const queryInvoiceStatus = require('../src/query-invoice-status.js');
@@ -21,19 +17,19 @@ describe('queryInvoiceStatus()', () => {
     const invoiceOperationList = [];
 
     invoiceOperationList.push(
-      createInvoiceOperation({
+      createInvoiceOperations({
         taxNumber: technicalUser.taxNumber,
       }).slice(0, 1)
     );
 
     invoiceOperationList.push(
-      createInvoiceOperation({
+      createInvoiceOperations({
         taxNumber: technicalUser.taxNumber,
       }).slice(0, 3)
     );
 
     invoiceOperationList.push(
-      createInvoiceOperation({
+      createInvoiceOperations({
         taxNumber: technicalUser.taxNumber,
         corrupt: true,
       })
@@ -65,64 +61,14 @@ describe('queryInvoiceStatus()', () => {
       multiTransactionId,
       corruptTransactionId,
     ].map((transactionId, index) =>
-      retry(
-        {
-          times: 20,
-          interval: 500,
-          errorFilter: error => {
-            const { message, response, request } = error;
-            if (this.test.timedOut) {
-              return false;
-            }
-
-            if (message === 'An invoice is still under processing!') {
-              return true;
-            }
-
-            if (response) {
-              if (response.status === 504) {
-                return true;
-              }
-
-              return response.data.result.errorCode === 'OPERATION_FAILED';
-            }
-
-            if (request) {
-              return true;
-            }
-
-            return false;
-          },
-        },
-        async () => {
-          const processingResults = await queryInvoiceStatus({
-            transactionId,
-            technicalUser,
-            softwareData,
-            axios,
-          });
-
-          /* Corrupt xml status is always aborted on index 1 and 2. */
-          const hasAborted = processingResults.find(
-            (processingResult, invoiceIndex) =>
-              processingResult.invoiceStatus === 'ABORTED' &&
-              !invoiceIndex &&
-              index !== 2
-          );
-
-          if (hasAborted) {
-            throw new Error('Invoice status is ABORTED!');
-          }
-
-          const hasPending = processingResults.find(processingResult =>
-            ['RECEIVED', 'PROCESSING'].includes(processingResult.invoiceStatus)
-          );
-
-          if (hasPending) {
-            throw new Error('An invoice is still under processing!');
-          }
-        }
-      )
+      waitInvoiceProcessing({
+        transactionId,
+        technicalUser,
+        softwareData,
+        axios,
+        test: this.test,
+        ignoreAbortedIndexes: index === 2 ? [4, 5] : [],
+      })
     );
 
     await Promise.all(getStatusPromises);
