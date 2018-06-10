@@ -6,6 +6,7 @@ const manageInvoice = require('../src/manage-invoice.js');
 const queryInvoiceStatus = require('../src/query-invoice-status.js');
 const testConnection = require('../src/test-connection.js');
 const queryInvoiceData = require('../src/query-invoice-data.js');
+const queryTaxpayer = require('../src/query-taxpayer.js');
 
 /** Class representing a NAV online interface.
  */
@@ -16,13 +17,13 @@ module.exports = class NavConnector {
    * @param {Object} params.technicalUser Technical user data.
    * @param {Object} params.softwareData Software data.
    * @param {string} [params.baseURL=https://api.onlineszamla.nav.gov.hu/invoiceService/] Axios baseURL.
-   * @param {number} [params.timeout=60000] Axios default timeout integer in milliseconds.
+   * @param {number} [params.timeout=70000] Axios default timeout integer in milliseconds.
    */
   constructor({
     technicalUser,
     softwareData,
     baseURL = defaultBaseUrl,
-    timeout = 60000,
+    timeout = 70000,
   }) {
     this.technicalUser = technicalUser;
     this.softwareData = softwareData;
@@ -98,7 +99,7 @@ module.exports = class NavConnector {
    * @param {number} params.page Integer page to query.
    * @param {Object} params.invoiceQuery Query single invoice with invoice number.
    * @param {Object} params.queryParams Query multiple invoices with params.
-   * @returns {Promise<Array>} response
+   * @returns {Promise<Object>} response
    */
   async queryInvoiceData({ page, invoiceQuery, queryParams }) {
     const { technicalUser, softwareData, axios } = this;
@@ -107,6 +108,22 @@ module.exports = class NavConnector {
       page,
       invoiceQuery,
       queryParams,
+      technicalUser,
+      softwareData,
+      axios,
+    });
+  }
+
+  /**
+   * Get taxpayer information by tax number.
+   * @param {string} taxNumber Taxpayer tax number to get information for.
+   * @returns {Promise<Object>} Taxpayer information.
+   */
+  async queryTaxpayer(taxNumber) {
+    const { technicalUser, softwareData, axios } = this;
+
+    return queryTaxpayer({
+      taxNumber,
       technicalUser,
       softwareData,
       axios,

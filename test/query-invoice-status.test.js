@@ -1,31 +1,87 @@
 const { assert } = require('chai');
+
 const { axios, technicalUser, softwareData } = require('./lib/globals.js');
-const createInvoiceOperation = require('./lib/create-invoice-operation.js');
+const createInvoiceOperations = require('./lib/create-invoice-operations.js');
+const createInvoiceCorruptOperations = require('./lib/create-invoice-corrupt-operations.js');
+const waitInvoiceProcessing = require('./lib/wait-invoice-processing.js');
 
 const manageInvoice = require('../src/manage-invoice.js');
 const queryInvoiceStatus = require('../src/query-invoice-status.js');
 
 describe('queryInvoiceStatus()', () => {
-  it('should resolve to processingResults with single invoice', async () => {
-    const invoiceOperation = createInvoiceOperation({
-      taxNumber: technicalUser.taxNumber,
-    }).slice(0, 1);
+  let singleTransactionId;
+  let multiTransactionId;
+  let corruptTransactionId;
 
-    const invoiceOperations = {
-      technicalAnnulment: false,
-      compressedContent: false,
-      invoiceOperation,
-    };
+  /* Send and wait for a single and multiple invoices to be processed. */
+  before(async function before() {
+    const invoiceOperationList = [];
 
-    const transactionId = await manageInvoice({
-      invoiceOperations,
-      technicalUser,
-      softwareData,
-      axios,
-    });
+    /* Create invoice operations with a single invoice. */
+    invoiceOperationList.push(
+      createInvoiceOperations({
+        taxNumber: technicalUser.taxNumber,
+        size: 1,
+      })
+    );
 
+    /* Create invoice operations with a multiple invoices. */
+    invoiceOperationList.push(
+      createInvoiceOperations({
+        taxNumber: technicalUser.taxNumber,
+        size: 2,
+      })
+    );
+
+    /* Create invoice operations with warns and errors. */
+    invoiceOperationList.push(
+      createInvoiceCorruptOperations({
+        taxNumber: technicalUser.taxNumber,
+      })
+    );
+
+    /* Send invoices. */
+    [
+      singleTransactionId,
+      multiTransactionId,
+      corruptTransactionId,
+    ] = await Promise.all(
+      invoiceOperationList.map(invoiceOperation =>
+        manageInvoice({
+          invoiceOperations: {
+            technicalAnnulment: false,
+            compressedContent: false,
+            invoiceOperation,
+          },
+          technicalUser,
+          softwareData,
+          axios,
+        })
+      )
+    );
+
+    /* Wait for invoices to be processes. */
+    const getStatusPromises = [
+      singleTransactionId,
+      multiTransactionId,
+      corruptTransactionId,
+    ].map((transactionId, index) =>
+      waitInvoiceProcessing({
+        transactionId,
+        technicalUser,
+        softwareData,
+        axios,
+        test: this.test,
+        ignoreAbortedIndexes: index === 2 ? [3, 4, 5] : [],
+      })
+    );
+
+    await Promise.all(getStatusPromises);
+  });
+
+  it('should resolve to array with single invoice', async () => {
     const processingResults = await queryInvoiceStatus({
-      transactionId,
+      transactionId: singleTransactionId,
       technicalUser,
       softwareData,
       axios,
@@ -34,26 +90,9 @@ describe('queryInvoiceStatus()', () => {
     assert.isArray(processingResults);
   });
 
-  it('should resolve to processingResults with multiple invoice', async () => {
-    const invoiceOperation = createInvoiceOperation({
-      taxNumber: technicalUser.taxNumber,
-    });
-
-    const invoiceOperations = {
-      technicalAnnulment: false,
-      compressedContent: false,
-      invoiceOperation,
-    };
-
-    const transactionId = await manageInvoice({
-      invoiceOperations,
-      technicalUser,
-      softwareData,
-      axios,
-    });
-
+  it('should resolve to array with multiple invoice', async () => {
     const processingResults = await queryInvoiceStatus({
-      transactionId,
+      transactionId: multiTransactionId,
       technicalUser,
       softwareData,
       axios,
@@ -74,38 +113,48 @@ describe('queryInvoiceStatus()', () => {
   });
 
   it('should handle originalRequest param', async () => {
-    const invoiceOperation = createInvoiceOperation({
-      taxNumber: technicalUser.taxNumber,
-    }).slice(0, 1);
-
-    const invoiceOperations = {
-      technicalAnnulment: false,
-      compressedContent: false,
-      invoiceOperation,
-    };
-
-    const transactionId = await manageInvoice({
-      invoiceOperations,
-      technicalUser,
-      softwareData,
-      axios,
-    });
-
     const processingResults = await queryInvoiceStatus({
-      transactionId,
+      transactionId: singleTransactionId,
       returnOriginalRequest: true,
       technicalUser,
       softwareData,
       axios,
     });
 
-    const { invoice } = invoiceOperations.invoiceOperation[0];
-    const { invoiceStatus, originalRequest } = processingResults[0];
+    assert.property(processingResults[0], 'originalRequest');
+  });
 
-    if (invoiceStatus === 'RECEIVED') {
-      assert.isUndefined(originalRequest);
-    } else {
-      assert.equal(invoice, originalRequest);
-    }
+  it('should convert types', async () => {
+    const processingResults = await queryInvoiceStatus({
+      transactionId: corruptTransactionId,
+      technicalUser,
+      softwareData,
+      axios,
+    });
+
+    const processingResult = processingResults[1];
+
+    assert.isNumber(processingResult.index);
+    assert.isBoolean(processingResult.compressedContentIndicator);
+    assert.isNumber(
+      processingResult.businessValidationMessages[0].pointer.line
+    );
+  });
+
+  it('should normalize validation messages to arrays', async () => {
+    const processingResults = await queryInvoiceStatus({
+      transactionId: corruptTransactionId,
+      technicalUser,
+      softwareData,
+      axios,
+    });
+
+    assert.lengthOf(processingResults[0].businessValidationMessages, 0);
+    assert.lengthOf(processingResults[1].businessValidationMessages, 1);
+    assert.lengthOf(processingResults[2].businessValidationMessages, 2);
+
+    assert.lengthOf(processingResults[0].technicalValidationMessages, 0);
+    assert.lengthOf(processingResults[4].technicalValidationMessages, 1);
+    assert.lengthOf(processingResults[5].technicalValidationMessages, 2);
   });
 });

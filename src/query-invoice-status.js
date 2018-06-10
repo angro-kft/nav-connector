@@ -43,11 +43,50 @@ module.exports = async function queryInvoiceStatus({
     return [];
   }
 
-  const { processingResult } = processingResults;
+  let { processingResult } = processingResults;
 
   if (!Array.isArray(processingResult)) {
-    return [processingResult];
+    processingResult = [processingResult];
   }
+
+  processingResult.forEach(result => {
+    const {
+      index,
+      compressedContentIndicator,
+      technicalValidationMessages,
+      businessValidationMessages,
+    } = result;
+    /* eslint-disable no-param-reassign */
+
+    /* Type conversion. */
+    result.index = Number(index);
+    result.compressedContentIndicator = compressedContentIndicator === 'true';
+
+    /* Normalize technicalValidationMessages to Array. */
+    if (!technicalValidationMessages) {
+      result.technicalValidationMessages = [];
+    } else if (!Array.isArray(technicalValidationMessages)) {
+      result.technicalValidationMessages = [technicalValidationMessages];
+    }
+
+    /* Normalize businessValidationMessages to Array. */
+    if (!businessValidationMessages) {
+      result.businessValidationMessages = [];
+    } else if (!Array.isArray(businessValidationMessages)) {
+      result.businessValidationMessages = [businessValidationMessages];
+    }
+
+    /* Type conversion. */
+    result.businessValidationMessages.forEach(validationResult => {
+      const { pointer } = validationResult;
+
+      if (pointer && pointer.line) {
+        pointer.line = Number(pointer.line);
+      }
+    });
+
+    /* eslint-enable no-param-reassign */
+  });
 
   return processingResult;
 };
