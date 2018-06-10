@@ -1,37 +1,40 @@
 const { assert } = require('chai');
 
-const { promisify } = require('util');
-const async = require('async');
-
-const retry = promisify(async.retry).bind(async);
-
 const { axios, technicalUser, softwareData } = require('./lib/globals.js');
-const createInvoiceOperation = require('./lib/create-invoice-operation.js');
+const createInvoiceOperations = require('./lib/create-invoice-operations.js');
+const createInvoiceModifyOperation = require('./lib/create-invoice-modify-operation.js');
+const waitInvoiceProcessing = require('./lib/wait-invoice-processing.js');
 
 const manageInvoice = require('../src/manage-invoice.js');
-const queryInvoiceStatus = require('../src/query-invoice-status.js');
 const queryInvoiceData = require('../src/query-invoice-data.js');
 
 describe('queryInvoiceData()', () => {
   let existingInvoiceNumber;
+  let modifiedInvoiceNumber;
   let transactionId;
 
   before(async function before() {
-    const invoiceOperation = createInvoiceOperation({
+    /* Create invoice operations. */
+    const invoiceCreateOperation = createInvoiceOperations({
       taxNumber: technicalUser.taxNumber,
-    }).slice(0, 2);
+      size: 2,
+    });
 
     const invoiceOperations = {
       technicalAnnulment: false,
       compressedContent: false,
-      invoiceOperation,
+      invoiceOperation: invoiceCreateOperation,
     };
 
-    existingInvoiceNumber = Buffer.from(invoiceOperation[1].invoice, 'base64')
-      .toString()
-      .match(/<invoiceNumber>(.*?)<\/invoiceNumber>/g)[0]
-      .replace(/<\/?invoiceNumber>/g, '');
+    [existingInvoiceNumber, modifiedInvoiceNumber] = invoiceCreateOperation.map(
+      operation =>
+        Buffer.from(operation.invoice, 'base64')
+          .toString()
+          .match(/<invoiceNumber>(.*?)<\/invoiceNumber>/g)[0]
+          .replace(/<\/?invoiceNumber>/g, '')
+    );
 
+    /* Wait for invoice operations to send and be processed. */
     transactionId = await manageInvoice({
       invoiceOperations,
       technicalUser,
@@ -39,152 +42,40 @@ describe('queryInvoiceData()', () => {
       axios,
     });
 
-    await retry(
-      {
-        times: 20,
-        interval: 500,
-        errorFilter: error => {
-          const { message, response, request } = error;
-          if (this.test.timedOut) {
-            return false;
-          }
+    await waitInvoiceProcessing({
+      transactionId,
+      technicalUser,
+      softwareData,
+      axios,
+      test: this.test,
+    });
 
-          if (message === 'An invoice is still under processing!') {
-            return true;
-          }
+    /* After invoices are processed create and send a modifier invoice. */
+    const invoiceModifyOperation = createInvoiceModifyOperation({
+      taxNumber: technicalUser.taxNumber,
+      originalInvoiceNumber: modifiedInvoiceNumber,
+    });
 
-          if (response) {
-            if (response.status === 504) {
-              return true;
-            }
-
-            return response.data.result.errorCode === 'OPERATION_FAILED';
-          }
-
-          if (request) {
-            return true;
-          }
-
-          return false;
-        },
-      },
-      async () => {
-        const processingResults = await queryInvoiceStatus({
-          transactionId,
-          technicalUser,
-          softwareData,
-          axios,
-        });
-
-        const hasAborted = processingResults.find(
-          processingResult => processingResult.invoiceStatus === 'ABORTED'
-        );
-
-        if (hasAborted) {
-          throw new Error('Invoice status is ABORTED!');
-        }
-
-        const hasPending = processingResults.find(processingResult =>
-          ['RECEIVED', 'PROCESSING'].includes(processingResult.invoiceStatus)
-        );
-
-        if (hasPending) {
-          throw new Error('An invoice is still under processing!');
-        }
-      }
-    );
-  });
-
-  it('should resolve to empty array with invoiceQuery param without result', async () => {
-    const invoiceQuery = {
-      invoiceNumber: 'invoiceNumber',
-      requestAllModification: true,
+    const invoiceModifyOperations = {
+      technicalAnnulment: false,
+      compressedContent: false,
+      invoiceOperation: invoiceModifyOperation,
     };
 
-    const response = await queryInvoiceData({
-      page: 1,
-      invoiceQuery,
+    const invoiceModifyTransactionId = await manageInvoice({
+      invoiceOperations: invoiceModifyOperations,
       technicalUser,
       softwareData,
       axios,
     });
 
-    assert.lengthOf(response.queryResult, 0);
-  });
-
-  it('should resolve to empty array with queryParams param without result', async () => {
-    const queryParams = {
-      invoiceIssueDateFrom: '1900-01-01',
-      invoiceIssueDateTo: '1900-01-01',
-    };
-
-    const response = await queryInvoiceData({
-      page: 1,
-      queryParams,
+    await waitInvoiceProcessing({
+      transactionId: invoiceModifyTransactionId,
       technicalUser,
       softwareData,
       axios,
+      test: this.test,
     });
-
-    assert.lengthOf(response.queryResult, 0);
-  });
-
-  it('should resolve with invoiceQuery param', async () => {
-    const invoiceQuery = {
-      invoiceNumber: existingInvoiceNumber,
-      requestAllModification: true,
-    };
-
-    const response = await queryInvoiceData({
-      page: 1,
-      invoiceQuery,
-      technicalUser,
-      softwareData,
-      axios,
-    });
-
-    assert.lengthOf(response.queryResult, 1);
-  });
-
-  it('should resolve with queryParams param', async () => {
-    const today = new Date().toISOString().split('T')[0];
-    const queryParams = {
-      invoiceIssueDateFrom: today,
-      invoiceIssueDateTo: today,
-    };
-
-    const response = await queryInvoiceData({
-      page: 1,
-      queryParams,
-      technicalUser,
-      softwareData,
-      axios,
-    });
-
-    assert.isAbove(response.queryResult.length, 2);
-  });
-
-  it('should normalize queryParams resolve value to array with single element', async () => {
-    const today = new Date().toISOString().split('T')[0];
-    const queryParams = {
-      invoiceIssueDateFrom: today,
-      invoiceIssueDateTo: today,
-      transactionParams: {
-        transactionId,
-        index: 1,
-        operation: 'CREATE',
-      },
-    };
-
-    const response = await queryInvoiceData({
-      page: 1,
-      queryParams,
-      technicalUser,
-      softwareData,
-      axios,
-    });
-
-    assert.lengthOf(response.queryResult, 1);
   });
 
   it('should normalize invoiceQuery object key order', async () => {
@@ -234,10 +125,9 @@ describe('queryInvoiceData()', () => {
     });
   });
 
-  it('should convert types with invoiceQuery param', async () => {
+  it('should resolve without "queryResult" property when invoiceQuery query has no result', async () => {
     const invoiceQuery = {
-      invoiceNumber: existingInvoiceNumber,
-      requestAllModification: true,
+      invoiceNumber: 'invoiceNumber',
     };
 
     const response = await queryInvoiceData({
@@ -248,19 +138,13 @@ describe('queryInvoiceData()', () => {
       axios,
     });
 
-    const queryResult = response.queryResult[0];
-
-    assert.isNumber(response.currentPage);
-    assert.isNumber(response.availablePage);
-    assert.isBoolean(queryResult.invoiceReference.modifyWithoutMaster);
-    assert.isBoolean(queryResult.compressedContentIndicator);
+    assert.notProperty(response, 'queryResult');
   });
 
-  it('should convert types with queryParams param', async () => {
-    const today = new Date().toISOString().split('T')[0];
+  it('should resolve without "queryResult" property when queryParams query has no result', async () => {
     const queryParams = {
-      invoiceIssueDateFrom: today,
-      invoiceIssueDateTo: today,
+      invoiceIssueDateFrom: '1900-01-01',
+      invoiceIssueDateTo: '1900-01-01',
     };
 
     const response = await queryInvoiceData({
@@ -271,11 +155,145 @@ describe('queryInvoiceData()', () => {
       axios,
     });
 
-    const firstDigest = response.queryResult[0];
+    assert.notProperty(response, 'queryResult');
+  });
 
-    assert.isNumber(response.currentPage);
-    assert.isNumber(response.availablePage);
-    assert.isNumber(firstDigest.invoiceNetAmount);
-    assert.isNumber(firstDigest.invoiceVatAmountHUF);
+  it('should resolve with "invoiceResult" and "invoiceDigestList" property when invoiceQuery query has result', async () => {
+    const invoiceQuery = {
+      invoiceNumber: existingInvoiceNumber,
+    };
+
+    const { queryResult } = await queryInvoiceData({
+      page: 1,
+      invoiceQuery,
+      technicalUser,
+      softwareData,
+      axios,
+    });
+
+    assert.hasAllKeys(queryResult, ['invoiceResult', 'invoiceDigestList']);
+  });
+
+  it('should resolve with "invoiceDigestList" property when queryParams query has result', async () => {
+    const today = new Date().toISOString().split('T')[0];
+    const queryParams = {
+      invoiceIssueDateFrom: today,
+      invoiceIssueDateTo: today,
+    };
+
+    const { queryResult } = await queryInvoiceData({
+      page: 1,
+      queryParams,
+      technicalUser,
+      softwareData,
+      axios,
+    });
+
+    assert.hasAllKeys(queryResult, ['invoiceDigestList']);
+    assert.isAbove(queryResult.invoiceDigestList.length, 2);
+  });
+
+  it('should normalize invoiceDigestList to Array with single invoiceQuery query digest result', async () => {
+    const invoiceQuery = {
+      invoiceNumber: existingInvoiceNumber,
+    };
+
+    const { queryResult } = await queryInvoiceData({
+      page: 1,
+      invoiceQuery,
+      technicalUser,
+      softwareData,
+      axios,
+    });
+
+    assert.lengthOf(queryResult.invoiceDigestList, 1);
+  });
+
+  it('should normalize invoiceDigestList to Array with single queryParams query digest result', async () => {
+    const today = new Date().toISOString().split('T')[0];
+    const queryParams = {
+      invoiceIssueDateFrom: today,
+      invoiceIssueDateTo: today,
+      transactionParams: {
+        transactionId,
+        index: 1,
+        operation: 'CREATE',
+      },
+    };
+
+    const { queryResult } = await queryInvoiceData({
+      page: 1,
+      queryParams,
+      technicalUser,
+      softwareData,
+      axios,
+    });
+
+    assert.lengthOf(queryResult.invoiceDigestList, 1);
+  });
+
+  it('should handle query modified invoice response if requestAllModification is true', async () => {
+    const invoiceQuery = {
+      invoiceNumber: modifiedInvoiceNumber,
+      requestAllModification: true,
+    };
+
+    const { queryResult } = await queryInvoiceData({
+      page: 1,
+      invoiceQuery,
+      technicalUser,
+      softwareData,
+      axios,
+    });
+
+    assert.lengthOf(queryResult.invoiceDigestList, 2);
+  });
+
+  it('should convert types in invoiceQuery resolve value', async () => {
+    const invoiceQuery = {
+      invoiceNumber: modifiedInvoiceNumber,
+      requestAllModification: true,
+    };
+
+    const { queryResult, currentPage, availablePage } = await queryInvoiceData({
+      page: 1,
+      invoiceQuery,
+      technicalUser,
+      softwareData,
+      axios,
+    });
+
+    const digest = queryResult.invoiceDigestList[0];
+    const { invoiceResult } = queryResult;
+
+    assert.isNumber(currentPage);
+    assert.isNumber(availablePage);
+    assert.isBoolean(invoiceResult.invoiceReference.modifyWithoutMaster);
+    assert.isBoolean(invoiceResult.compressedContentIndicator);
+    assert.isNumber(digest.invoiceNetAmount);
+    assert.isNumber(digest.invoiceVatAmountHUF);
+  });
+
+  it('should convert types in queryParams resolve value', async () => {
+    const today = new Date().toISOString().split('T')[0];
+    const queryParams = {
+      invoiceIssueDateFrom: today,
+      invoiceIssueDateTo: today,
+    };
+
+    const { queryResult, currentPage, availablePage } = await queryInvoiceData({
+      page: 1,
+      queryParams,
+      technicalUser,
+      softwareData,
+      axios,
+    });
+
+    const digest = queryResult.invoiceDigestList[1];
+
+    assert.isNumber(currentPage);
+    assert.isNumber(availablePage);
+    assert.isNumber(digest.invoiceNetAmount);
+    assert.isNumber(digest.invoiceVatAmountHUF);
   });
 });

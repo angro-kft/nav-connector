@@ -1,4 +1,4 @@
-const { pick } = require('lodash');
+const { pick, mapKeys } = require('lodash');
 
 const createBaseRequest = require('./create-base-request.js');
 const sendRequest = require('./send-request.js');
@@ -13,7 +13,7 @@ const sendRequest = require('./send-request.js');
  * @param {Object} params.technicalUser Technical user’s data.
  * @param {Object} params.softwareData Invoice software data.
  * @param {Object} params.axios Axios instance.
- * @returns {Promise<Array>} response
+ * @returns {Promise<Object>} queryResults
  */
 module.exports = async function queryInvoiceData({
   page,
@@ -33,7 +33,10 @@ module.exports = async function queryInvoiceData({
     /* Normalize invoiceQuery key order. */
     Object.assign(request.QueryInvoiceDataRequest, {
       page,
-      invoiceQuery: pick(invoiceQuery, ['invoiceNumber', 'invoiceNumber']),
+      invoiceQuery: pick(invoiceQuery, [
+        'invoiceNumber',
+        'requestAllModification',
+      ]),
     });
   } else {
     /* Normalize queryParams key order. */
@@ -75,61 +78,50 @@ module.exports = async function queryInvoiceData({
     path: '/queryInvoiceData',
   });
 
-  const response = responseData.QueryInvoiceDataResponse.queryResults;
-
-  /* Normalize queryResult to Array. */
-  const { queryResult } = response;
-
-  if (!queryResult) {
-    response.queryResult = [];
-  } else if (invoiceQuery) {
-    response.queryResult = [response.queryResult.invoiceResult];
-
-    /* Type conversions. */
-    const result = response.queryResult[0];
-
-    /* Rename property ns2:modifyWithoutMaster to modifyWithoutMaster.
-       The response data object key names will match the documentation this way.
-       This is necessary now because the response does not match the documentation
-       but can be omitted if the response or documentation gets fixed. */
-    const { invoiceReference } = result;
-
-    /* istanbul ignore next */
-    if (
-      invoiceReference['ns2:modifyWithoutMaster'] &&
-      !invoiceReference.modifyWithoutMaster
-    ) {
-      invoiceReference.modifyWithoutMaster =
-        invoiceReference['ns2:modifyWithoutMaster'];
-
-      delete invoiceReference['ns2:modifyWithoutMaster'];
-    }
-
-    invoiceReference.modifyWithoutMaster =
-      invoiceReference.modifyWithoutMaster === 'true';
-
-    result.compressedContentIndicator =
-      result.compressedContentIndicator === 'true';
-  } else {
-    const { invoiceDigest } = response.queryResult.invoiceDigestList;
-
-    /* Normalize to Array. */
-    response.queryResult = Array.isArray(invoiceDigest)
-      ? invoiceDigest
-      : [invoiceDigest];
-
-    /* Type conversions. */
-    response.queryResult.forEach(digest => {
-      /* eslint-disable no-param-reassign */
-      digest.invoiceNetAmount = Number(digest.invoiceNetAmount);
-      digest.invoiceVatAmountHUF = Number(digest.invoiceVatAmountHUF);
-      /* eslint-enable no-param-reassign */
-    });
-  }
+  const { queryResults } = responseData.QueryInvoiceDataResponse;
 
   /* Type conversions. */
-  response.currentPage = Number(response.currentPage);
-  response.availablePage = Number(response.availablePage);
+  queryResults.currentPage = Number(queryResults.currentPage);
+  queryResults.availablePage = Number(queryResults.availablePage);
 
-  return response;
+  const { queryResult } = queryResults;
+
+  if (!queryResult) {
+    return queryResults;
+  }
+
+  const { invoiceResult, invoiceDigestList } = queryResult;
+
+  if (invoiceResult) {
+    let { invoiceReference } = invoiceResult;
+    /* Map object key names to match the documentation. The ns2: prefix must be removed. */
+    invoiceResult.invoiceReference = mapKeys(invoiceReference, (value, key) =>
+      key.replace('ns2:', '')
+    );
+
+    ({ invoiceReference } = invoiceResult);
+
+    /* Type conversions. */
+    invoiceReference.modifyWithoutMaster =
+      invoiceReference.modifyWithoutMaster === 'true';
+    invoiceResult.compressedContentIndicator =
+      invoiceResult.compressedContentIndicator === 'true';
+  }
+
+  const { invoiceDigest } = invoiceDigestList;
+
+  /* Normalize to Array. */
+  queryResult.invoiceDigestList = Array.isArray(invoiceDigest)
+    ? invoiceDigest
+    : [invoiceDigest];
+
+  /* Type conversions. */
+  queryResult.invoiceDigestList.forEach(digest => {
+    /* eslint-disable no-param-reassign */
+    digest.invoiceNetAmount = Number(digest.invoiceNetAmount);
+    digest.invoiceVatAmountHUF = Number(digest.invoiceVatAmountHUF);
+    /* eslint-enable no-param-reassign */
+  });
+
+  return queryResults;
 };
