@@ -2,6 +2,7 @@ const { assert } = require('chai');
 
 const { axios, technicalUser, softwareData } = require('./lib/globals.js');
 const createInvoiceOperations = require('./lib/create-invoice-operations.js');
+const createInvoiceCorruptOperations = require('./lib/create-invoice-corrupt-operations.js');
 const waitInvoiceProcessing = require('./lib/wait-invoice-processing.js');
 
 const manageInvoice = require('../src/manage-invoice.js');
@@ -16,22 +17,26 @@ describe('queryInvoiceStatus()', () => {
   before(async function before() {
     const invoiceOperationList = [];
 
+    /* Create invoice operations with a single invoice. */
     invoiceOperationList.push(
       createInvoiceOperations({
         taxNumber: technicalUser.taxNumber,
-      }).slice(0, 1)
+        size: 1,
+      })
     );
 
+    /* Create invoice operations with a multiple invoices. */
     invoiceOperationList.push(
       createInvoiceOperations({
         taxNumber: technicalUser.taxNumber,
-      }).slice(0, 3)
+        size: 2,
+      })
     );
 
+    /* Create invoice operations with warns and errors. */
     invoiceOperationList.push(
-      createInvoiceOperations({
+      createInvoiceCorruptOperations({
         taxNumber: technicalUser.taxNumber,
-        corrupt: true,
       })
     );
 
@@ -67,7 +72,7 @@ describe('queryInvoiceStatus()', () => {
         softwareData,
         axios,
         test: this.test,
-        ignoreAbortedIndexes: index === 2 ? [4, 5] : [],
+        ignoreAbortedIndexes: index === 2 ? [3, 4, 5] : [],
       })
     );
 
@@ -149,7 +154,7 @@ describe('queryInvoiceStatus()', () => {
     assert.lengthOf(processingResults[2].businessValidationMessages, 2);
 
     assert.lengthOf(processingResults[0].technicalValidationMessages, 0);
-    assert.lengthOf(processingResults[3].technicalValidationMessages, 1);
-    assert.lengthOf(processingResults[4].technicalValidationMessages, 2);
+    assert.lengthOf(processingResults[4].technicalValidationMessages, 1);
+    assert.lengthOf(processingResults[5].technicalValidationMessages, 2);
   });
 });

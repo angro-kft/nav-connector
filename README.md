@@ -193,6 +193,8 @@ processingResults.forEach(processingResult => {
   const {
     index,
     invoiceStatus,
+    originalRequest,
+    compressedContentIndicator,
     businessValidationMessages,
     technicalValidationMessages,
   } = processingResult;
@@ -257,7 +259,7 @@ const { currentPage, availablePage, queryResult } = response;
 if (!queryResult) {
   return;
 }
-/* If requestAllModification is false then invoiceDigestList is undefined. */
+
 const { invoiceResult, invoiceDigestList } = queryResult;
 ```
 

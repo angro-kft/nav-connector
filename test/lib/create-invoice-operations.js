@@ -5,23 +5,23 @@ const { gzipSync } = require('zlib');
 const baseInvoiceXml = readFileSync('./test/lib/invoice-create.xml');
 
 /**
- * Creates 3 valid and unique invoices and returns them as an invoiceOperation Array.
- * @param {string} taxNumber Tax number of the taxpayer using the interface service,
+ * Create the given number of invoice operations.
+ * @param {Object} params Function params.
+ * @param {string} params.taxNumber Tax number of the taxpayer using the interface service,
  * to whom the technical user is assigned.
- * @param {boolean} [compress=false] Flag to compress invoice xmls.
- * @param {boolean} [corrupt=false] Flag to set data corruptions in the invoices.
+ * @param {boolean} [params.compress=false] Flag to compress invoice xmls.
+ * @param {number} [params.size=1] The integer of invoice operations to create.
  * @returns {Array} invoiceOperation
  */
 module.exports = function createInvoiceOperations({
   taxNumber,
   compress = false,
-  corrupt = false,
+  size = 1,
 }) {
   const invoiceOperation = [];
   const today = new Date().toISOString().split('T')[0];
-  let existingInvoiceNumber;
 
-  for (let index = 0; index < 6; index += 1) {
+  for (let index = 0; index < size; index += 1) {
     let invoiceXml = baseInvoiceXml;
     const invoiceNumber = ObjectId().toString();
 
@@ -47,48 +47,6 @@ module.exports = function createInvoiceOperations({
         '<paymentDate>2019-05-30</paymentDate>',
         `<paymentDate>${today}</paymentDate>`
       );
-
-    if (corrupt) {
-      switch (index) {
-        case 1:
-          invoiceXml = invoiceXml.replace(
-            '<lineNumber>2</lineNumber>',
-            '<lineNumber>2</lineNumber><productCodes><productCode><productCodeCategory>VTSZ</productCodeCategory><productCodeValue>16010091</productCodeValue></productCode></productCodes>'
-          );
-          break;
-
-        case 2:
-          invoiceXml = invoiceXml
-            .replace(
-              '<taxpayerId>15789934</taxpayerId>',
-              '<taxpayerId>33333333</taxpayerId>'
-            )
-            .replace(
-              '<lineNumber>2</lineNumber>',
-              '<lineNumber>2</lineNumber><productCodes><productCode><productCodeCategory>VTSZ</productCodeCategory><productCodeValue>16010091</productCodeValue></productCode></productCodes>'
-            );
-
-          break;
-
-        case 3:
-          existingInvoiceNumber = invoiceNumber;
-          break;
-
-        case 4:
-          invoiceXml = invoiceXml.replace('<lineNumber>2</lineNumber>', '');
-          break;
-
-        case 5:
-          invoiceXml = invoiceXml.replace(
-            `<invoiceNumber>${invoiceNumber}</invoiceNumber>`,
-            `<invoiceNumber>${existingInvoiceNumber}</invoiceNumber>`
-          );
-          break;
-
-        default:
-          break;
-      }
-    }
 
     if (compress) {
       invoiceXml = gzipSync(invoiceXml);

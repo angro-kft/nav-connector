@@ -1,4 +1,4 @@
-const { pick, mapKeys, has } = require('lodash');
+const { pick, mapKeys } = require('lodash');
 
 const createBaseRequest = require('./create-base-request.js');
 const sendRequest = require('./send-request.js');
@@ -13,7 +13,7 @@ const sendRequest = require('./send-request.js');
  * @param {Object} params.technicalUser Technical user’s data.
  * @param {Object} params.softwareData Invoice software data.
  * @param {Object} params.axios Axios instance.
- * @returns {Promise<Object>} response
+ * @returns {Promise<Object>} queryResults
  */
 module.exports = async function queryInvoiceData({
   page,
@@ -78,16 +78,16 @@ module.exports = async function queryInvoiceData({
     path: '/queryInvoiceData',
   });
 
-  const { response } = responseData.QueryInvoiceDataResponse;
+  const { queryResults } = responseData.QueryInvoiceDataResponse;
 
   /* Type conversions. */
-  response.currentPage = Number(response.currentPage);
-  response.availablePage = Number(response.availablePage);
+  queryResults.currentPage = Number(queryResults.currentPage);
+  queryResults.availablePage = Number(queryResults.availablePage);
 
-  const { queryResult } = response;
+  const { queryResult } = queryResults;
 
   if (!queryResult) {
-    return response;
+    return queryResults;
   }
 
   const { invoiceResult, invoiceDigestList } = queryResult;
@@ -102,31 +102,26 @@ module.exports = async function queryInvoiceData({
     ({ invoiceReference } = invoiceResult);
 
     /* Type conversions. */
-    if (has(invoiceReference, 'modifyWithoutMaster')) {
-      invoiceReference.modifyWithoutMaster =
-        invoiceReference.modifyWithoutMaster === 'true';
-    }
-
+    invoiceReference.modifyWithoutMaster =
+      invoiceReference.modifyWithoutMaster === 'true';
     invoiceResult.compressedContentIndicator =
       invoiceResult.compressedContentIndicator === 'true';
   }
 
-  if (invoiceDigestList) {
-    const { invoiceDigest } = invoiceDigestList;
+  const { invoiceDigest } = invoiceDigestList;
 
-    /* Normalize to Array. */
-    queryResult.invoiceDigestList = Array.isArray(invoiceDigest)
-      ? invoiceDigest
-      : [invoiceDigest];
+  /* Normalize to Array. */
+  queryResult.invoiceDigestList = Array.isArray(invoiceDigest)
+    ? invoiceDigest
+    : [invoiceDigest];
 
-    /* Type conversions. */
-    queryResult.invoiceDigestList.forEach(digest => {
-      /* eslint-disable no-param-reassign */
-      digest.invoiceNetAmount = Number(digest.invoiceNetAmount);
-      digest.invoiceVatAmountHUF = Number(digest.invoiceVatAmountHUF);
-      /* eslint-enable no-param-reassign */
-    });
-  }
+  /* Type conversions. */
+  queryResult.invoiceDigestList.forEach(digest => {
+    /* eslint-disable no-param-reassign */
+    digest.invoiceNetAmount = Number(digest.invoiceNetAmount);
+    digest.invoiceVatAmountHUF = Number(digest.invoiceVatAmountHUF);
+    /* eslint-enable no-param-reassign */
+  });
 
-  return response;
+  return queryResults;
 };

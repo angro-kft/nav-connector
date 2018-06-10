@@ -161,12 +161,12 @@ describe('NavConnector', () => {
         requestAllModification: false,
       };
 
-      const response = await navConnector.queryInvoiceData({
+      const { queryResult } = await navConnector.queryInvoiceData({
         page: 1,
         invoiceQuery,
       });
 
-      assert.isArray(response.queryResult);
+      assert.isUndefined(queryResult);
     });
   });
 
