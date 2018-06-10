@@ -5,6 +5,18 @@ const retry = promisify(async.retry).bind(async);
 
 const queryInvoiceStatus = require('../../src/query-invoice-status.js');
 
+/**
+ * Resolves when the operations with the given transactionId get processed.
+ * @async
+ * @param {Object} params Function params.
+ * @param {string} params.transactionId Wait for processing this transactionId.
+ * @param {Object} params.technicalUser Technical user’s data.
+ * @param {Object} params.softwareData Invoice software data.
+ * @param {Object} params.axios Axios instance.
+ * @param {Object} params.test Mocha this.test.
+ * @param {Array} params.ignoreAbortedIndexes List of indexes to ignore when they have aborted statuses.
+ * @returns {Promise<undefined>}
+ */
 module.exports = function waitInvoiceProcessing({
   transactionId,
   technicalUser,
