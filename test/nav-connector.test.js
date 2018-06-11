@@ -1,6 +1,6 @@
 const { assert } = require('chai');
 const { technicalUser, softwareData } = require('./lib/globals.js');
-const createInvoiceOperation = require('./lib/create-invoice-operation.js');
+const createInvoiceOperations = require('./lib/create-invoice-operations.js');
 
 const NavConnector = require('../src/nav-connector.js');
 
@@ -48,7 +48,7 @@ describe('NavConnector', () => {
   });
 
   it('should set axios default timeout', () => {
-    const timeout = 50000;
+    const timeout = 65000;
     const navConnector = new NavConnector({
       technicalUser,
       softwareData,
@@ -59,7 +59,7 @@ describe('NavConnector', () => {
   });
 
   it('should use default axios timeout when omitted', () => {
-    const defaultTimeout = 60000;
+    const defaultTimeout = 70000;
     const navConnector = new NavConnector({
       technicalUser,
       softwareData,
@@ -92,7 +92,7 @@ describe('NavConnector', () => {
         baseURL,
       });
 
-      const invoiceOperation = createInvoiceOperation({
+      const invoiceOperation = createInvoiceOperations({
         taxNumber: technicalUser.taxNumber,
       }).slice(0, 1);
 
@@ -116,7 +116,7 @@ describe('NavConnector', () => {
         baseURL,
       });
 
-      const invoiceOperation = createInvoiceOperation({
+      const invoiceOperation = createInvoiceOperations({
         taxNumber: technicalUser.taxNumber,
       }).slice(0, 1);
 
@@ -161,12 +161,26 @@ describe('NavConnector', () => {
         requestAllModification: false,
       };
 
-      const response = await navConnector.queryInvoiceData({
+      const { queryResult } = await navConnector.queryInvoiceData({
         page: 1,
         invoiceQuery,
       });
 
-      assert.isArray(response.queryResult);
+      assert.isUndefined(queryResult);
+    });
+  });
+
+  describe('queryTaxpayer()', () => {
+    it('should resolve to taxpayer information if taxpayer is valid', async () => {
+      const navConnector = new NavConnector({
+        technicalUser,
+        softwareData,
+        baseURL,
+      });
+
+      const taxpayerInfo = await navConnector.queryTaxpayer('15789934');
+
+      assert.hasAllKeys(taxpayerInfo, ['taxpayerValidity', 'taxpayerData']);
     });
   });
 });
