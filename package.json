@@ -1,6 +1,6 @@
 {
   "name": "@angro/nav-connector",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "description": "Node.js module which provides an interface for communicating with NAV online invoice service.",
   "main": "./src/nav-connector.js",
   "scripts": {
@@ -47,6 +47,6 @@
     "eslint-plugin-prettier": "^2.6.0",
     "mocha": "^5.2.0",
     "nyc": "^12.0.2",
-    "prettier": "^1.13.4"
+    "prettier": "^1.13.5"
   }
 }
