@@ -31,7 +31,7 @@ module.exports = async function sendRequest({ request, axios, path }) {
 
     /* Normalize errors. */
     if (response) {
-      /* istanbul ignore if */
+      /* istanbul ignore next */
       if (!response.data) {
         response.data = {
           result: {},
