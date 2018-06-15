@@ -46,8 +46,8 @@ module.exports = function createInvoiceOperations({ taxNumber }) {
     switch (index) {
       case 1:
         invoiceXml = invoiceXml.replace(
-          '<lineNumber>2</lineNumber>',
-          '<lineNumber>2</lineNumber><productCodes><productCode><productCodeCategory>VTSZ</productCodeCategory><productCodeValue>16010091</productCodeValue></productCode></productCodes>'
+          '<unitOfMeasure>kg</unitOfMeasure>',
+          ''
         );
         break;
 
@@ -57,10 +57,7 @@ module.exports = function createInvoiceOperations({ taxNumber }) {
             '<taxpayerId>15789934</taxpayerId>',
             '<taxpayerId>33333333</taxpayerId>'
           )
-          .replace(
-            '<lineNumber>2</lineNumber>',
-            '<lineNumber>2</lineNumber><productCodes><productCode><productCodeCategory>VTSZ</productCodeCategory><productCodeValue>16010091</productCodeValue></productCode></productCodes>'
-          );
+          .replace('<unitOfMeasure>kg</unitOfMeasure>', '');
 
         break;
 

@@ -61,6 +61,12 @@
 					<lineNumberReference>5</lineNumberReference>
 					<lineOperation>CREATE</lineOperation>
 				</lineModificationReference>
+				<productCodes>
+					<productCode>
+						<productCodeCategory>VTSZ</productCodeCategory>
+						<productCodeValue>16010091</productCodeValue>
+					</productCode>
+				</productCodes>
 				<lineDescription>Érlelt szalámi</lineDescription>
 				<quantity>-1600.00</quantity>
 				<unitOfMeasure>kg</unitOfMeasure>
@@ -80,6 +86,12 @@
 					<lineNumberReference>6</lineNumberReference>
 					<lineOperation>CREATE</lineOperation>
 				</lineModificationReference>
+				<productCodes>
+					<productCode>
+						<productCodeCategory>VTSZ</productCodeCategory>
+						<productCodeValue>16010091</productCodeValue>
+					</productCode>
+				</productCodes>
 				<lineDescription>Árengedmény 10%</lineDescription>
 				<quantity>-1600.00</quantity>
 				<unitOfMeasure>kg</unitOfMeasure>
@@ -92,13 +104,19 @@
 					<lineVatAmount>129600.00</lineVatAmount>
 					<lineGrossAmountNormal>609600.00</lineGrossAmountNormal>
 				</lineAmountsNormal>
-			</line>
+			</line>	
 			<line>
 				<lineNumber>3</lineNumber>
 				<lineModificationReference>
 					<lineNumberReference>7</lineNumberReference>
 					<lineOperation>CREATE</lineOperation>
 				</lineModificationReference>
+				<productCodes>
+					<productCode>
+						<productCodeCategory>VTSZ</productCodeCategory>
+						<productCodeValue>16010091</productCodeValue>
+					</productCode>
+				</productCodes>
 				<lineDescription>Érlelt szalámi</lineDescription>
 				<quantity>1600.00</quantity>
 				<unitOfMeasure>kg</unitOfMeasure>
@@ -130,7 +148,7 @@
 					<lineVatAmount>-172800.00</lineVatAmount>
 					<lineGrossAmountNormal>-812800.00</lineGrossAmountNormal>
 				</lineAmountsNormal>
-			</line>
+			</line>								
 		</invoiceLines>
 		<invoiceSummary>
 			<summaryNormal>
