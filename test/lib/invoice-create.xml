@@ -47,6 +47,7 @@
 			<invoiceIssueDate>2019-05-15</invoiceIssueDate>
 			<invoiceDeliveryDate>2019-05-10</invoiceDeliveryDate>
 			<currencyCode>HUF</currencyCode>
+			<exchangeRate>1</exchangeRate>
 			<paymentMethod>TRANSFER</paymentMethod>
 			<paymentDate>2019-05-30</paymentDate>
 			<invoiceAppearance>PAPER</invoiceAppearance>
@@ -68,7 +69,7 @@
 			</productCodes>
 			<lineDescription>Hűtött házi sertés (fél)</lineDescription>
 			<quantity>1500.00</quantity>
-			<unitOfMeasure>kg</unitOfMeasure>
+			<unitOfMeasure>PIECE</unitOfMeasure>
 			<unitPrice>400.00</unitPrice>
 			<lineAmountsNormal>
 				<lineNetAmount>600000.00</lineNetAmount>
@@ -89,7 +90,7 @@
 			</productCodes>
 			<lineDescription>Érlelt szalámi</lineDescription>
 			<quantity>1600.00</quantity>
-			<unitOfMeasure>kg</unitOfMeasure>
+			<unitOfMeasure>PIECE</unitOfMeasure>
 			<unitPrice>3000.00</unitPrice>
 			<lineAmountsNormal>
 				<lineNetAmount>4800000.00</lineNetAmount>
@@ -104,7 +105,7 @@
 			<lineNumber>3</lineNumber>
 			<lineDescription>Árengedmény</lineDescription>
 			<quantity>1600.00</quantity>
-			<unitOfMeasure>kg</unitOfMeasure>
+			<unitOfMeasure>PIECE</unitOfMeasure>
 			<unitPrice>-300.00</unitPrice>
 			<lineAmountsNormal>
 				<lineNetAmount>-480000.00</lineNetAmount>
@@ -125,7 +126,7 @@
 			</productCodes>
 			<lineDescription>Kenőmájas</lineDescription>
 			<quantity>40.00</quantity>
-			<unitOfMeasure>kg</unitOfMeasure>
+			<unitOfMeasure>PIECE</unitOfMeasure>
 			<unitPrice>800.00</unitPrice>
 			<lineAmountsNormal>
 				<lineNetAmount>32000.00</lineNetAmount>

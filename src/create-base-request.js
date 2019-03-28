@@ -59,7 +59,7 @@ module.exports = function createBaseRequest({
       header: {
         requestId,
         timestamp: date.toISOString(),
-        requestVersion: '1.0',
+        requestVersion: '1.1',
         headerVersion: '1.0',
       },
       user: {

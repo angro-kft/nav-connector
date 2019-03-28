@@ -51,6 +51,7 @@
 				<invoiceNumber>2019/000129</invoiceNumber>
 				<invoiceCategory>NORMAL</invoiceCategory>
 				<currencyCode>HUF</currencyCode>
+				<exchangeRate>1</exchangeRate>
 				<invoiceAppearance>PAPER</invoiceAppearance>
 			</invoiceData>
 		</invoiceHead>
@@ -67,9 +68,10 @@
 						<productCodeValue>16010091</productCodeValue>
 					</productCode>
 				</productCodes>
+				<lineExpressionIndicator>true</lineExpressionIndicator>
 				<lineDescription>Érlelt szalámi</lineDescription>
 				<quantity>-1600.00</quantity>
-				<unitOfMeasure>kg</unitOfMeasure>
+				<unitOfMeasure>PIECE</unitOfMeasure>
 				<unitPrice>3000.00</unitPrice>
 				<lineAmountsNormal>
 					<lineNetAmount>-4800000.00</lineNetAmount>
@@ -92,9 +94,10 @@
 						<productCodeValue>16010091</productCodeValue>
 					</productCode>
 				</productCodes>
+				<lineExpressionIndicator>true</lineExpressionIndicator>
 				<lineDescription>Árengedmény 10%</lineDescription>
 				<quantity>-1600.00</quantity>
-				<unitOfMeasure>kg</unitOfMeasure>
+				<unitOfMeasure>PIECE</unitOfMeasure>
 				<unitPrice>-300.00</unitPrice>
 				<lineAmountsNormal>
 					<lineNetAmount>480000.00</lineNetAmount>
@@ -117,9 +120,10 @@
 						<productCodeValue>16010091</productCodeValue>
 					</productCode>
 				</productCodes>
+				<lineExpressionIndicator>true</lineExpressionIndicator>
 				<lineDescription>Érlelt szalámi</lineDescription>
 				<quantity>1600.00</quantity>
-				<unitOfMeasure>kg</unitOfMeasure>
+				<unitOfMeasure>PIECE</unitOfMeasure>
 				<unitPrice>4000.00</unitPrice>
 				<lineAmountsNormal>
 					<lineNetAmount>6400000.00</lineNetAmount>
@@ -136,9 +140,10 @@
 					<lineNumberReference>8</lineNumberReference>
 					<lineOperation>CREATE</lineOperation>
 				</lineModificationReference>
+				<lineExpressionIndicator>true</lineExpressionIndicator>
 				<lineDescription>Árengedmény</lineDescription>
 				<quantity>1600.00</quantity>
-				<unitOfMeasure>kg</unitOfMeasure>
+				<unitOfMeasure>PIECE</unitOfMeasure>
 				<unitPrice>-400.00</unitPrice>
 				<lineAmountsNormal>
 					<lineNetAmount>-640000.00</lineNetAmount>

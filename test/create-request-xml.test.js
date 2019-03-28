@@ -10,7 +10,7 @@ describe('createRequestXml()', () => {
         header: {
           requestId: 'RID253015243342',
           timestamp: '2018-01-19T15:12:55Z',
-          requestVersion: '1.0',
+          requestVersion: '1.1',
           headerVersion: '1.0',
         },
         user: {
@@ -33,7 +33,6 @@ describe('createRequestXml()', () => {
         },
       },
     };
-
     const requestXml = createRequestXml(request);
 
     const expected = readFileSync('./test/lib/tokenExchange.xml').toString();
