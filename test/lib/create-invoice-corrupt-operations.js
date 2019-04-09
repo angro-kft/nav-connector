@@ -46,7 +46,7 @@ module.exports = function createInvoiceOperations({ taxNumber }) {
     switch (index) {
       case 1:
         invoiceXml = invoiceXml.replace(
-          '<unitOfMeasure>kg</unitOfMeasure>',
+          '<unitOfMeasure>PIECE</unitOfMeasure>',
           ''
         );
         break;
@@ -57,7 +57,7 @@ module.exports = function createInvoiceOperations({ taxNumber }) {
             '<taxpayerId>15789934</taxpayerId>',
             '<taxpayerId>33333333</taxpayerId>'
           )
-          .replace('<unitOfMeasure>kg</unitOfMeasure>', '');
+          .replace('<unitOfMeasure>PIECE</unitOfMeasure>', '');
 
         break;
 
