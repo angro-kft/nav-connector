@@ -13,7 +13,7 @@ This module was developed in order to satisfy the following specification:
 
 ## Installation
 
-Tested with version 8.11.2 of Node.js.
+Tested with version 8.11.2 and 10.15.3 of Node.js.
 
 ```sh
 $ npm install @angro/nav-connector
@@ -379,8 +379,6 @@ $ npm run test
 ## Maintainers
 
 This repository is maintained by [ANGRO Nagykereskedelmi Kft.](https://angro.hu/)
-
-Repository lead maintainer: [Dávid Házi](https://github.com/kailniris) ( <mailto:hazi.david@angro.hu> )
 
 ## License
 
