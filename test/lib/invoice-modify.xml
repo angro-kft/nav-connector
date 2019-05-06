@@ -12,45 +12,43 @@
 				<supplierTaxNumber>
 					<taxpayerId>11111111</taxpayerId>
 					<vatCode>2</vatCode>
-					<countyCode>42</countyCode>
+					<countyCode>41</countyCode>
 				</supplierTaxNumber>
-				<supplierName>Szállító Kft</supplierName>
+				<supplierName>ANGRO Kft.</supplierName>
 				<supplierAddress>
 					<detailedAddress>
 						<countryCode>HU</countryCode>
-						<postalCode>1111</postalCode>
-						<city>Budapest</city>
-						<streetName>Példa</streetName>
-						<publicPlaceCategory>utca</publicPlaceCategory>
-						<number>777</number>
-						<floor>1.</floor>
-						<door>3.</door>
+						<postalCode>5600</postalCode>
+						<city>Békéscsaba</city>
+						<streetName>Kétegyházi</streetName>
+						<publicPlaceCategory>út.</publicPlaceCategory>
+						<number>7</number>
 					</detailedAddress>
 				</supplierAddress>
-				<supplierBankAccountNumber>88888888-66666666-12345678</supplierBankAccountNumber>
 			</supplierInfo>
 			<customerInfo>
 				<customerTaxNumber>
-					<taxpayerId>15789934</taxpayerId>
+					<taxpayerId>24291763</taxpayerId>
 					<vatCode>2</vatCode>
-					<countyCode>51</countyCode>
+					<countyCode>04</countyCode>
 				</customerTaxNumber>
-				<customerName>Vevő Kft</customerName>
+				<customerName>VEVŐ Kft.</customerName>
 				<customerAddress>
 					<detailedAddress>
 						<countryCode>HU</countryCode>
-						<postalCode>7600</postalCode>
-						<city>Pécs</city>
-						<streetName>Kitalált</streetName>
-						<publicPlaceCategory>köz</publicPlaceCategory>
-						<number>8</number>
+						<postalCode>5600</postalCode>
+						<city>Békéscsaba</city>
+						<streetName>Kétegyházi</streetName>
+						<publicPlaceCategory>út</publicPlaceCategory>
+						<number>7</number>
 					</detailedAddress>
 				</customerAddress>
 			</customerInfo>
 			<invoiceData>
-				<invoiceNumber>2019/000129</invoiceNumber>
+				<invoiceNumber>2019/000129K</invoiceNumber>
 				<invoiceCategory>NORMAL</invoiceCategory>
 				<currencyCode>HUF</currencyCode>
+				<exchangeRate>1</exchangeRate>
 				<invoiceAppearance>PAPER</invoiceAppearance>
 			</invoiceData>
 		</invoiceHead>
@@ -58,122 +56,41 @@
 			<line>
 				<lineNumber>1</lineNumber>
 				<lineModificationReference>
-					<lineNumberReference>5</lineNumberReference>
-					<lineOperation>CREATE</lineOperation>
+					<lineNumberReference>1</lineNumberReference>
+					<lineOperation>MODIFY</lineOperation>
 				</lineModificationReference>
-				<productCodes>
-					<productCode>
-						<productCodeCategory>VTSZ</productCodeCategory>
-						<productCodeValue>16010091</productCodeValue>
-					</productCode>
-				</productCodes>
-				<lineDescription>Érlelt szalámi</lineDescription>
-				<quantity>-1600.00</quantity>
-				<unitOfMeasure>kg</unitOfMeasure>
-				<unitPrice>3000.00</unitPrice>
+				<lineExpressionIndicator>true</lineExpressionIndicator>
+				<lineDescription>BOMBA</lineDescription>
+				<quantity>-1000</quantity>
+				<unitOfMeasure>PIECE</unitOfMeasure>
+				<unitPrice>120</unitPrice>
+				<lineDiscountData>
+					<discountValue>-6000</discountValue>
+					<discountRate>0.05</discountRate>
+				</lineDiscountData>
 				<lineAmountsNormal>
-					<lineNetAmount>-4800000.00</lineNetAmount>
+					<lineNetAmount>-126000</lineNetAmount>
 					<lineVatRate>
 						<vatPercentage>0.27</vatPercentage>
 					</lineVatRate>
-					<lineVatAmount>-1296000.00</lineVatAmount>
-					<lineGrossAmountNormal>-6096000.00</lineGrossAmountNormal>
 				</lineAmountsNormal>
 			</line>
-			<line>
-				<lineNumber>2</lineNumber>
-				<lineModificationReference>
-					<lineNumberReference>6</lineNumberReference>
-					<lineOperation>CREATE</lineOperation>
-				</lineModificationReference>
-				<productCodes>
-					<productCode>
-						<productCodeCategory>VTSZ</productCodeCategory>
-						<productCodeValue>16010091</productCodeValue>
-					</productCode>
-				</productCodes>
-				<lineDescription>Árengedmény 10%</lineDescription>
-				<quantity>-1600.00</quantity>
-				<unitOfMeasure>kg</unitOfMeasure>
-				<unitPrice>-300.00</unitPrice>
-				<lineAmountsNormal>
-					<lineNetAmount>480000.00</lineNetAmount>
-					<lineVatRate>
-						<vatPercentage>0.27</vatPercentage>
-					</lineVatRate>
-					<lineVatAmount>129600.00</lineVatAmount>
-					<lineGrossAmountNormal>609600.00</lineGrossAmountNormal>
-				</lineAmountsNormal>
-			</line>	
-			<line>
-				<lineNumber>3</lineNumber>
-				<lineModificationReference>
-					<lineNumberReference>7</lineNumberReference>
-					<lineOperation>CREATE</lineOperation>
-				</lineModificationReference>
-				<productCodes>
-					<productCode>
-						<productCodeCategory>VTSZ</productCodeCategory>
-						<productCodeValue>16010091</productCodeValue>
-					</productCode>
-				</productCodes>
-				<lineDescription>Érlelt szalámi</lineDescription>
-				<quantity>1600.00</quantity>
-				<unitOfMeasure>kg</unitOfMeasure>
-				<unitPrice>4000.00</unitPrice>
-				<lineAmountsNormal>
-					<lineNetAmount>6400000.00</lineNetAmount>
-					<lineVatRate>
-						<vatPercentage>0.27</vatPercentage>
-					</lineVatRate>
-					<lineVatAmount>1728000.00</lineVatAmount>
-					<lineGrossAmountNormal>8128000.00</lineGrossAmountNormal>
-				</lineAmountsNormal>
-			</line>
-			<line>
-				<lineNumber>4</lineNumber>
-				<lineModificationReference>
-					<lineNumberReference>8</lineNumberReference>
-					<lineOperation>CREATE</lineOperation>
-				</lineModificationReference>
-				<lineDescription>Árengedmény</lineDescription>
-				<quantity>1600.00</quantity>
-				<unitOfMeasure>kg</unitOfMeasure>
-				<unitPrice>-400.00</unitPrice>
-				<lineAmountsNormal>
-					<lineNetAmount>-640000.00</lineNetAmount>
-					<lineVatRate>
-						<vatPercentage>0.27</vatPercentage>
-					</lineVatRate>
-					<lineVatAmount>-172800.00</lineVatAmount>
-					<lineGrossAmountNormal>-812800.00</lineGrossAmountNormal>
-				</lineAmountsNormal>
-			</line>								
 		</invoiceLines>
 		<invoiceSummary>
 			<summaryNormal>
 				<summaryByVatRate>
 					<vatRate>
-						<vatPercentage>0.05</vatPercentage>
-					</vatRate>
-					<vatRateNetAmount>0.00</vatRateNetAmount>
-					<vatRateVatAmount>0.00</vatRateVatAmount>
-					<vatRateVatAmountHUF>0.00</vatRateVatAmountHUF>
-					<vatRateGrossAmount>0.00</vatRateGrossAmount>
-				</summaryByVatRate>
-				<summaryByVatRate>
-					<vatRate>
 						<vatPercentage>0.27</vatPercentage>
 					</vatRate>
-					<vatRateNetAmount>1440000.00</vatRateNetAmount>
-					<vatRateVatAmount>388800.00</vatRateVatAmount>
-					<vatRateVatAmountHUF>388800.00</vatRateVatAmountHUF>
+					<vatRateNetAmount>-114000</vatRateNetAmount>
+					<vatRateVatAmount>-30780</vatRateVatAmount>
+					<vatRateVatAmountHUF>-30780</vatRateVatAmountHUF>
 				</summaryByVatRate>
-				<invoiceNetAmount>1440000.00</invoiceNetAmount>
-				<invoiceVatAmount>388800.00</invoiceVatAmount>
-				<invoiceVatAmountHUF>388800.00</invoiceVatAmountHUF>
+				<invoiceNetAmount>-114000</invoiceNetAmount>
+				<invoiceVatAmount>-30780</invoiceVatAmount>
+				<invoiceVatAmountHUF>-30780</invoiceVatAmountHUF>
 			</summaryNormal>
-			<invoiceGrossAmount>1828800.00</invoiceGrossAmount>
+			<invoiceGrossAmount>-144780</invoiceGrossAmount>
 		</invoiceSummary>
 	</invoiceExchange>
 </Invoice>
