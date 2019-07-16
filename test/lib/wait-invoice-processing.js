@@ -28,7 +28,7 @@ module.exports = function waitInvoiceProcessing({
   return retry(
     {
       times: 20,
-      interval: 500,
+      interval: 2000,
       errorFilter: error => {
         const { message, response, request } = error;
         if (test.timedOut) {
