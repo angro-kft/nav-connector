@@ -18,7 +18,6 @@
     "invoice",
     "számla"
   ],
-  "author": "Dávid Házi <hazi.david@angro.hu> (https://angro.hu/)",
   "license": "GPL-3.0",
   "bugs": {
     "url": "https://github.com/angro-kft/nav-connector/issues"

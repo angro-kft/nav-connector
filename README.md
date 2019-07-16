@@ -4,7 +4,8 @@
 [![codecov](https://codecov.io/gh/angro-kft/nav-connector/branch/dev/graph/badge.svg)](https://codecov.io/gh/angro-kft/nav-connector)
 [![npm (scoped)](https://img.shields.io/npm/v/@angro/nav-connector.svg)](https://www.npmjs.com/package/@angro/nav-connector)
 [![license](https://img.shields.io/github/license/angro-kft/nav-connector.svg)](https://github.com/angro-kft/nav-connector/blob/dev/LICENSE)
-![nav](https://img.shields.io/badge/NAV%20service%20version%20compatible-0.15-blue.svg)
+![nav](https://img.shields.io/badge/NAV%20service%20version%20compatible-1.7.2-blue.svg)
+![nav-interface](https://img.shields.io/badge/NAV%20interface%20version%20compatible-1.1-blue.svg)
 
 Node.js module which provides an interface for communicating with NAV online invoice service.
 
@@ -13,7 +14,7 @@ This module was developed in order to satisfy the following specification:
 
 ## Installation
 
-Tested with version 8.11.2 of Node.js.
+Tested with version 8.11.2 and 10.15.3 of Node.js.
 
 ```sh
 $ npm install @angro/nav-connector
@@ -379,8 +380,6 @@ $ npm run test
 ## Maintainers
 
 This repository is maintained by [ANGRO Nagykereskedelmi Kft.](https://angro.hu/)
-
-Repository lead maintainer: [Dávid Házi](https://github.com/kailniris) ( <mailto:hazi.david@angro.hu> )
 
 ## License
 
