@@ -45,7 +45,7 @@
 				</customerAddress>
 			</customerInfo>
 			<invoiceData>
-				<invoiceNumber>2019/000129K</invoiceNumber>
+				<invoiceNumber>2019/000129</invoiceNumber>
 				<invoiceCategory>NORMAL</invoiceCategory>
 				<currencyCode>HUF</currencyCode>
 				<exchangeRate>1</exchangeRate>

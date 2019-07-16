@@ -72,7 +72,7 @@ describe('queryInvoiceStatus()', () => {
         softwareData,
         axios,
         test: this.test,
-        ignoreAbortedIndexes: index === 2 ? [3, 4, 5] : [],
+        ignoreAbortedIndexes: index === 2 ? [1, 2, 3, 4, 5] : [],
       })
     );
 
@@ -151,10 +151,10 @@ describe('queryInvoiceStatus()', () => {
 
     assert.lengthOf(processingResults[0].businessValidationMessages, 0);
     assert.lengthOf(processingResults[1].businessValidationMessages, 1);
-    assert.lengthOf(processingResults[2].businessValidationMessages, 2);
+    assert.lengthOf(processingResults[2].businessValidationMessages, 1);
 
     assert.lengthOf(processingResults[0].technicalValidationMessages, 0);
     assert.lengthOf(processingResults[4].technicalValidationMessages, 1);
-    assert.lengthOf(processingResults[5].technicalValidationMessages, 2);
+    assert.lengthOf(processingResults[5].technicalValidationMessages, 0);
   });
 });
