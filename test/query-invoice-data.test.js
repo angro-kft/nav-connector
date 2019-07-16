@@ -143,8 +143,8 @@ describe('queryInvoiceData()', () => {
 
   it('should resolve without "queryResult" property when queryParams query has no result', async () => {
     const queryParams = {
-      invoiceIssueDateFrom: '1900-01-01',
-      invoiceIssueDateTo: '1900-01-01',
+      invoiceIssueDateFrom: '2018-01-01',
+      invoiceIssueDateTo: '2018-01-01',
     };
 
     const response = await queryInvoiceData({
