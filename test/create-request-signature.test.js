@@ -16,7 +16,6 @@ describe('createRequestSignature()', () => {
 
     assert.isString(requestSignature);
   });
-
   it('should return valid request signature', () => {
     const requestSignature = createRequestSignature({
       requestId: 'RID332893718672',
@@ -25,7 +24,7 @@ describe('createRequestSignature()', () => {
       invoices: invoicesBase64,
     });
     const expected =
-      'F1FFC71E7A7C800B86FB7AF10F2FF26AB9FBCB8CD39747FE5987D0318563F2B0E8ECB893B9A34D4BF034575B6AFD067EB8A1D8C9D8E5875D9F42496443F9B84D';
+      '0379FD6E5609F15585AAB258F291FCD3AB03565BE067B76A00066E109DB91C5637F8E33F91C4D1F8E0CA54A48484F957BD53A6C2639CCBDE1DD0FC040B6298D9';
 
     assert.equal(requestSignature, expected);
   });
@@ -37,7 +36,7 @@ describe('createRequestSignature()', () => {
       signatureKey: 'mnlFCfiGkwjIDe59',
     });
     const expected =
-      '9CF7E97AFE159C71A632D3D6C9F75C8B7012BFE23AAAC425C276DE997B31878FD9394426CCFE99983EDA55B244921399C2B8BB262ABED59DF9AFE3CDD76ED86F';
+      'F37A8AF883E2E31BAF0087A484BF22EBCEA122D8790C1C86BB407EC590972CFEBFCC447E995DCD7014B4ACC64A9171D361E96F4A4F4EB5372D16C30D70E9BEC3';
 
     assert.equal(requestSignature, expected);
   });

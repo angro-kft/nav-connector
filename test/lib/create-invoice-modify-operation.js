@@ -26,26 +26,22 @@ module.exports = function createInvoiceModifyOperations({
       `<taxpayerId>${taxNumber}</taxpayerId>`
     )
     .replace(
-      '<invoiceNumber>2019/000129</invoiceNumber>',
+      '<invoiceNumber>ZZZ000009</invoiceNumber>',
       `<invoiceNumber>${invoiceModifyNumber}</invoiceNumber>`
     )
     .replace(
-      '<originalInvoiceNumber>2019/000123</originalInvoiceNumber>',
+      '<originalInvoiceNumber>ZZZ000001</originalInvoiceNumber>',
       `<originalInvoiceNumber>${originalInvoiceNumber}</originalInvoiceNumber>`
     )
     .replace(
-      '<modificationIssueDate>2019-05-15</modificationIssueDate>',
-      `<modificationIssueDate>${today}</modificationIssueDate>`
-    )
-    .replace(
-      '<modificationTimestamp>2019-05-15T17:12:20.000Z</modificationTimestamp>',
-      `<modificationTimestamp>${new Date().toISOString()}</modificationTimestamp>`
+      '<invoiceIssueDate>2020-05-20</invoiceIssueDate>',
+      `<invoiceIssueDate>${today}</invoiceIssueDate>`
     );
 
   invoiceOperation.push({
     index: 1,
-    operation: 'MODIFY',
-    invoice: Buffer.from(invoiceModifyXml).toString('base64'),
+    invoiceOperation: 'MODIFY',
+    invoiceData: Buffer.from(invoiceModifyXml).toString('base64'),
   });
 
   return invoiceOperation;

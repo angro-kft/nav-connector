@@ -4,8 +4,8 @@ const createInvoiceOperations = require('./lib/create-invoice-operations.js');
 
 const NavConnector = require('../src/nav-connector.js');
 
-const defaultBaseUrl = 'https://api.onlineszamla.nav.gov.hu/invoiceService/';
-const baseURL = 'https://api-test.onlineszamla.nav.gov.hu/invoiceService/';
+const defaultBaseUrl = 'https://api.onlineszamla.nav.gov.hu/invoiceService/v2/';
+const baseURL = 'https://api-test.onlineszamla.nav.gov.hu/invoiceService/v2/';
 
 describe('NavConnector', () => {
   it('should assign technicalUser to the new instance', () => {
@@ -97,7 +97,6 @@ describe('NavConnector', () => {
       }).slice(0, 1);
 
       const invoiceOperations = {
-        technicalAnnulment: false,
         compressedContent: false,
         invoiceOperation,
       };
@@ -108,7 +107,37 @@ describe('NavConnector', () => {
     });
   });
 
-  describe('queryInvoiceStatus()', () => {
+  describe('manageAnnulment()', () => {
+    it('should resolve to transactionId', async () => {
+      const navConnector = new NavConnector({
+        technicalUser,
+        softwareData,
+        baseURL,
+      });
+
+      const annulmentOperation = createInvoiceOperations({
+        taxNumber: technicalUser.taxNumber,
+      })
+        .slice(0, 1)
+        .map(({ invoiceData, invoiceOperation, index }) => ({
+          index,
+          annulmentOperation: 'ANNUL',
+          invoiceAnnulment: invoiceData,
+        }));
+
+      const annulmentOperations = {
+        annulmentOperation,
+      };
+
+      const transactionId = await navConnector.manageAnnulment(
+        annulmentOperations
+      );
+
+      assert.match(transactionId, /^[+a-zA-Z0-9_]{1,30}$/);
+    });
+  });
+
+  describe('queryTransactionStatus()', () => {
     it('should resolve to processingResults', async () => {
       const navConnector = new NavConnector({
         technicalUser,
@@ -121,14 +150,13 @@ describe('NavConnector', () => {
       }).slice(0, 1);
 
       const invoiceOperations = {
-        technicalAnnulment: false,
         compressedContent: false,
         invoiceOperation,
       };
 
       const transactionId = await navConnector.manageInvoice(invoiceOperations);
 
-      const processingResults = await navConnector.queryInvoiceStatus({
+      const processingResults = await navConnector.queryTransactionStatus({
         transactionId,
       });
 
@@ -158,11 +186,10 @@ describe('NavConnector', () => {
 
       const invoiceQuery = {
         invoiceNumber: 'invoiceNumber',
-        requestAllModification: false,
+        invoiceDirection: 'OUTBOUND',
       };
 
       const { queryResult } = await navConnector.queryInvoiceData({
-        page: 1,
         invoiceQuery,
       });
 

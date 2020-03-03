@@ -6,9 +6,9 @@ const createInvoiceCorruptOperations = require('./lib/create-invoice-corrupt-ope
 const waitInvoiceProcessing = require('./lib/wait-invoice-processing.js');
 
 const manageInvoice = require('../src/manage-invoice.js');
-const queryInvoiceStatus = require('../src/query-invoice-status.js');
+const queryTransactionStatus = require('../src/query-transaction-status.js');
 
-describe('queryInvoiceStatus()', () => {
+describe('queryTransactionStatus()', () => {
   let singleTransactionId;
   let multiTransactionId;
   let corruptTransactionId;
@@ -49,7 +49,6 @@ describe('queryInvoiceStatus()', () => {
       invoiceOperationList.map(invoiceOperation =>
         manageInvoice({
           invoiceOperations: {
-            technicalAnnulment: false,
             compressedContent: false,
             invoiceOperation,
           },
@@ -80,7 +79,7 @@ describe('queryInvoiceStatus()', () => {
   });
 
   it('should resolve to array with single invoice', async () => {
-    const processingResults = await queryInvoiceStatus({
+    const processingResults = await queryTransactionStatus({
       transactionId: singleTransactionId,
       technicalUser,
       softwareData,
@@ -91,7 +90,7 @@ describe('queryInvoiceStatus()', () => {
   });
 
   it('should resolve to array with multiple invoice', async () => {
-    const processingResults = await queryInvoiceStatus({
+    const processingResults = await queryTransactionStatus({
       transactionId: multiTransactionId,
       technicalUser,
       softwareData,
@@ -102,7 +101,7 @@ describe('queryInvoiceStatus()', () => {
   });
 
   it('should resolve to an empty array if transactionId is invalid', async () => {
-    const processingResults = await queryInvoiceStatus({
+    const processingResults = await queryTransactionStatus({
       transactionId: 'invalid',
       technicalUser,
       softwareData,
@@ -113,7 +112,7 @@ describe('queryInvoiceStatus()', () => {
   });
 
   it('should handle originalRequest param', async () => {
-    const processingResults = await queryInvoiceStatus({
+    const processingResults = await queryTransactionStatus({
       transactionId: singleTransactionId,
       returnOriginalRequest: true,
       technicalUser,
@@ -125,7 +124,7 @@ describe('queryInvoiceStatus()', () => {
   });
 
   it('should convert types', async () => {
-    const processingResults = await queryInvoiceStatus({
+    const processingResults = await queryTransactionStatus({
       transactionId: corruptTransactionId,
       technicalUser,
       softwareData,
@@ -142,7 +141,7 @@ describe('queryInvoiceStatus()', () => {
   });
 
   it('should normalize validation messages to arrays', async () => {
-    const processingResults = await queryInvoiceStatus({
+    const processingResults = await queryTransactionStatus({
       transactionId: corruptTransactionId,
       technicalUser,
       softwareData,
@@ -155,6 +154,6 @@ describe('queryInvoiceStatus()', () => {
 
     assert.lengthOf(processingResults[0].technicalValidationMessages, 0);
     assert.lengthOf(processingResults[4].technicalValidationMessages, 1);
-    assert.lengthOf(processingResults[5].technicalValidationMessages, 0);
+    assert.lengthOf(processingResults[5].technicalValidationMessages, 2);
   });
 });

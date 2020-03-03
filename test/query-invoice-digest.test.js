@@ -6,9 +6,9 @@ const createInvoiceModifyOperation = require('./lib/create-invoice-modify-operat
 const waitInvoiceProcessing = require('./lib/wait-invoice-processing.js');
 
 const manageInvoice = require('../src/manage-invoice.js');
-const queryInvoiceData = require('../src/query-invoice-data.js');
+const queryInvoiceDigest = require('../src/query-invoice-digest.js');
 
-describe('queryInvoiceData()', () => {
+describe('queryInvoiceDigest()', () => {
   let existingInvoiceNumber;
   let modifiedInvoiceNumber;
   let transactionId;
@@ -76,53 +76,114 @@ describe('queryInvoiceData()', () => {
     });
   });
 
-  it('should normalize invoiceQuery object key order', async () => {
-    const invoiceQuery = {
-      invoiceNumber: 'invoiceNumber',
-      invoiceDirection: 'OUTBOUND',
+  it('should normalize queryParams object key order', async () => {
+    const queryParams = {
+      invoiceOperation: 'CREATE',
+      index: 1,
+      transactionId: '33DD1A7QAI55',
+      dateTo: '2019-05-15',
+      dateFrom: '2019-05-15',
     };
 
-    await queryInvoiceData({
-      invoiceQuery,
+    await queryInvoiceDigest({
+      page: 1,
+      queryParams,
+      invoiceDirection: 'OUTBOUND',
       technicalUser,
       softwareData,
       axios,
     });
   });
 
-  it('should resolve without "invoiceDataResult" property when invoiceQuery query has no result', async () => {
-    const invoiceQuery = {
-      invoiceNumber: 'invoiceNumber',
-      invoiceDirection: 'OUTBOUND',
+  it('should resolve without "invoiceDigestResult" property when queryParams query has no result', async () => {
+    const queryParams = {
+      dateFrom: '2018-01-01',
+      dateTo: '2018-01-01',
     };
 
-    const response = await queryInvoiceData({
-      invoiceQuery,
+    const response = await queryInvoiceDigest({
+      page: 1,
+      queryParams,
+      invoiceDirection: 'OUTBOUND',
       technicalUser,
       softwareData,
       axios,
     });
 
-    assert.notProperty(response, 'invoiceDataResult');
+    assert.notProperty(response, 'invoiceDigestResult');
   });
 
-  it('should resolve with "invoiceData", "compressedContentIndicator" and "auditData" property when invoiceQuery query has result', async () => {
-    const invoiceQuery = {
-      invoiceNumber: existingInvoiceNumber,
-      invoiceDirection: 'OUTBOUND',
+  it('should resolve with "invoiceDigest" "availablePage" "currentPage" property when queryParams query has result', async () => {
+    const today = new Date().toISOString().split('T')[0];
+    const queryParams = {
+      dateFrom: today,
+      dateTo: today,
     };
 
-    const response = await queryInvoiceData({
-      invoiceQuery,
+    const invoiceDigestResult = await queryInvoiceDigest({
+      page: 1,
+      queryParams,
+      invoiceDirection: 'OUTBOUND',
       technicalUser,
       softwareData,
       axios,
     });
 
-    assert.hasAllKeys(response, [
-      'invoiceData',
-      'compressedContentIndicator',
-      'auditData',
+    assert.hasAllKeys(invoiceDigestResult, [
+      'availablePage',
+      'currentPage',
+      'invoiceDigest',
     ]);
+    assert.isAbove(invoiceDigestResult.invoiceDigest.length, 2);
+  });
+
+  it('should normalize invoiceDigest to Array', async () => {
+    const today = new Date().toISOString().split('T')[0];
+    const queryParams = {
+      dateFrom: today,
+      dateTo: today,
+      transactionParams: {
+        transactionId,
+        index: 1,
+        operation: 'CREATE',
+      },
+    };
+
+    await queryInvoiceDigest({
+      page: 1,
+      queryParams,
+      invoiceDirection: 'OUTBOUND',
+      technicalUser,
+      softwareData,
+      axios,
+    });
+  });
+
+  it('should convert types in queryParams resolve value', async () => {
+    const today = new Date().toISOString().split('T')[0];
+    const queryParams = {
+      dateFrom: today,
+      dateTo: today,
+    };
+
+    const {
+      currentPage,
+      availablePage,
+      invoiceDigest,
+    } = await queryInvoiceDigest({
+      page: 1,
+      queryParams,
+      invoiceDirection: 'OUTBOUND',
+      technicalUser,
+      softwareData,
+      axios,
+    });
+
+    const digest = invoiceDigest[1];
+
+    assert.isNumber(currentPage);
+    assert.isNumber(availablePage);
+    assert.isNumber(digest.invoiceNetAmount);
+    assert.isNumber(digest.invoiceVatAmountHUF);
   });
 });

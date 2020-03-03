@@ -12,7 +12,7 @@ const createRequestSignature = require('./create-request-signature.js');
  * @param {Date} [params.date=new Date()] Request creation date.
  * @param {Object} params.technicalUser Technical user data.
  * @param {Object} params.softwareData Software data.
- * @param {Array} [params.invoices=[]] Invoice xmls in base64 encoding.
+ * @param {Array} [params.invoices=[]] Invoice xmls in base64 encoding and invoice operation
  * @returns {Object} Base request.
  */
 module.exports = function createBaseRequest({
@@ -54,12 +54,12 @@ module.exports = function createBaseRequest({
   const baseRequest = {
     [requestType]: {
       $: {
-        xmlns: 'http://schemas.nav.gov.hu/OSA/1.0/api',
+        xmlns: 'http://schemas.nav.gov.hu/OSA/2.0/api',
       },
       header: {
         requestId,
         timestamp: date.toISOString(),
-        requestVersion: '1.1',
+        requestVersion: '2.0',
         headerVersion: '1.0',
       },
       user: {

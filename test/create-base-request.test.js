@@ -25,11 +25,11 @@ describe('createBaseRequest()', () => {
   it('should return valid baseRequest', () => {
     const expected = {
       TokenExchangeRequest: {
-        $: { xmlns: 'http://schemas.nav.gov.hu/OSA/1.0/api' },
+        $: { xmlns: 'http://schemas.nav.gov.hu/OSA/2.0/api' },
         header: {
           requestId: '5aa8fb82b058db2438eaab4d',
           timestamp: '2018-03-14T10:37:54.000Z',
-          requestVersion: '1.1',
+          requestVersion: '2.0',
           headerVersion: '1.0',
         },
         user: {
@@ -38,7 +38,7 @@ describe('createBaseRequest()', () => {
             'B109F3BBBC244EB82441917ED06D618B9008DD09B3BEFD1B5E07394C706A8BB980B1D7785E5976EC049B46DF5F1326AF5A2EA6D103FD07C95385FFAB0CACBC86',
           taxNumber: '12345678',
           requestSignature:
-            '91A5E8D2AF76A3C11AC223942D97114E1C878B4D44E98269E18650DE0FE75BD7C86D7B08EA17A703C86BEE3B58860F452BA4F6CE830D49B1581E72C779662042',
+            '1738823EF4917CCEA987FDAAC599E29AD9880DF6CD7A871A5AA7968C85E305488DDC0CEC7AADF3F16C3AFB20241E7585B0E5ACB5067216012F99367856667FBD',
         },
         software: {
           softwareId: '123456789123456789',

@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<TokenExchangeRequest xmlns="http://schemas.nav.gov.hu/OSA/1.0/api">
+<TokenExchangeRequest xmlns="http://schemas.nav.gov.hu/OSA/2.0/api">
 	<header>
-		<requestId>RID253015243342</requestId>
-		<timestamp>2018-01-19T15:12:55Z</timestamp>
-		<requestVersion>1.1</requestVersion>
+		<requestId>RID896801578348</requestId>
+		<timestamp>2019-09-11T10:55:31.440Z</timestamp>
+		<requestVersion>2.0</requestVersion>
 		<headerVersion>1.0</headerVersion>
 	</header>
 	<user>
-		<login>iHXDTq8JHQ33x9O</login>
-		<passwordHash>B109F3BBBC244EB82441917ED06D618B9008DD09B3BEFD1B5E07394C706A8BB980B1D7785E5976EC049B46DF5F1326AF5A2EA6D103FD07C95385FFAB0CACBC86</passwordHash>
-		<taxNumber>12345678</taxNumber>
-		<requestSignature>9CF7E97AFE159C71A632D3D6C9F75C8B7012BFE23AAAC425C276DE997B31878FD9394426CCFE99983EDA55B244921399C2B8BB262ABED59DF9AFE3CDD76ED86F</requestSignature>
+		<login>lwilsmn0uqdxe6u</login>
+		<passwordHash>2F43840A882CFDB7DB0FEC07D419D030D864B47B6B541DC280EF81B937B7A176E33C052B0D26638CC18A7A2C08D8D311733078A774BF43F6CA57FE8CD74DC28E</passwordHash>
+		<taxNumber>11111111</taxNumber>
+		<requestSignature>B4B5E0F197BFFD3DF69BCC98D3BE775F65FD5445EEF95C9D6B6C59425F2B81C4F6DA1FD563B0C7E7D98AF1E1725E5C63C2803B5D3A93D1C02ED354AC92F2CC94</requestSignature>
 	</user>
 	<software>
 		<softwareId>123456789123456789</softwareId>

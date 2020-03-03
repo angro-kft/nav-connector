@@ -27,19 +27,19 @@ module.exports = function createInvoiceOperations({ taxNumber }) {
         `<taxpayerId>${taxNumber}</taxpayerId>`
       )
       .replace(
-        '<invoiceNumber>2019/000123</invoiceNumber>',
+        '<invoiceNumber>2020/000123</invoiceNumber>',
         `<invoiceNumber>${invoiceNumber}</invoiceNumber>`
       )
       .replace(
-        '<invoiceIssueDate>2019-05-15</invoiceIssueDate>',
+        '<invoiceIssueDate>2020-05-15</invoiceIssueDate>',
         `<invoiceIssueDate>${today}</invoiceIssueDate>`
       )
       .replace(
-        '<invoiceDeliveryDate>2019-05-10</invoiceDeliveryDate>',
+        '<invoiceDeliveryDate>2020-05-10</invoiceDeliveryDate>',
         `<invoiceDeliveryDate>${today}</invoiceDeliveryDate>`
       )
       .replace(
-        '<paymentDate>2019-05-30</paymentDate>',
+        '<paymentDate>2020-05-30</paymentDate>',
         `<paymentDate>${today}</paymentDate>`
       );
 
@@ -52,12 +52,10 @@ module.exports = function createInvoiceOperations({ taxNumber }) {
         break;
 
       case 2:
-        invoiceXml = invoiceXml
-          .replace(
-            '<taxpayerId>15789934</taxpayerId>',
-            '<taxpayerId>33333333</taxpayerId>'
-          )
-          .replace('<unitOfMeasure>PIECE</unitOfMeasure>', '');
+        invoiceXml = invoiceXml.replace(
+          '<unitOfMeasure>PIECE</unitOfMeasure>',
+          ''
+        );
 
         break;
 
@@ -81,9 +79,13 @@ module.exports = function createInvoiceOperations({ taxNumber }) {
         break;
     }
 
-    const invoice = Buffer.from(invoiceXml).toString('base64');
+    const invoiceData = Buffer.from(invoiceXml).toString('base64');
 
-    invoiceOperation.push({ index: index + 1, operation: 'CREATE', invoice });
+    invoiceOperation.push({
+      index: index + 1,
+      invoiceOperation: 'CREATE',
+      invoiceData,
+    });
   }
 
   return invoiceOperation;

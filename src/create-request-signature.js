@@ -17,11 +17,15 @@ module.exports = function createRequestSignature({
   invoices = [],
 }) {
   const timestamp = `${date.toISOString().split('.')[0]}`.replace(/[-:T]/g, '');
-  const invoiceCrcChecksums = invoices.map(invoice => crc32(invoice)).join('');
+  const invoiceCrcChecksums = invoices
+    .map(invoice => {
+      const hash = crypto.createHash('sha3-512');
+      hash.update(`${invoice.operation}${invoice.data}`);
+      return hash.digest('hex').toUpperCase();
+    })
+    .join('');
 
-  const hash = crypto.createHash('sha512');
-
+  const hash = crypto.createHash('sha3-512');
   hash.update(`${requestId}${timestamp}${signatureKey}${invoiceCrcChecksums}`);
-
   return hash.digest('hex').toUpperCase();
 };
