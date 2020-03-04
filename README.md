@@ -169,7 +169,6 @@ const invoiceOperations = {
 };
 ```
 
-
 ### navConnector.manageAnnulment()
 
 Method to send a single or multiple invoice annulments to the NAV service. The method returns the transaction id of the operation which can be used later to get the status of the invoice processing status of this request.
@@ -202,6 +201,7 @@ const annulmentOperations = {
   ],
 };
 ```
+
 ### navConnector.queryTransactionStatus()
 
 Method to get the processing status of previously send invoices. The resolved return value is the ProcessingResultListType of the specification.
@@ -250,7 +250,7 @@ Method to test connection, user auth data and keys validity with a tokenExchange
  */
 try {
   await navConnector.testConnection();
-} catch(error) {
+} catch (error) {
   /* Log the error. */
 }
 ```
@@ -274,17 +274,17 @@ Method to query previously sent invoices with invoice number or query params.
 ```js
 const invoiceQuery = {
   invoiceNumber: 'invoiceNumber',
-  invoiceDirection: 'OUTBOUND'
+  invoiceDirection: 'OUTBOUND',
 };
 
 const response = await navConnector.queryInvoiceData({
-  invoiceQuery
+  invoiceQuery,
 });
 
-const { currentPage, availablePage, queryResult } = response;
+const { invoiceData, auditData, compressedContentIndicator } = response;
 
 /* If no invoice was found with the given query then queryResult is undefined. */
-if (!queryResult) {
+if (!invoiceData) {
   return;
 }
 
@@ -292,7 +292,6 @@ const { invoiceResult, invoiceDigestList } = queryResult;
 ```
 
 This function does type conversion for number and boolean typed values in the response according to the NAV service documentation.
-
 
 ### navConnector.queryInvoiceDigest()
 
@@ -309,6 +308,7 @@ Method to query previously sent invoices with query params.
  * @returns {Promise<Object>} response
  */
 ```
+
 #### Query by parameters
 
 ```js
@@ -318,7 +318,7 @@ const queryParams = {
 };
 
 const response = await navConnector.queryInvoiceDigest({
-  invoiceDirection: "OUTBOUND",
+  invoiceDirection: 'OUTBOUND',
   page: 1,
   queryParams,
 });
@@ -335,7 +335,6 @@ const { invoiceDigestList } = queryResult;
 
 This function does type conversion for number and boolean typed values in the response according to the NAV service documentation.
 
-
 ### navConnector.queryTaxpayer()
 
 Method to get taxpayer information by tax number.  
@@ -348,7 +347,9 @@ Keep in mind the taxpayerData property is not returned by the NAV service if the
  * @param {string} taxNumber Taxpayer tax number to get information for.
  * @returns {Promise<Object>} Taxpayer information.
  */
-const { taxpayerValidity, taxpayerData } = await navConnector.queryTaxpayer('12345678');
+const { taxpayerValidity, taxpayerData } = await navConnector.queryTaxpayer(
+  '12345678'
+);
 
 if (!taxpayerValidity) {
   /* Taxpayer is non existent or inactive. */

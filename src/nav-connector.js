@@ -118,18 +118,14 @@ module.exports = class NavConnector {
    * Query previously sent invoices with invoice number or query params.
    * @async
    * @param {Object} params Function params.
-   * @param {number} params.page Integer page to query.
    * @param {Object} params.invoiceQuery Query single invoice with invoice number.
-   * @param {Object} params.queryParams Query multiple invoices with params.
    * @returns {Promise<Object>} response
    */
-  async queryInvoiceData({ page, invoiceQuery, queryParams }) {
+  async queryInvoiceData({ invoiceQuery }) {
     const { technicalUser, softwareData, axios } = this;
 
     return queryInvoiceData({
-      page,
       invoiceQuery,
-      queryParams,
       technicalUser,
       softwareData,
       axios,
