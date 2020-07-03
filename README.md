@@ -257,11 +257,11 @@ try {
 
 ### navConnector.queryInvoiceData()
 
-Method to query previously sent invoices with invoice number or query params.
+Method to query previously sent invoices with invoice number.
 
 ```js
 /**
- * Query previously sent invoices with invoice number or query params.
+ * Query previously sent invoices with invoice number
  * @async
  * @param {Object} params Function params.
  * @param {Object} params.invoiceQuery Query single invoice with invoice number.
@@ -305,6 +305,19 @@ Method to query previously sent invoices with query params.
  * @param {number} params.page Integer page to query.
  * @param {string} params.invoiceDirection inbound or outbound request type
  * @param {Object} params.queryParams Query multiple invoices with params.
+ * @param {string} queryParams.dateFrom - REQUIRED valid date string to search from
+ * @param {string} queryParams.dateTo - REQUIRED valid date string to search to
+ * @param {string} queryParams.taxNumber - OPTIONAL Tax number of the invoice supplier or customer
+ * @param {string} queryParams.groupMemberTaxNumber - OPTIONAL Tax number of group member for the invoice supplier or customer
+ * @param {string} queryParams.name - OPTIONAL Left side text matching for the invoice supplier or customer search parameter
+ * @param {string} queryParams.invoiceCategory - OPTIONAL Invoice category type
+ * @param {string} queryParams.paymentMethod - OPTIONAL Payment method
+ * @param {string} queryParams.invoiceAppearance - OPTIONAL Appearance of the invoice
+ * @param {string} queryParams.source - OPTIONAL Data report source
+ * @param {string} queryParams.currency - OPTIONAL Invoice currency
+ * @param {string} queryParams.transactionId - OPTIONAL The searched transaction ID
+ * @param {number} queryParams.index - OPTIONAL Index of the searched invoice within the transaction
+ * @param {string} queryParams.invoiceOperation - OPTIONAL Invoice operation search parameter
  * @returns {Promise<Object>} response
  */
 ```
