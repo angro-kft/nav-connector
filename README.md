@@ -1,11 +1,10 @@
 # nav-connector
 
-[![CircleCI](https://circleci.com/gh/angro-kft/nav-connector.svg?style=shield)](https://circleci.com/gh/angro-kft/nav-connector)
 [![codecov](https://codecov.io/gh/angro-kft/nav-connector/branch/dev/graph/badge.svg)](https://codecov.io/gh/angro-kft/nav-connector)
 [![npm (scoped)](https://img.shields.io/npm/v/@angro/nav-connector.svg)](https://www.npmjs.com/package/@angro/nav-connector)
 [![license](https://img.shields.io/github/license/angro-kft/nav-connector.svg)](https://github.com/angro-kft/nav-connector/blob/dev/LICENSE)
-![nav](https://img.shields.io/badge/NAV%20service%20version%20compatible-1.8-blue.svg)
-![nav-interface](https://img.shields.io/badge/NAV%20interface%20version%20compatible-1.1-blue.svg)
+![nav](https://img.shields.iohttps://img.shields.io/badge/NAV%20service%20version%20compatible-2.10-blue.svg)
+![nav-interface](https://img.shields.io/badge/NAV%20interface%20version%20compatible-2.0-blue.svg)
 
 Node.js module which provides an interface for communicating with NAV online invoice service.
 
