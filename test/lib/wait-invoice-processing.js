@@ -3,7 +3,7 @@ const async = require('async');
 
 const retry = promisify(async.retry).bind(async);
 
-const queryInvoiceStatus = require('../../src/query-invoice-status.js');
+const queryTransactionStatus = require('../../src/query-transaction-status.js');
 
 /**
  * Resolves when the operations with the given transactionId get processed.
@@ -55,7 +55,7 @@ module.exports = function waitInvoiceProcessing({
       },
     },
     async () => {
-      const processingResults = await queryInvoiceStatus({
+      const processingResults = await queryTransactionStatus({
         transactionId,
         technicalUser,
         softwareData,
@@ -68,18 +68,6 @@ module.exports = function waitInvoiceProcessing({
           processingResult.invoiceStatus === 'ABORTED' &&
           !ignoreAbortedIndexes.includes(invoiceIndex)
       );
-
-      if (hasAborted) {
-        throw new Error('Invoice status is ABORTED!');
-      }
-
-      const hasPending = processingResults.find(processingResult =>
-        ['RECEIVED', 'PROCESSING'].includes(processingResult.invoiceStatus)
-      );
-
-      if (hasPending) {
-        throw new Error('An invoice is still under processing!');
-      }
     }
   );
 };

@@ -90,7 +90,7 @@ describe('sendRequest()', () => {
 
       throw new Error('should throw if request is invalid');
     } catch (error) {
-      assert.lengthOf(error.response.data.technicalValidationMessages, 2);
+      assert.lengthOf(error.response.data.technicalValidationMessages, 4);
     }
   });
 
@@ -114,7 +114,7 @@ describe('sendRequest()', () => {
 
       throw new Error('should throw if request is invalid');
     } catch (error) {
-      assert.lengthOf(error.response.data.technicalValidationMessages, 1);
+      assert.lengthOf(error.response.data.technicalValidationMessages, 2);
     }
   });
 

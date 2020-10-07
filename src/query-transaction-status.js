@@ -12,7 +12,7 @@ const sendRequest = require('./send-request.js');
  * @param {Object} params.axios Axios instance.
  * @returns {Promise<Array>} processingResults
  */
-module.exports = async function queryInvoiceStatus({
+module.exports = async function queryTransactionStatus({
   transactionId,
   returnOriginalRequest = false,
   technicalUser,
@@ -20,12 +20,12 @@ module.exports = async function queryInvoiceStatus({
   axios,
 }) {
   const request = createBaseRequest({
-    requestType: 'QueryInvoiceStatusRequest',
+    requestType: 'QueryTransactionStatusRequest',
     technicalUser,
     softwareData,
   });
 
-  Object.assign(request.QueryInvoiceStatusRequest, {
+  Object.assign(request.QueryTransactionStatusRequest, {
     transactionId,
     returnOriginalRequest,
   });
@@ -33,10 +33,10 @@ module.exports = async function queryInvoiceStatus({
   const responseData = await sendRequest({
     request,
     axios,
-    path: '/queryInvoiceStatus',
+    path: '/queryTransactionStatus',
   });
 
-  const { processingResults } = responseData.QueryInvoiceStatusResponse;
+  const { processingResults } = responseData.QueryTransactionStatusResponse;
 
   /* Normalize processingResults to Array. */
   if (!processingResults) {

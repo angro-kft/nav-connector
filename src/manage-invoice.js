@@ -20,9 +20,12 @@ module.exports = async function manageInvoice({
   softwareData,
   axios,
 }) {
-  const invoices = invoiceOperations.invoiceOperation.map(
-    invoiceOperation => invoiceOperation.invoice
-  );
+  const invoices = invoiceOperations.invoiceOperation.map(invoiceOperation => {
+    return {
+      data: invoiceOperation.invoiceData,
+      operation: invoiceOperation.invoiceOperation,
+    };
+  });
 
   const request = createBaseRequest({
     requestType: 'ManageInvoiceRequest',
@@ -39,7 +42,6 @@ module.exports = async function manageInvoice({
 
   /* Normalize request object key order. */
   const normalizedInvoiceOperations = pick(invoiceOperations, [
-    'technicalAnnulment',
     'compressedContent',
     'invoiceOperation',
   ]);
@@ -47,7 +49,7 @@ module.exports = async function manageInvoice({
   const { invoiceOperation } = normalizedInvoiceOperations;
 
   normalizedInvoiceOperations.invoiceOperation = invoiceOperation.map(elem =>
-    pick(elem, ['index', 'operation', 'invoice'])
+    pick(elem, ['index', 'invoiceOperation', 'invoiceData'])
   );
 
   request.ManageInvoiceRequest.invoiceOperations = normalizedInvoiceOperations;

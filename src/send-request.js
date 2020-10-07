@@ -20,11 +20,8 @@ const createRequestXml = require('./create-request-xml.js');
 module.exports = async function sendRequest({ request, axios, path }) {
   try {
     const requestXml = createRequestXml(request);
-
     const response = await axios.post(path, requestXml);
-
     response.data = await parseXml(response.data);
-
     return response.data;
   } catch (error) {
     const { response } = error;

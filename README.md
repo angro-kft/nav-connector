@@ -1,11 +1,10 @@
 # nav-connector
 
-[![CircleCI](https://circleci.com/gh/angro-kft/nav-connector.svg?style=shield)](https://circleci.com/gh/angro-kft/nav-connector)
 [![codecov](https://codecov.io/gh/angro-kft/nav-connector/branch/dev/graph/badge.svg)](https://codecov.io/gh/angro-kft/nav-connector)
 [![npm (scoped)](https://img.shields.io/npm/v/@angro/nav-connector.svg)](https://www.npmjs.com/package/@angro/nav-connector)
 [![license](https://img.shields.io/github/license/angro-kft/nav-connector.svg)](https://github.com/angro-kft/nav-connector/blob/dev/LICENSE)
-![nav](https://img.shields.io/badge/NAV%20service%20version%20compatible-1.8-blue.svg)
-![nav-interface](https://img.shields.io/badge/NAV%20interface%20version%20compatible-1.1-blue.svg)
+![nav](https://img.shields.io/badge/NAV%20service%20version%20compatible-2.10-blue.svg)
+![nav-interface](https://img.shields.io/badge/NAV%20interface%20version%20compatible-2.0-blue.svg)
 
 Node.js module which provides an interface for communicating with NAV online invoice service.
 
@@ -45,7 +44,7 @@ const softwareData = {
   softwareDevTaxNumber: 'string',
 };
 
-const baseURL = 'https://api-test.onlineszamla.nav.gov.hu/invoiceService/';
+const baseURL = 'https://api-test.onlineszamla.nav.gov.hu/invoiceService/v2/';
 
 /* Create the nav connector interface. */
 const navConnector = new NavConnector({ technicalUser, softwareData, baseURL });
@@ -59,7 +58,6 @@ const navConnector = new NavConnector({ technicalUser, softwareData, baseURL });
     /* Send invoice to the NAV service.
        invoiceOperations is the InvoiceOperationListType in the specification. */
     const invoiceOperations = {
-      technicalAnnulment: false,
       compressedContent: false,
       invoiceOperation: [
         {
@@ -74,7 +72,7 @@ const navConnector = new NavConnector({ technicalUser, softwareData, baseURL });
 
     /* Check previously sent invoice processing status.
        processingResults is the ProcessingResultListType in the specification. */
-    const processingResults = await navConnector.queryInvoiceStatus({
+    const processingResults = await navConnector.queryTransactionStatus({
       transactionId,
     });
 
@@ -101,7 +99,7 @@ Class representing the implementation of the NAV online invoice data service spe
  * @param {Object} params Constructor params.
  * @param {Object} params.technicalUser Technical user data.
  * @param {Object} params.softwareData Software data.
- * @param {String} [params.baseURL=https://api.onlineszamla.nav.gov.hu/invoiceService/] Axios baseURL.
+ * @param {String} [params.baseURL=https://api.onlineszamla.nav.gov.hu/invoiceService/v2/] Axios baseURL.
  * @param {number} [params.timeout=70000] Axios default timeout integer in milliseconds.
  */
 const navConnector = new NavConnector({ technicalUser, softwareData });
@@ -139,18 +137,17 @@ Example for invoiceOperations parameter:
 
 ```js
 const invoiceOperations = {
-  technicalAnnulment: false,
   compressedContent: false,
   invoiceOperation: [
     {
       index: 1,
-      operation: 'CREATE',
-      invoice: 'invoice xml in base64 encoding',
+      invoiceOperation: 'CREATE',
+      invoiceData: 'invoice xml in base64 encoding',
     },
     {
       index: 2,
-      operation: 'STORNO',
-      invoice: 'invoice xml in base64 encoding',
+      invoiceOperation: 'STORNO',
+      invoiceData: 'invoice xml in base64 encoding',
     },
   ],
 };
@@ -160,19 +157,51 @@ Take note You have to compress the invoice by yourself before using the manageIn
 
 ```js
 const invoiceOperations = {
-  technicalAnnulment: false,
   compressedContent: true,
   invoiceOperation: [
     {
       index: 1,
-      operation: 'CREATE',
-      invoice: 'compressed invoice xml in base64 encoding',
+      invoiceOperation: 'CREATE',
+      invoiceData: 'compressed invoice xml in base64 encoding',
     },
   ],
 };
 ```
 
-### navConnector.queryInvoiceStatus()
+### navConnector.manageAnnulment()
+
+Method to send a single or multiple invoice annulments to the NAV service. The method returns the transaction id of the operation which can be used later to get the status of the invoice processing status of this request.
+
+```js
+/**
+ * Send request to NAV service to manage annulment invoices.
+ * @async
+ * @param {Object} annulmentOperations Request object for xml conversion and send.
+ * @returns {Promise<string>} Manage invoice operation transaction id.
+ */
+const transactionId = await navConnector.manageAnnulment(annulmentOperations);
+```
+
+Example for annulmentOperations parameter:
+
+```js
+const annulmentOperations = {
+  annulmentOperation: [
+    {
+      index: 1,
+      annulmentOperation: 'ANNUL',
+      invoiceAnnulment: 'invoice xml in base64 encoding',
+    },
+    {
+      index: 2,
+      annulmentOperation: 'ANNUL',
+      invoiceAnnulment: 'invoice xml in base64 encoding',
+    },
+  ],
+};
+```
+
+### navConnector.queryTransactionStatus()
 
 Method to get the processing status of previously send invoices. The resolved return value is the ProcessingResultListType of the specification.
 
@@ -185,7 +214,7 @@ Method to get the processing status of previously send invoices. The resolved re
  * @param {boolean} [params.returnOriginalRequest=false] Flag for api response to contain the original invoice.
  * @returns {Promise<Array>} processingResults
  */
-const processingResults = await navConnector.queryInvoiceStatus({
+const processingResults = await navConnector.queryTransactionStatus({
   transactionId,
   returnOriginalRequest: true,
 });
@@ -220,23 +249,21 @@ Method to test connection, user auth data and keys validity with a tokenExchange
  */
 try {
   await navConnector.testConnection();
-} catch(error) {
+} catch (error) {
   /* Log the error. */
 }
 ```
 
 ### navConnector.queryInvoiceData()
 
-Method to query previously sent invoices with invoice number or query params.
+Method to query previously sent invoices with invoice number.
 
 ```js
 /**
- * Query previously sent invoices with invoice number or query params.
+ * Query previously sent invoices with invoice number
  * @async
  * @param {Object} params Function params.
- * @param {number} params.page Integer page to query.
  * @param {Object} params.invoiceQuery Query single invoice with invoice number.
- * @param {Object} params.queryParams Query multiple invoices with params.
  * @returns {Promise<Object>} response
  */
 ```
@@ -246,33 +273,64 @@ Method to query previously sent invoices with invoice number or query params.
 ```js
 const invoiceQuery = {
   invoiceNumber: 'invoiceNumber',
-  requestAllModification: true,
+  invoiceDirection: 'OUTBOUND',
 };
 
 const response = await navConnector.queryInvoiceData({
-  page: 1,
   invoiceQuery,
 });
 
-const { currentPage, availablePage, queryResult } = response;
+const { invoiceData, auditData, compressedContentIndicator } = response;
 
 /* If no invoice was found with the given query then queryResult is undefined. */
-if (!queryResult) {
+if (!invoiceData) {
   return;
 }
 
 const { invoiceResult, invoiceDigestList } = queryResult;
 ```
 
+This function does type conversion for number and boolean typed values in the response according to the NAV service documentation.
+
+### navConnector.queryInvoiceDigest()
+
+Method to query previously sent invoices with query params.
+
+```js
+/**
+ * Query previously sent invoices with query params.
+ * @async
+ * @param {Object} params Function params.
+ * @param {number} params.page Integer page to query.
+ * @param {string} params.invoiceDirection inbound or outbound request type
+ * @param {Object} params.queryParams Query multiple invoices with params.
+ * @param {string} queryParams.dateFrom - REQUIRED valid date string to search from
+ * @param {string} queryParams.dateTo - REQUIRED valid date string to search to
+ * @param {string} queryParams.taxNumber - OPTIONAL Tax number of the invoice supplier or customer
+ * @param {string} queryParams.groupMemberTaxNumber - OPTIONAL Tax number of group member for the invoice supplier or customer
+ * @param {string} queryParams.name - OPTIONAL Left side text matching for the invoice supplier or customer search parameter
+ * @param {string} queryParams.invoiceCategory - OPTIONAL Invoice category type
+ * @param {string} queryParams.paymentMethod - OPTIONAL Payment method
+ * @param {string} queryParams.invoiceAppearance - OPTIONAL Appearance of the invoice
+ * @param {string} queryParams.source - OPTIONAL Data report source
+ * @param {string} queryParams.currency - OPTIONAL Invoice currency
+ * @param {string} queryParams.transactionId - OPTIONAL The searched transaction ID
+ * @param {number} queryParams.index - OPTIONAL Index of the searched invoice within the transaction
+ * @param {string} queryParams.invoiceOperation - OPTIONAL Invoice operation search parameter
+ * @returns {Promise<Object>} response
+ */
+```
+
 #### Query by parameters
 
 ```js
 const queryParams = {
-  invoiceIssueDateFrom: '2017-12-28',
-  invoiceIssueDateTo: '2017-12-28',
+  dateFrom: '2017-12-28',
+  dateTo: '2017-12-28',
 };
 
-const response = await navConnector.queryInvoiceData({
+const response = await navConnector.queryInvoiceDigest({
+  invoiceDirection: 'OUTBOUND',
   page: 1,
   queryParams,
 });
@@ -301,7 +359,9 @@ Keep in mind the taxpayerData property is not returned by the NAV service if the
  * @param {string} taxNumber Taxpayer tax number to get information for.
  * @returns {Promise<Object>} Taxpayer information.
  */
-const { taxpayerValidity, taxpayerData } = await navConnector.queryTaxpayer('12345678');
+const { taxpayerValidity, taxpayerData } = await navConnector.queryTaxpayer(
+  '12345678'
+);
 
 if (!taxpayerValidity) {
   /* Taxpayer is non existent or inactive. */

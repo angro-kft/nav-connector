@@ -1,11 +1,13 @@
 const axiosCreate = require('axios').create;
 
-const defaultBaseUrl = 'https://api.onlineszamla.nav.gov.hu/invoiceService/';
+const defaultBaseUrl = 'https://api.onlineszamla.nav.gov.hu/invoiceService/v2/';
 
 const manageInvoice = require('../src/manage-invoice.js');
-const queryInvoiceStatus = require('../src/query-invoice-status.js');
+const manageAnnulment = require('../src/manage-annulment.js');
+const queryTransactionStatus = require('../src/query-transaction-status.js');
 const testConnection = require('../src/test-connection.js');
 const queryInvoiceData = require('../src/query-invoice-data.js');
+const queryInvoiceDigest = require('../src/query-invoice-digest');
 const queryTaxpayer = require('../src/query-taxpayer.js');
 
 /** Class representing a NAV online interface.
@@ -16,7 +18,7 @@ module.exports = class NavConnector {
    * @param {Object} params Constructor params.
    * @param {Object} params.technicalUser Technical user data.
    * @param {Object} params.softwareData Software data.
-   * @param {string} [params.baseURL=https://api.onlineszamla.nav.gov.hu/invoiceService/] Axios baseURL.
+   * @param {string} [params.baseURL=https://api.onlineszamla.nav.gov.hu/invoiceService/v2/] Axios baseURL.
    * @param {number} [params.timeout=70000] Axios default timeout integer in milliseconds.
    */
   constructor({
@@ -57,6 +59,23 @@ module.exports = class NavConnector {
   }
 
   /**
+   * Send request to NAV service to manage invoice annulments.
+   * @async
+   * @param {Object} annulmentOperations Request object for xml conversion and send.
+   * @returns {Promise<string>} Manage invoice annulment operation transaction id.
+   */
+  async manageAnnulment(annulmentOperations) {
+    const { technicalUser, softwareData, axios } = this;
+
+    return manageAnnulment({
+      annulmentOperations,
+      technicalUser,
+      softwareData,
+      axios,
+    });
+  }
+
+  /**
    * Get the result of a previously sent manage invoice request.
    * @async
    * @param {Object} params Function params.
@@ -64,10 +83,13 @@ module.exports = class NavConnector {
    * @param {boolean} [params.returnOriginalRequest=false] Flag for api response to contain the original invoice.
    * @returns {Promise<Array>} processingResults
    */
-  async queryInvoiceStatus({ transactionId, returnOriginalRequest = false }) {
+  async queryTransactionStatus({
+    transactionId,
+    returnOriginalRequest = false,
+  }) {
     const { technicalUser, softwareData, axios } = this;
 
-    return queryInvoiceStatus({
+    return queryTransactionStatus({
       transactionId,
       returnOriginalRequest,
       technicalUser,
@@ -96,17 +118,35 @@ module.exports = class NavConnector {
    * Query previously sent invoices with invoice number or query params.
    * @async
    * @param {Object} params Function params.
-   * @param {number} params.page Integer page to query.
    * @param {Object} params.invoiceQuery Query single invoice with invoice number.
-   * @param {Object} params.queryParams Query multiple invoices with params.
    * @returns {Promise<Object>} response
    */
-  async queryInvoiceData({ page, invoiceQuery, queryParams }) {
+  async queryInvoiceData({ invoiceQuery }) {
     const { technicalUser, softwareData, axios } = this;
 
     return queryInvoiceData({
-      page,
       invoiceQuery,
+      technicalUser,
+      softwareData,
+      axios,
+    });
+  }
+
+  /**
+   * Query previously sent invoices with query params.
+   * @async
+   * @param {Object} params Function params.
+   * @param {number} params.page Integer page to query.
+   * @param {string} params.invoiceDirection inbound or outbound request type
+   * @param {Object} params.queryParams Query multiple invoices with params.
+   * @returns {Promise<Object>} response
+   */
+  async queryInvoiceDigest({ page, invoiceDirection, queryParams }) {
+    const { technicalUser, softwareData, axios } = this;
+
+    return queryInvoiceDigest({
+      page,
+      invoiceDirection,
       queryParams,
       technicalUser,
       softwareData,

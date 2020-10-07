@@ -11,7 +11,6 @@ describe('manageInvoice()', () => {
     }).slice(0, 1);
 
     const invoiceOperations = {
-      technicalAnnulment: false,
       compressedContent: false,
       invoiceOperation,
     };
@@ -31,7 +30,6 @@ describe('manageInvoice()', () => {
     });
 
     const invoiceOperations = {
-      technicalAnnulment: false,
       compressedContent: false,
       invoiceOperation,
     };
@@ -49,16 +47,15 @@ describe('manageInvoice()', () => {
   it('should normalize invoiceOperation key order', async () => {
     const invoiceOperation = createInvoiceOperations({
       taxNumber: technicalUser.taxNumber,
-    }).map(({ invoice, operation, index }) => ({
-      invoice,
-      operation,
+    }).map(({ invoiceData, invoiceOperation, index }) => ({
+      invoiceData,
+      invoiceOperation,
       index,
     }));
 
     const invoiceOperations = {
       invoiceOperation,
       compressedContent: false,
-      technicalAnnulment: false,
     };
 
     await manageInvoice({
@@ -76,7 +73,6 @@ describe('manageInvoice()', () => {
     }).slice(0, 1);
 
     const invoiceOperations = {
-      technicalAnnulment: false,
       compressedContent: true,
       invoiceOperation,
     };
