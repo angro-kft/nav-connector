@@ -48,9 +48,17 @@ module.exports = async function manageInvoice({
 
   const { invoiceOperation } = normalizedInvoiceOperations;
 
-  normalizedInvoiceOperations.invoiceOperation = invoiceOperation.map(elem =>
-    pick(elem, ['index', 'invoiceOperation', 'invoiceData'])
-  );
+  normalizedInvoiceOperations.invoiceOperation = invoiceOperation.map(elem => ({
+    index: elem.index,
+    invoiceOperation: elem.invoiceOperation,
+    invoiceData: elem.invoiceData,
+    electronicInvoiceHash: {
+      $: {
+        cryptoType: 'SHA3-512',
+      },
+      _: elem.electronicInvoiceHash,
+    },
+  }));
 
   request.ManageInvoiceRequest.invoiceOperations = normalizedInvoiceOperations;
 

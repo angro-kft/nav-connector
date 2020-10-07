@@ -49,6 +49,7 @@ describe('manageInvoice()', () => {
       taxNumber: technicalUser.taxNumber,
     }).map(({ invoiceData, invoiceOperation, index }) => ({
       invoiceData,
+      electronicInvoiceHash,
       invoiceOperation,
       index,
     }));
