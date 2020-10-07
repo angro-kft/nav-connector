@@ -12,7 +12,11 @@ describe('queryTaxpayer()', () => {
       axios,
     });
 
-    assert.hasAllKeys(taxpayerInfo, ['taxpayerValidity', 'taxpayerData']);
+    assert.hasAllKeys(taxpayerInfo, [
+      'taxpayerValidity',
+      'taxpayerData',
+      'incorporation',
+    ]);
   });
 
   it('should resolve to empty object if taxpayer does not exists', async () => {
