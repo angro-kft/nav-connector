@@ -25,11 +25,14 @@ describe('createBaseRequest()', () => {
   it('should return valid baseRequest', () => {
     const expected = {
       TokenExchangeRequest: {
-        $: { xmlns: 'http://schemas.nav.gov.hu/OSA/2.0/api' },
+        $: {
+          'xmlns:common': 'http://schemas.nav.gov.hu/NTCA/1.0/common',
+          xmlns: 'http://schemas.nav.gov.hu/OSA/3.0/api',
+        },
         header: {
           requestId: '5aa8fb82b058db2438eaab4d',
           timestamp: '2018-03-14T10:37:54.000Z',
-          requestVersion: '2.0',
+          requestVersion: '3.0',
           headerVersion: '1.0',
         },
         user: {
