@@ -58,6 +58,8 @@ module.exports = function createInvoiceOperations({
       index: index + 1,
       invoiceOperation: 'CREATE',
       invoiceData,
+      electronicInvoiceHash:
+        '1F1C1E8BDA6C52CA4F2CF805D402997B7ADD6B57705032F7AEA99308B84C5A9D0FCB70BBD52FEA572F4064D19227C2E78D6ADF047DBB058AAD0A4CE4A457888C',
     });
   }
 
