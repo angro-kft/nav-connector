@@ -22,7 +22,7 @@ exports.softwareData = {
 };
 
 exports.axios = axios.create({
-  baseURL: 'https://api-test.onlineszamla.nav.gov.hu/invoiceService/v2/',
+  baseURL: 'https://api-test.onlineszamla.nav.gov.hu/invoiceService/v3/',
   timeout: 70000,
   headers: {
     'content-type': 'application/xml',

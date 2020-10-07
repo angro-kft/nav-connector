@@ -4,8 +4,8 @@ const createInvoiceOperations = require('./lib/create-invoice-operations.js');
 
 const NavConnector = require('../src/nav-connector.js');
 
-const defaultBaseUrl = 'https://api.onlineszamla.nav.gov.hu/invoiceService/v2/';
-const baseURL = 'https://api-test.onlineszamla.nav.gov.hu/invoiceService/v2/';
+const defaultBaseUrl = 'https://api.onlineszamla.nav.gov.hu/invoiceService/v3/';
+const baseURL = 'https://api-test.onlineszamla.nav.gov.hu/invoiceService/v3/';
 
 describe('NavConnector', () => {
   it('should assign technicalUser to the new instance', () => {

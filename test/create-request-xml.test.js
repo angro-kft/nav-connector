@@ -6,11 +6,14 @@ describe('createRequestXml()', () => {
   it('should return a valid request xml', () => {
     const request = {
       TokenExchangeRequest: {
-        $: { xmlns: 'http://schemas.nav.gov.hu/OSA/2.0/api' },
+        $: {
+          'xmlns:common': 'http://schemas.nav.gov.hu/NTCA/1.0/common',
+          xmlns: 'http://schemas.nav.gov.hu/OSA/3.0/api',
+        },
         header: {
           requestId: 'RID896801578348',
           timestamp: '2019-09-11T10:55:31.440Z',
-          requestVersion: '2.0',
+          requestVersion: '3.0',
           headerVersion: '1.0',
         },
         user: {

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<TokenExchangeRequest xmlns="http://schemas.nav.gov.hu/OSA/2.0/api">
-	<header>
+<TokenExchangeRequest xmlns:common="http://schemas.nav.gov.hu/NTCA/1.0/common" xmlns="http://schemas.nav.gov.hu/OSA/3.0/api">
+	<common:header>
 		<requestId>RID896801578348</requestId>
 		<timestamp>2019-09-11T10:55:31.440Z</timestamp>
-		<requestVersion>2.0</requestVersion>
+		<requestVersion>3.0</requestVersion>
 		<headerVersion>1.0</headerVersion>
 	</header>
 	<user>
