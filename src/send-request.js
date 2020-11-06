@@ -39,17 +39,16 @@ module.exports = async function sendRequest({ request, axios, path }) {
 
         response.data = {
           result: pick(data.GeneralExceptionResponse, [
-            'funcCode',
-            'errorCode',
-            'message',
+            'ns2:funcCode',
+            'ns2:errorCode',
+            'ns2:message',
           ]),
           technicalValidationMessages: [],
         };
       } else if (response.data.includes('GeneralErrorResponse')) {
         const data = await parseXml(response.data);
-
         response.data = pick(data.GeneralErrorResponse, [
-          'result',
+          'ns2:result',
           'schemaValidationMessages',
           'technicalValidationMessages',
         ]);

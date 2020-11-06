@@ -58,16 +58,26 @@ module.exports = function createBaseRequest({
         xmlns: 'http://schemas.nav.gov.hu/OSA/3.0/api',
       },
       'common:header': {
-        requestId,
-        timestamp: date.toISOString(),
-        requestVersion: '3.0',
-        headerVersion: '1.0',
+        'common:requestId': requestId,
+        'common:timestamp': date.toISOString(),
+        'common:requestVersion': '3.0',
+        'common:headerVersion': '1.0',
       },
       'common:user': {
-        login,
-        passwordHash,
-        taxNumber,
-        requestSignature,
+        'common:login': login,
+        'common:passwordHash': {
+          $: {
+            cryptoType: 'SHA2-512',
+          },
+          _: passwordHash,
+        },
+        'common:taxNumber': taxNumber,
+        'common:requestSignature': {
+          $: {
+            cryptoType: 'SHA3-512',
+          },
+          _: requestSignature,
+        },
       },
       software,
     },
