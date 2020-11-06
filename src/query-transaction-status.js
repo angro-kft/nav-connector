@@ -69,6 +69,15 @@ module.exports = async function queryTransactionStatus({
       result.technicalValidationMessages = [technicalValidationMessages];
     }
 
+    // [3.0] normalize namespace changes
+    result.technicalValidationMessages = result.technicalValidationMessages.map(
+      value => ({
+        validationResultCode: value['ns2:validationResultCode'],
+        validationErrorCode: value['ns2:validationErrorCode'],
+        message: value['ns2:message'],
+      })
+    );
+
     /* Normalize businessValidationMessages to Array. */
     if (!businessValidationMessages) {
       result.businessValidationMessages = [];
