@@ -36,7 +36,6 @@ module.exports = async function queryTaxpayer({
   const taxpayerInfo = pick(response.QueryTaxpayerResponse, [
     'taxpayerValidity',
     'taxpayerData',
-    'incorporation',
   ]);
 
   taxpayerInfo.taxpayerValidity = taxpayerInfo.taxpayerValidity === 'true';
