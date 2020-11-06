@@ -45,6 +45,18 @@ module.exports = async function sendRequest({ request, axios, path }) {
           ]),
           technicalValidationMessages: [],
         };
+
+        // [3.0] normalize namespace changes
+        response.data.result = {
+          funcCode: response.data.result['ns2:funcCode'],
+        };
+        if (response.data.result['ns2:errorCode']) {
+          response.data.result.errorCode =
+            response.data.result['ns2:errorCode'];
+        }
+        if (response.data.result['ns2:message']) {
+          response.data.result.message = response.data.result['ns2:message'];
+        }
       } else if (response.data.includes('GeneralErrorResponse')) {
         const data = await parseXml(response.data);
         response.data = pick(data.GeneralErrorResponse, [
@@ -52,6 +64,19 @@ module.exports = async function sendRequest({ request, axios, path }) {
           'schemaValidationMessages',
           'technicalValidationMessages',
         ]);
+
+        // [3.0] normalize namespace changes
+        response.data.result = {
+          funcCode: response.data['ns2:result']['ns2:funcCode'],
+        };
+        if (response.data['ns2:result']['ns2:errorCode']) {
+          response.data.result.errorCode =
+            response.data['ns2:result']['ns2:errorCode'];
+        }
+        if (response.data['ns2:result']['ns2:message']) {
+          response.data.result.message =
+            response.data['ns2:result']['ns2:message'];
+        }
 
         const { technicalValidationMessages } = response.data;
 
