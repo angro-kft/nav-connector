@@ -61,7 +61,6 @@ module.exports = function waitInvoiceProcessing({
         softwareData,
         axios,
       });
-
       /* Invoices can be willfully corrupted. There can be predefined indexes to ignore. */
       const hasAborted = processingResults.find(
         (processingResult, invoiceIndex) =>

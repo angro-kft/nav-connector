@@ -12,21 +12,17 @@ describe('queryTaxpayer()', () => {
       axios,
     });
 
-    assert.hasAllKeys(taxpayerInfo, [
-      'taxpayerValidity',
-      'taxpayerData',
-      'incorporation',
-    ]);
+    assert.hasAllKeys(taxpayerInfo, ['taxpayerValidity', 'taxpayerData']);
   });
 
-  it('should resolve to empty object if taxpayer does not exists', async () => {
+  it('should resolve to false if taxpayer does not exists', async () => {
     const taxpayerInfo = await queryTaxpayer({
       taxNumber: '00000000',
       technicalUser,
       softwareData,
       axios,
     });
-
     assert.hasAllKeys(taxpayerInfo, ['taxpayerValidity']);
+    assert.equal(taxpayerInfo.taxpayerValidity, false);
   });
 });
