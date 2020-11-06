@@ -49,7 +49,6 @@ describe('manageInvoice()', () => {
       taxNumber: technicalUser.taxNumber,
     }).map(({ invoiceData, invoiceOperation, index }) => ({
       invoiceData,
-      electronicInvoiceHash,
       invoiceOperation,
       index,
     }));
@@ -75,6 +74,27 @@ describe('manageInvoice()', () => {
 
     const invoiceOperations = {
       compressedContent: true,
+      invoiceOperation,
+    };
+
+    const transactionId = await manageInvoice({
+      invoiceOperations,
+      technicalUser,
+      softwareData,
+      axios,
+    });
+
+    assert.match(transactionId, /^[+a-zA-Z0-9_]{1,30}$/);
+  });
+
+  it('should resolve to transactionId with electronicInvoiceHash', async () => {
+    const invoiceOperation = createInvoiceOperations({
+      taxNumber: technicalUser.taxNumber,
+      createInvoiceHash: true,
+    }).slice(0, 1);
+
+    const invoiceOperations = {
+      compressedContent: false,
       invoiceOperation,
     };
 
