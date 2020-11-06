@@ -1,6 +1,7 @@
 const { assert } = require('chai');
 const { technicalUser, softwareData } = require('./lib/globals.js');
 const createInvoiceOperations = require('./lib/create-invoice-operations.js');
+const createAnnulmentOperations = require('./lib/create-annulment-operations.js');
 
 const NavConnector = require('../src/nav-connector.js');
 
@@ -115,14 +116,14 @@ describe('NavConnector', () => {
         baseURL,
       });
 
-      const annulmentOperation = createInvoiceOperations({
-        taxNumber: technicalUser.taxNumber,
-      })
+      const annulmentOperation = createAnnulmentOperations([
+        { annulmentReference: 'INV-123-K' },
+      ])
         .slice(0, 1)
-        .map(({ invoiceData, invoiceOperation, index }) => ({
+        .map(({ index, annulmentOperation, invoiceAnnulment }) => ({
           index,
-          annulmentOperation: 'ANNUL',
-          invoiceAnnulment: invoiceData,
+          annulmentOperation,
+          invoiceAnnulment,
         }));
 
       const annulmentOperations = {
@@ -132,7 +133,6 @@ describe('NavConnector', () => {
       const transactionId = await navConnector.manageAnnulment(
         annulmentOperations
       );
-
       assert.match(transactionId, /^[+a-zA-Z0-9_]{1,30}$/);
     });
   });
