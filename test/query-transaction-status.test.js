@@ -3,19 +3,27 @@ const { assert } = require('chai');
 const { axios, technicalUser, softwareData } = require('./lib/globals.js');
 const createInvoiceOperations = require('./lib/create-invoice-operations.js');
 const createInvoiceCorruptOperations = require('./lib/create-invoice-corrupt-operations.js');
+const createAnnulmentOperations = require('./lib/create-annulment-operations');
+const createAnnulmentCorruptOperations = require('./lib/create-annulment-corrupt-operations');
 const waitInvoiceProcessing = require('./lib/wait-invoice-processing.js');
 
 const manageInvoice = require('../src/manage-invoice.js');
+const manageAnnulment = require('../src/manage-annulment.js');
 const queryTransactionStatus = require('../src/query-transaction-status.js');
 
 describe('queryTransactionStatus()', () => {
   let singleTransactionId;
   let multiTransactionId;
   let corruptTransactionId;
+  let toAnnulTransactionId;
+
+  let annulmentTransactionId;
+  let corruptAnnulmentTransactionId;
 
   /* Send and wait for a single and multiple invoices to be processed. */
   before(async function before() {
     const invoiceOperationList = [];
+    const annulmentOperationList = [];
 
     /* Create invoice operations with a single invoice. */
     invoiceOperationList.push(
@@ -40,11 +48,29 @@ describe('queryTransactionStatus()', () => {
       })
     );
 
+    /* Create invoice operations for annulment */
+    invoiceOperationList.push(
+      createInvoiceOperations({
+        taxNumber: technicalUser.taxNumber,
+        size: 1,
+        invoiceNumber: 'INV-1212-K',
+      })
+    );
+
+    /* Create an annulment operation */
+    annulmentOperationList.push(
+      createAnnulmentOperations([{ annulmentReference: 'INV-1212-K' }])
+    );
+
+    /* Create an annulment corrupt operation */
+    annulmentOperationList.push(createAnnulmentCorruptOperations({ size: 1 }));
+
     /* Send invoices. */
     [
       singleTransactionId,
       multiTransactionId,
       corruptTransactionId,
+      toAnnulTransactionId,
     ] = await Promise.all(
       invoiceOperationList.map(invoiceOperation =>
         manageInvoice({
@@ -64,6 +90,7 @@ describe('queryTransactionStatus()', () => {
       singleTransactionId,
       multiTransactionId,
       corruptTransactionId,
+      toAnnulTransactionId,
     ].map((transactionId, index) =>
       waitInvoiceProcessing({
         transactionId,
@@ -75,7 +102,37 @@ describe('queryTransactionStatus()', () => {
       })
     );
 
-    await Promise.all(getStatusPromises);
+    /*  send annulments  */
+
+    [annulmentTransactionId, corruptAnnulmentTransactionId] = await Promise.all(
+      annulmentOperationList.map(annulmentOperation =>
+        manageAnnulment({
+          annulmentOperations: {
+            annulmentOperation,
+          },
+          technicalUser,
+          softwareData,
+          axios,
+        })
+      )
+    );
+
+    /* Wait for annulments to be processes. */
+    const getAnnulmentStatusPromises = [
+      annulmentTransactionId,
+      corruptAnnulmentTransactionId,
+    ].map((transactionId, index) =>
+      waitInvoiceProcessing({
+        transactionId,
+        technicalUser,
+        softwareData,
+        axios,
+        test: this.test,
+        ignoreAbortedIndexes: index === 2 ? [1, 2, 3, 4, 5] : [],
+      })
+    );
+
+    await Promise.all(getStatusPromises.concat(getAnnulmentStatusPromises));
   });
 
   it('should resolve to array with single invoice', async () => {
@@ -88,7 +145,6 @@ describe('queryTransactionStatus()', () => {
 
     assert.isArray(processingResults);
   });
-
   it('should resolve to array with multiple invoice', async () => {
     const processingResults = await queryTransactionStatus({
       transactionId: multiTransactionId,
@@ -135,9 +191,6 @@ describe('queryTransactionStatus()', () => {
 
     assert.isNumber(processingResult.index);
     assert.isBoolean(processingResult.compressedContentIndicator);
-    assert.isNumber(
-      processingResult.businessValidationMessages[0].pointer.line
-    );
   });
 
   it('should normalize validation messages to arrays', async () => {
@@ -147,13 +200,15 @@ describe('queryTransactionStatus()', () => {
       softwareData,
       axios,
     });
-
-    assert.lengthOf(processingResults[0].businessValidationMessages, 0);
-    assert.lengthOf(processingResults[1].businessValidationMessages, 1);
-    assert.lengthOf(processingResults[2].businessValidationMessages, 1);
-
-    assert.lengthOf(processingResults[0].technicalValidationMessages, 0);
     assert.lengthOf(processingResults[4].technicalValidationMessages, 1);
-    assert.lengthOf(processingResults[5].technicalValidationMessages, 2);
+  });
+  it('should resolve to array with single annulment', async () => {
+    const processingResults = await queryTransactionStatus({
+      transactionId: annulmentTransactionId,
+      technicalUser,
+      softwareData,
+      axios,
+    });
+    assert.isArray(processingResults);
   });
 });
