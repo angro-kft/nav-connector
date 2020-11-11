@@ -4,7 +4,7 @@
 [![npm (scoped)](https://img.shields.io/npm/v/@angro/nav-connector.svg)](https://www.npmjs.com/package/@angro/nav-connector)
 [![license](https://img.shields.io/github/license/angro-kft/nav-connector.svg)](https://github.com/angro-kft/nav-connector/blob/dev/LICENSE)
 ![nav](https://img.shields.io/badge/NAV%20service%20version%20compatible-2.10-blue.svg)
-![nav-interface](https://img.shields.io/badge/NAV%20interface%20version%20compatible-2.0-blue.svg)
+![nav-interface](https://img.shields.io/badge/NAV%20interface%20version%20compatible-3.0-blue.svg)
 
 Node.js module which provides an interface for communicating with NAV online invoice service.
 
@@ -13,7 +13,7 @@ This module was developed in order to satisfy the following specification:
 
 ## Installation
 
-Tested with version 10.16.0 of Node.js.
+Tested with version 12.18.3 of Node.js.
 
 ```sh
 $ npm install @angro/nav-connector
