@@ -21,11 +21,14 @@ module.exports = async function sendRequest({ request, axios, path }) {
   try {
     const requestXml = createRequestXml(request);
     const response = await axios.post(path, requestXml);
-    response.data = await parseXml(response.data);
+
+    // [3.0] replace ns2 in response to empty string because we can get responses with or without namespaces
+    const noNsXml = response.data.replace(/ns2:/g, '');
+
+    response.data = await parseXml(noNsXml);
     return response.data;
   } catch (error) {
     const { response } = error;
-
     /* Normalize errors. */
     if (response) {
       /* istanbul ignore next */
@@ -35,48 +38,28 @@ module.exports = async function sendRequest({ request, axios, path }) {
           technicalValidationMessages: [],
         };
       } else if (response.data.includes('GeneralExceptionResponse')) {
-        const data = await parseXml(response.data);
+        // [3.0] replace ns2 in response to empty string because we can get responses with or without namespaces
+        const noNsXml = response.data.replace(/ns2:/g, '');
 
+        const data = await parseXml(noNsXml);
         response.data = {
           result: pick(data.GeneralExceptionResponse, [
-            'ns2:funcCode',
-            'ns2:errorCode',
-            'ns2:message',
+            'funcCode',
+            'errorCode',
+            'message',
           ]),
           technicalValidationMessages: [],
         };
-
-        // [3.0] normalize namespace changes
-        response.data.result = {
-          funcCode: response.data.result['ns2:funcCode'],
-        };
-        if (response.data.result['ns2:errorCode']) {
-          response.data.result.errorCode =
-            response.data.result['ns2:errorCode'];
-        }
-        if (response.data.result['ns2:message']) {
-          response.data.result.message = response.data.result['ns2:message'];
-        }
       } else if (response.data.includes('GeneralErrorResponse')) {
-        const data = await parseXml(response.data);
+        // [3.0] replace ns2 in response to empty string because we can get responses with or without namespaces
+        const noNsXml = response.data.replace(/ns2:/g, '');
+
+        const data = await parseXml(noNsXml);
         response.data = pick(data.GeneralErrorResponse, [
-          'ns2:result',
+          'result',
           'schemaValidationMessages',
           'technicalValidationMessages',
         ]);
-
-        // [3.0] normalize namespace changes
-        response.data.result = {
-          funcCode: response.data['ns2:result']['ns2:funcCode'],
-        };
-        if (response.data['ns2:result']['ns2:errorCode']) {
-          response.data.result.errorCode =
-            response.data['ns2:result']['ns2:errorCode'];
-        }
-        if (response.data['ns2:result']['ns2:message']) {
-          response.data.result.message =
-            response.data['ns2:result']['ns2:message'];
-        }
 
         const { technicalValidationMessages } = response.data;
 
