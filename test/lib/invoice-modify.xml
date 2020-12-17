@@ -45,7 +45,7 @@
                <exciseLicenceNum>0rz4tD7rQMIxI9joYOud8lDIVdm8FH9Fqi61Supr8v6sQf6iRk</exciseLicenceNum>
             </supplierInfo>
             <customerInfo>
-               <privatePersonIndicator>false</privatePersonIndicator>
+               <customerVatStatus>DOMESTIC</customerVatStatus>
                <customerVatData>
                   <customerTaxNumber>
                      <ns2:taxpayerId>22222222</ns2:taxpayerId>
