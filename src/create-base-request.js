@@ -67,7 +67,7 @@ module.exports = function createBaseRequest({
         'common:login': login,
         'common:passwordHash': {
           $: {
-            cryptoType: 'SHA2-512',
+            cryptoType: 'SHA-512',
           },
           _: passwordHash,
         },

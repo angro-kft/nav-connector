@@ -39,7 +39,7 @@ describe('createBaseRequest()', () => {
           'common:login': 'login123',
           'common:passwordHash': {
             $: {
-              cryptoType: 'SHA2-512',
+              cryptoType: 'SHA-512',
             },
             _:
               'B109F3BBBC244EB82441917ED06D618B9008DD09B3BEFD1B5E07394C706A8BB980B1D7785E5976EC049B46DF5F1326AF5A2EA6D103FD07C95385FFAB0CACBC86',
