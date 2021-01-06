@@ -141,7 +141,7 @@ describe('sendRequest()', () => {
 
   it('should handle non response errors', async () => {
     const invalidAxios = newAxios.create({
-      baseURL: 'https://api2-test.onlineszamla.nav.gov.hu/invoiceService/',
+      baseURL: 'https://api3-test.onlineszamla.nav.gov.hu/invoiceService/',
       headers: {
         'content-type': 'application/xml',
         accept: 'application/xml',

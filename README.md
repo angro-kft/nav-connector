@@ -4,7 +4,7 @@
 [![npm (scoped)](https://img.shields.io/npm/v/@angro/nav-connector.svg)](https://www.npmjs.com/package/@angro/nav-connector)
 [![license](https://img.shields.io/github/license/angro-kft/nav-connector.svg)](https://github.com/angro-kft/nav-connector/blob/dev/LICENSE)
 ![nav](https://img.shields.io/badge/NAV%20service%20version%20compatible-2.10-blue.svg)
-![nav-interface](https://img.shields.io/badge/NAV%20interface%20version%20compatible-2.0-blue.svg)
+![nav-interface](https://img.shields.io/badge/NAV%20interface%20version%20compatible-3.0-blue.svg)
 
 Node.js module which provides an interface for communicating with NAV online invoice service.
 
@@ -13,7 +13,7 @@ This module was developed in order to satisfy the following specification:
 
 ## Installation
 
-Tested with version 10.16.0 of Node.js.
+Tested with version 12.18.3 of Node.js.
 
 ```sh
 $ npm install @angro/nav-connector
@@ -44,7 +44,7 @@ const softwareData = {
   softwareDevTaxNumber: 'string',
 };
 
-const baseURL = 'https://api-test.onlineszamla.nav.gov.hu/invoiceService/v2/';
+const baseURL = 'https://api-test.onlineszamla.nav.gov.hu/invoiceService/v3/';
 
 /* Create the nav connector interface. */
 const navConnector = new NavConnector({ technicalUser, softwareData, baseURL });
@@ -99,7 +99,7 @@ Class representing the implementation of the NAV online invoice data service spe
  * @param {Object} params Constructor params.
  * @param {Object} params.technicalUser Technical user data.
  * @param {Object} params.softwareData Software data.
- * @param {String} [params.baseURL=https://api.onlineszamla.nav.gov.hu/invoiceService/v2/] Axios baseURL.
+ * @param {String} [params.baseURL=https://api.onlineszamla.nav.gov.hu/invoiceService/v3/] Axios baseURL.
  * @param {number} [params.timeout=70000] Axios default timeout integer in milliseconds.
  */
 const navConnector = new NavConnector({ technicalUser, softwareData });
@@ -143,6 +143,7 @@ const invoiceOperations = {
       index: 1,
       invoiceOperation: 'CREATE',
       invoiceData: 'invoice xml in base64 encoding',
+      electronicInvoiceHash: 'SHA3-512'
     },
     {
       index: 2,
@@ -163,6 +164,7 @@ const invoiceOperations = {
       index: 1,
       invoiceOperation: 'CREATE',
       invoiceData: 'compressed invoice xml in base64 encoding',
+      electronicInvoiceHash: 'SHA3-512'
     },
   ],
 };
@@ -357,9 +359,9 @@ Keep in mind the taxpayerData property is not returned by the NAV service if the
 /**
  * Get taxpayer information by tax number.
  * @param {string} taxNumber Taxpayer tax number to get information for.
- * @returns {Promise<Object>} Taxpayer information.
+ * @returns {Promise<Object>} Taxpayer information with taxpayerValidity, taxpayerData, incorporation fields.
  */
-const { taxpayerValidity, taxpayerData } = await navConnector.queryTaxpayer(
+const { taxpayerValidity, taxpayerData, incorporation } = await navConnector.queryTaxpayer(
   '12345678'
 );
 
@@ -436,6 +438,12 @@ Copy the file named `.env.example` and rename it to `.env` in the root of the re
 ```sh
 $ npm run test
 ```
+
+## TODO
+These operations are currently not supported by the project:
+- queryInvoiceChainDigest
+- queryInvoiceCheck
+- queryTransactionList
 
 ## Maintainers
 

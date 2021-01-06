@@ -1,6 +1,6 @@
 const axiosCreate = require('axios').create;
 
-const defaultBaseUrl = 'https://api.onlineszamla.nav.gov.hu/invoiceService/v2/';
+const defaultBaseUrl = 'https://api.onlineszamla.nav.gov.hu/invoiceService/v3/';
 
 const manageInvoice = require('../src/manage-invoice.js');
 const manageAnnulment = require('../src/manage-annulment.js');
@@ -18,7 +18,7 @@ module.exports = class NavConnector {
    * @param {Object} params Constructor params.
    * @param {Object} params.technicalUser Technical user data.
    * @param {Object} params.softwareData Software data.
-   * @param {string} [params.baseURL=https://api.onlineszamla.nav.gov.hu/invoiceService/v2/] Axios baseURL.
+   * @param {string} [params.baseURL=https://api.onlineszamla.nav.gov.hu/invoiceService/v3/] Axios baseURL.
    * @param {number} [params.timeout=70000] Axios default timeout integer in milliseconds.
    */
   constructor({

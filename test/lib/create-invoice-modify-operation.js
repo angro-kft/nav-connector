@@ -22,20 +22,28 @@ module.exports = function createInvoiceModifyOperations({
   const invoiceModifyXml = baseInvoiceModifyXml
     .toString()
     .replace(
-      '<taxpayerId>11111111</taxpayerId>',
-      `<taxpayerId>${taxNumber}</taxpayerId>`
+      '<ns2:taxpayerId>68845007</ns2:taxpayerId>',
+      `<ns2:taxpayerId>${taxNumber}</ns2:taxpayerId>`
     )
     .replace(
-      '<invoiceNumber>ZZZ000009</invoiceNumber>',
+      '<invoiceNumber>08185237810576020670</invoiceNumber>',
       `<invoiceNumber>${invoiceModifyNumber}</invoiceNumber>`
     )
     .replace(
-      '<originalInvoiceNumber>ZZZ000001</originalInvoiceNumber>',
+      '<originalInvoiceNumber>08185237810576020670</originalInvoiceNumber>',
       `<originalInvoiceNumber>${originalInvoiceNumber}</originalInvoiceNumber>`
     )
     .replace(
-      '<invoiceIssueDate>2020-05-20</invoiceIssueDate>',
+      '<invoiceIssueDate>2020-09-04</invoiceIssueDate>',
       `<invoiceIssueDate>${today}</invoiceIssueDate>`
+    )
+    .replace(
+      '<invoiceDeliveryDate>2020-05-10</invoiceDeliveryDate>',
+      `<invoiceDeliveryDate>${today}</invoiceDeliveryDate>`
+    )
+    .replace(
+      '<paymentDate>2020-05-30</paymentDate>',
+      `<paymentDate>${today}</paymentDate>`
     );
 
   invoiceOperation.push({

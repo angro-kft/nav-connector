@@ -1,19 +1,23 @@
 const { assert } = require('chai');
 const { axios, technicalUser, softwareData } = require('./lib/globals.js');
-const createInvoiceOperations = require('./lib/create-invoice-operations.js');
+const createAnnulmentOperations = require('./lib/create-annulment-operations.js');
 
 const manageAnnulment = require('../src/manage-annulment.js');
 
 describe('manageAnnulment()', () => {
-  it('should resolve to transactionId with single invoice', async () => {
-    const annulmentOperation = createInvoiceOperations({
-      taxNumber: technicalUser.taxNumber,
-    })
+  it('should resolve to transactionId with single annulment', async () => {
+    const operations = [
+      {
+        annulmentReference: '22222222',
+      },
+    ];
+
+    const annulmentOperation = createAnnulmentOperations(operations)
       .slice(0, 1)
-      .map(({ invoiceData, invoiceOperation, index }) => ({
+      .map(({ index, annulmentOperation, invoiceAnnulment }) => ({
         index,
-        annulmentOperation: 'ANNUL',
-        invoiceAnnulment: invoiceData,
+        annulmentOperation,
+        invoiceAnnulment,
       }));
 
     const annulmentOperations = {
@@ -29,14 +33,23 @@ describe('manageAnnulment()', () => {
     assert.match(transactionId, /^[+a-zA-Z0-9_]{1,30}$/);
   });
 
-  it('should resolve to transactionId with multiple invoices', async () => {
-    const annulmentOperation = createInvoiceOperations({
-      taxNumber: technicalUser.taxNumber,
-    }).map(({ invoiceData, invoiceOperation, index }) => ({
-      index,
-      annulmentOperation: 'ANNUL',
-      invoiceAnnulment: invoiceData,
-    }));
+  it('should resolve to transactionId with multiple annulments', async () => {
+    const operations = [
+      {
+        annulmentReference: '11111111',
+      },
+      {
+        annulmentReference: '22222222',
+      },
+    ];
+
+    const annulmentOperation = createAnnulmentOperations(operations).map(
+      ({ index, annulmentOperation, invoiceAnnulment }) => ({
+        index,
+        annulmentOperation,
+        invoiceAnnulment,
+      })
+    );
 
     const annulmentOperations = {
       annulmentOperation,
@@ -53,24 +66,31 @@ describe('manageAnnulment()', () => {
   });
 
   it('should normalize annulmentOperation key order', async () => {
-    const annulmentOperation = createInvoiceOperations({
-      taxNumber: technicalUser.taxNumber,
-    }).map(({ invoiceData, invoiceOperation, index }) => ({
-      invoiceAnnulment: invoiceData,
-      annulmentOperation: 'ANNUL',
-      index,
-    }));
+    const operations = [
+      {
+        annulmentReference: '22222222',
+      },
+    ];
+
+    const annulmentOperation = createAnnulmentOperations(operations).map(
+      ({ index, annulmentOperation, invoiceAnnulment }) => ({
+        annulmentOperation,
+        index,
+        invoiceAnnulment,
+      })
+    );
 
     const annulmentOperations = {
       annulmentOperation,
-      compressedContent: false,
     };
 
-    await manageAnnulment({
+    const transactionId = await manageAnnulment({
       annulmentOperations,
       technicalUser,
       softwareData,
       axios,
     });
+
+    assert.match(transactionId, /^[+a-zA-Z0-9_]{1,30}$/);
   });
 });

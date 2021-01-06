@@ -25,20 +25,33 @@ describe('createBaseRequest()', () => {
   it('should return valid baseRequest', () => {
     const expected = {
       TokenExchangeRequest: {
-        $: { xmlns: 'http://schemas.nav.gov.hu/OSA/2.0/api' },
-        header: {
-          requestId: '5aa8fb82b058db2438eaab4d',
-          timestamp: '2018-03-14T10:37:54.000Z',
-          requestVersion: '2.0',
-          headerVersion: '1.0',
+        $: {
+          'xmlns:common': 'http://schemas.nav.gov.hu/NTCA/1.0/common',
+          xmlns: 'http://schemas.nav.gov.hu/OSA/3.0/api',
         },
-        user: {
-          login: 'login123',
-          passwordHash:
-            'B109F3BBBC244EB82441917ED06D618B9008DD09B3BEFD1B5E07394C706A8BB980B1D7785E5976EC049B46DF5F1326AF5A2EA6D103FD07C95385FFAB0CACBC86',
-          taxNumber: '12345678',
-          requestSignature:
-            '1738823EF4917CCEA987FDAAC599E29AD9880DF6CD7A871A5AA7968C85E305488DDC0CEC7AADF3F16C3AFB20241E7585B0E5ACB5067216012F99367856667FBD',
+        'common:header': {
+          'common:requestId': '5aa8fb82b058db2438eaab4d',
+          'common:timestamp': '2018-03-14T10:37:54.000Z',
+          'common:requestVersion': '3.0',
+          'common:headerVersion': '1.0',
+        },
+        'common:user': {
+          'common:login': 'login123',
+          'common:passwordHash': {
+            $: {
+              cryptoType: 'SHA-512',
+            },
+            _:
+              'B109F3BBBC244EB82441917ED06D618B9008DD09B3BEFD1B5E07394C706A8BB980B1D7785E5976EC049B46DF5F1326AF5A2EA6D103FD07C95385FFAB0CACBC86',
+          },
+          'common:taxNumber': '12345678',
+          'common:requestSignature': {
+            $: {
+              cryptoType: 'SHA3-512',
+            },
+            _:
+              '1738823EF4917CCEA987FDAAC599E29AD9880DF6CD7A871A5AA7968C85E305488DDC0CEC7AADF3F16C3AFB20241E7585B0E5ACB5067216012F99367856667FBD',
+          },
         },
         software: {
           softwareId: '123456789123456789',

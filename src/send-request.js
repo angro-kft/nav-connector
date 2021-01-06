@@ -21,11 +21,14 @@ module.exports = async function sendRequest({ request, axios, path }) {
   try {
     const requestXml = createRequestXml(request);
     const response = await axios.post(path, requestXml);
-    response.data = await parseXml(response.data);
+
+    // [3.0] replace ns2 in response to empty string because we can get responses with or without namespaces
+    const noNsXml = response.data.replace(/ns2:/g, '');
+
+    response.data = await parseXml(noNsXml);
     return response.data;
   } catch (error) {
     const { response } = error;
-
     /* Normalize errors. */
     if (response) {
       /* istanbul ignore next */
@@ -35,8 +38,10 @@ module.exports = async function sendRequest({ request, axios, path }) {
           technicalValidationMessages: [],
         };
       } else if (response.data.includes('GeneralExceptionResponse')) {
-        const data = await parseXml(response.data);
+        // [3.0] replace ns2 in response to empty string because we can get responses with or without namespaces
+        const noNsXml = response.data.replace(/ns2:/g, '');
 
+        const data = await parseXml(noNsXml);
         response.data = {
           result: pick(data.GeneralExceptionResponse, [
             'funcCode',
@@ -46,8 +51,10 @@ module.exports = async function sendRequest({ request, axios, path }) {
           technicalValidationMessages: [],
         };
       } else if (response.data.includes('GeneralErrorResponse')) {
-        const data = await parseXml(response.data);
+        // [3.0] replace ns2 in response to empty string because we can get responses with or without namespaces
+        const noNsXml = response.data.replace(/ns2:/g, '');
 
+        const data = await parseXml(noNsXml);
         response.data = pick(data.GeneralErrorResponse, [
           'result',
           'schemaValidationMessages',

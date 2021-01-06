@@ -54,19 +54,30 @@ module.exports = function createBaseRequest({
   const baseRequest = {
     [requestType]: {
       $: {
-        xmlns: 'http://schemas.nav.gov.hu/OSA/2.0/api',
+        'xmlns:common': 'http://schemas.nav.gov.hu/NTCA/1.0/common',
+        xmlns: 'http://schemas.nav.gov.hu/OSA/3.0/api',
       },
-      header: {
-        requestId,
-        timestamp: date.toISOString(),
-        requestVersion: '2.0',
-        headerVersion: '1.0',
+      'common:header': {
+        'common:requestId': requestId,
+        'common:timestamp': date.toISOString(),
+        'common:requestVersion': '3.0',
+        'common:headerVersion': '1.0',
       },
-      user: {
-        login,
-        passwordHash,
-        taxNumber,
-        requestSignature,
+      'common:user': {
+        'common:login': login,
+        'common:passwordHash': {
+          $: {
+            cryptoType: 'SHA-512',
+          },
+          _: passwordHash,
+        },
+        'common:taxNumber': taxNumber,
+        'common:requestSignature': {
+          $: {
+            cryptoType: 'SHA3-512',
+          },
+          _: requestSignature,
+        },
       },
       software,
     },

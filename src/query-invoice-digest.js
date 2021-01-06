@@ -4,7 +4,7 @@ const createBaseRequest = require('./create-base-request.js');
 const sendRequest = require('./send-request.js');
 
 /**
- * Query previously sent invoices with invoice number or query params.
+ * Query previously sent invoices with query params.
  * @async
  * @param {Object} params Function params.
  * @param {number} params.page Integer page to query.
@@ -80,14 +80,13 @@ module.exports = async function queryInvoiceDigest({
   });
 
   const { invoiceDigestResult } = responseData.QueryInvoiceDigestResponse;
+  if (!invoiceDigestResult) {
+    return responseData.QueryInvoiceDigestResponse;
+  }
 
   /* Type conversions. */
   invoiceDigestResult.currentPage = Number(invoiceDigestResult.currentPage);
   invoiceDigestResult.availablePage = Number(invoiceDigestResult.availablePage);
-
-  if (!invoiceDigestResult) {
-    return responseData.QueryInvoiceDigestResponse;
-  }
 
   const { invoiceDigest } = invoiceDigestResult;
 

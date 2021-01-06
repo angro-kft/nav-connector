@@ -11,7 +11,7 @@ const baseInvoiceXml = readFileSync('./test/lib/invoice-create.xml');
  * to whom the technical user is assigned.
  * @returns {Array} invoiceOperation
  */
-module.exports = function createInvoiceOperations({ taxNumber }) {
+module.exports = function createInvoiceCorruptOperations({ taxNumber }) {
   const invoiceOperation = [];
   const today = new Date().toISOString().split('T')[0];
   let existingInvoiceNumber;
@@ -23,23 +23,23 @@ module.exports = function createInvoiceOperations({ taxNumber }) {
     invoiceXml = invoiceXml
       .toString()
       .replace(
-        '<taxpayerId>11111111</taxpayerId>',
-        `<taxpayerId>${taxNumber}</taxpayerId>`
+        '<ns2:taxpayerId>68845007</ns2:taxpayerId>',
+        `<ns2:taxpayerId>${taxNumber}</ns2:taxpayerId>`
       )
       .replace(
-        '<invoiceNumber>2020/000123</invoiceNumber>',
+        '<invoiceNumber>08185237810576020670</invoiceNumber>',
         `<invoiceNumber>${invoiceNumber}</invoiceNumber>`
       )
       .replace(
-        '<invoiceIssueDate>2020-05-15</invoiceIssueDate>',
+        '<invoiceIssueDate>2020-09-04</invoiceIssueDate>',
         `<invoiceIssueDate>${today}</invoiceIssueDate>`
       )
       .replace(
-        '<invoiceDeliveryDate>2020-05-10</invoiceDeliveryDate>',
+        '<invoiceDeliveryDate>2020-09-04</invoiceDeliveryDate>',
         `<invoiceDeliveryDate>${today}</invoiceDeliveryDate>`
       )
       .replace(
-        '<paymentDate>2020-05-30</paymentDate>',
+        '<paymentDate>2020-09-04</paymentDate>',
         `<paymentDate>${today}</paymentDate>`
       );
 
