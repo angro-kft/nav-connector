@@ -134,7 +134,6 @@ describe('sendRequest()', () => {
 
       throw new Error('should throw if request is invalid');
     } catch (error) {
-      assert.isString(error.response.data.result.message);
       assert.isArray(error.response.data.technicalValidationMessages);
     }
   });

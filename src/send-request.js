@@ -22,8 +22,8 @@ module.exports = async function sendRequest({ request, axios, path }) {
     const requestXml = createRequestXml(request);
     const response = await axios.post(path, requestXml);
 
-    // [3.0] replace ns2 in response to empty string because we can get responses with or without namespaces
-    const noNsXml = response.data.replace(/ns2:/g, '');
+    // [3.0] replace ns2 and ns3 in response to empty string because we can get responses with or without namespaces
+    const noNsXml = response.data.replace(/ns2:|ns3:/g, '');
 
     response.data = await parseXml(noNsXml);
     return response.data;
@@ -38,8 +38,8 @@ module.exports = async function sendRequest({ request, axios, path }) {
           technicalValidationMessages: [],
         };
       } else if (response.data.includes('GeneralExceptionResponse')) {
-        // [3.0] replace ns2 in response to empty string because we can get responses with or without namespaces
-        const noNsXml = response.data.replace(/ns2:/g, '');
+        // [3.0] replace ns2 and ns3 in response to empty string because we can get responses with or without namespaces
+        const noNsXml = response.data.replace(/ns2:|ns3:/g, '');
 
         const data = await parseXml(noNsXml);
         response.data = {
@@ -51,8 +51,8 @@ module.exports = async function sendRequest({ request, axios, path }) {
           technicalValidationMessages: [],
         };
       } else if (response.data.includes('GeneralErrorResponse')) {
-        // [3.0] replace ns2 in response to empty string because we can get responses with or without namespaces
-        const noNsXml = response.data.replace(/ns2:/g, '');
+        // [3.0] replace ns2 and ns3 in response to empty string because we can get responses with or without namespaces
+        const noNsXml = response.data.replace(/ns2:|ns3:/g, '');
 
         const data = await parseXml(noNsXml);
         response.data = pick(data.GeneralErrorResponse, [
