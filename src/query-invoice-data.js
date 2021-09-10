@@ -12,7 +12,11 @@ const parseXml = promisify(xmlParser.parseString).bind(xmlParser);
  * Query previously sent invoices with invoice number or query params.
  * @async
  * @param {Object} params Function params.
- * @param {Object} params.invoiceQuery Query single invoice with invoice number.
+ * @param {Object} params.invoiceQuery Query single invoice.
+ * @param {string} params.invoiceQuery.invoiceNumber Query invoices based on the invoiceNumber.
+ * @param {"INBOUND" | "OUTBOUND"} params.invoiceQuery.invoiceDirection Query invoices based on the invoice direction INBOUND | OUTBOUND.
+ * @param {number} params.invoiceQuery.batchIndex Batch index.
+ * @param {string} params.invoiceQuery.supplierTaxNumber Query invoices based on the supplier tax number.
  * @param {Object} params.technicalUser Technical user’s data.
  * @param {Object} params.softwareData Invoice software data.
  * @param {Object} params.axios Axios instance.
@@ -35,6 +39,8 @@ module.exports = async function queryInvoiceData({
     invoiceNumberQuery: pick(invoiceQuery, [
       'invoiceNumber',
       'invoiceDirection',
+      'batchIndex', //This might be optional
+      'supplierTaxNumber' //This might be optional
     ]),
   });
 
