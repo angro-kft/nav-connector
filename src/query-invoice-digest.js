@@ -105,5 +105,5 @@ module.exports = async function queryInvoiceDigest({
     });
   }
 
-  return invoiceDigestResult;
+  return {...invoiceDigestResult, requestXml: responseData.requestXml};
 };

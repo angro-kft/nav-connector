@@ -47,7 +47,7 @@ module.exports = async function queryInvoiceData({
   const { invoiceDataResult } = responseData.QueryInvoiceDataResponse;
 
   if (!invoiceDataResult) {
-    return responseData.QueryInvoiceDataResponse;
+    return responseData;
   }
 
   invoiceDataResult.invoiceData = await parseXml(

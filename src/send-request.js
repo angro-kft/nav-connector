@@ -26,7 +26,7 @@ module.exports = async function sendRequest({ request, axios, path }) {
     const noNsXml = response.data.replace(/ns2:|ns3:/g, '');
 
     response.data = await parseXml(noNsXml);
-    return response.data;
+    return {...response.data, requestXml};
   } catch (error) {
     const { response } = error;
     /* Normalize errors. */
