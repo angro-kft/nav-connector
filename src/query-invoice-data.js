@@ -35,6 +35,7 @@ module.exports = async function queryInvoiceData({
     invoiceNumberQuery: pick(invoiceQuery, [
       'invoiceNumber',
       'invoiceDirection',
+      'supplierTaxNumber'
     ]),
   });
 
