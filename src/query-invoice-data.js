@@ -3,6 +3,7 @@ const { pick, mapKeys } = require('lodash');
 const createBaseRequest = require('./create-base-request.js');
 const sendRequest = require('./send-request.js');
 
+const zlib = require('zlib');
 const xml2js = require('xml2js');
 const { promisify } = require('util');
 const xmlParser = new xml2js.Parser({ explicitArray: false });
@@ -40,7 +41,7 @@ module.exports = async function queryInvoiceData({
       'invoiceNumber',
       'invoiceDirection',
       'batchIndex', //This might be optional
-      'supplierTaxNumber' //This might be optional
+      'supplierTaxNumber', //This might be optional
     ]),
   });
 
@@ -56,9 +57,25 @@ module.exports = async function queryInvoiceData({
     return responseData.QueryInvoiceDataResponse;
   }
 
-  invoiceDataResult.invoiceData = await parseXml(
-    Buffer.from(invoiceDataResult.invoiceData, 'base64')
+  const data = await new Promise((resolve, reject) =>
+    zlib.gunzip(
+      Buffer.from(invoiceDataResult.invoiceData, 'base64'),
+      async (err, buffer) => {
+        if (err) reject(err);
+        try {
+          resolve(await parseXml(buffer));
+        } catch (e) {
+          reject(e);
+        }
+      }
+    )
   );
 
-  return invoiceDataResult;
+  return data;
+  /*
+    invoiceDataResult.invoiceData = await parseXml(
+      Buffer.from(invoiceDataResult.invoiceData, 'base64')
+    );
+
+    return invoiceDataResult;*/
 };
