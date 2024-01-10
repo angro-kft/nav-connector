@@ -7,6 +7,8 @@ const xml2js = require('xml2js');
 const { promisify } = require('util');
 const xmlParser = new xml2js.Parser({ explicitArray: false });
 const parseXml = promisify(xmlParser.parseString).bind(xmlParser);
+const zlib = require("zlib");
+const asyncUnzip = promisify(zlib.unzip);
 
 /**
  * Query previously sent invoices with invoice number or query params.
@@ -51,9 +53,17 @@ module.exports = async function queryInvoiceData({
     return responseData;
   }
 
-  invoiceDataResult.invoiceData = await parseXml(
-    Buffer.from(invoiceDataResult.invoiceData, 'base64')
-  );
+  if (invoiceDataResult.compressedContentIndicator === "true") {
+    const unzippedInvoiceData = await asyncUnzip(Buffer.from(invoiceDataResult.invoiceData, 'base64'))
+
+    const unzippedXmlString = unzippedInvoiceData.toString('utf8')
+
+    invoiceDataResult.invoiceData = await parseXml(unzippedXmlString)
+  } else {
+    invoiceDataResult.invoiceData = await parseXml(
+      Buffer.from(invoiceDataResult.invoiceData, 'base64')
+    );
+  }
 
   return invoiceDataResult;
 };
